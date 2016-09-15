@@ -1,6 +1,7 @@
 package main.DTO;
 
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -20,7 +21,11 @@ public class ContactDTO implements DTO{
     private String city;
     private String street;
     private String index;
-    private List<TelephoneDTO> telephoneDTOs;
+    private List<TelephoneDTO> telephonesDTO;
+
+    public ContactDTO() {
+        telephonesDTO =new ArrayList<>();
+    }
 
     @Override
     public int getId() {
@@ -44,7 +49,7 @@ public class ContactDTO implements DTO{
                 ", city='" + city + '\'' +
                 ", street='" + street + '\'' +
                 ", index='" + index + '\'' +
-                ", telephoneDTOs=" + telephoneDTOs +
+                ", telephonesDTO=" + telephonesDTO +
                 '}';
     }
 
@@ -174,12 +179,12 @@ public class ContactDTO implements DTO{
         return this;
     }
 
-    public List<TelephoneDTO> getTelephoneDTOs() {
-        return telephoneDTOs;
+    public List<TelephoneDTO> getTelephonesDTO() {
+        return telephonesDTO;
     }
 
-    public ContactDTO setTelephoneDTOs(List<TelephoneDTO> telephoneDTOs) {
-        this.telephoneDTOs = telephoneDTOs;
+    public ContactDTO setTelephonesDTO(List<TelephoneDTO> telephonesDTO) {
+        this.telephonesDTO = telephonesDTO;
         return this;
     }
 
