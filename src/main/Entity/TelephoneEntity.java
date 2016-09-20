@@ -1,13 +1,21 @@
 package main.Entity;
 
 
+import main.DTO.TelephoneDTO;
+
 public class TelephoneEntity {
     private int id;
     private String number;
     private String type;
     private String comments;
     private int contactId;
-
+    public  TelephoneEntity(){};
+    public TelephoneEntity(TelephoneDTO telephoneDTO, int contactId) {
+        setId(telephoneDTO.getId());
+        setNumber(telephoneDTO.getNumber());
+        setType(telephoneDTO.getType());
+        setContactId(contactId);
+    }
 
     @Override
     public String toString() {

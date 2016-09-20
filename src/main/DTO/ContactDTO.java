@@ -1,6 +1,8 @@
 package main.DTO;
 
 
+import main.Entity.ContactEntity;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -25,6 +27,25 @@ public class ContactDTO implements DTO{
 
     public ContactDTO() {
         telephonesDTO =new ArrayList<>();
+    }
+
+    public ContactDTO(ContactEntity contactEntity){
+        super();
+        this.id = contactEntity.getId();
+        this.firstName = contactEntity.getFirstName();
+        this.secondName = contactEntity.getSecondName();
+        this.patronymic = contactEntity.getPatronymic();
+        this.birthday = contactEntity.getBirthday();
+        this.male = contactEntity.isMale();
+        this.nationality = contactEntity.getNationality();
+        this.relationshipStatus = contactEntity.getRelationshipStatus();
+        this.webSite = contactEntity.getWebSite();
+        this.email = contactEntity.getEmail();
+        this.company = contactEntity.getCompany();
+        this.country = contactEntity.getCountry();
+        this.city = contactEntity.getCity();
+        this.street = contactEntity.getStreet();
+        this.index = contactEntity.getIndex();
     }
 
     @Override

@@ -6,13 +6,16 @@ import main.DAO.DAOException;
 import java.util.List;
 
 public interface Repository <T,K> {
-    T create(T entity) throws DAOException;
+    T create(T dto) throws RepositoryException;
 
-    void update(T entity) throws DAOException;
+    void update(T dto) throws  RepositoryException;
 
-    void delete(T entity) throws DAOException;
+    void delete(T dto) throws RepositoryException;
 
-    T getById(K id) throws DAOException;
+    T get(K id) throws RepositoryException;
 
-    List<T> getAll() throws DAOException;
+    List<T> toList() throws RepositoryException;
+
+    int size() throws RepositoryException;
+
 }

@@ -1,11 +1,19 @@
 package main.DTO;
 
 
+import main.Entity.TelephoneEntity;
+
 public class TelephoneDTO implements DTO {
     private int id;
     private String number;
     private String type;
     private String comments;
+
+    public TelephoneDTO(TelephoneEntity telephoneEntity) {
+        this.id = telephoneEntity.getId();
+        this.number = telephoneEntity.getNumber();
+        this.type = telephoneEntity.getType();
+    }
 
     @Override
     public int getId() {

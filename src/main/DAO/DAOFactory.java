@@ -1,19 +1,22 @@
 package main.DAO;
 
 
-
-
 import org.apache.commons.dbcp.BasicDataSource;
 
 
 import javax.naming.NamingException;
 import javax.sql.DataSource;
+import java.sql.Connection;
 import java.sql.SQLException;
 
 public abstract class DAOFactory {
-    public abstract ContactDAO getContactDAO() throws DAOException;
-    public abstract TelephoneDAO getTelephoneDAO() throws DAOException;
-    public static DAOFactory getDAOFactory(TypeDAOFactory typeDAOFactory){
+    public abstract ContactDAO getContactDAO(Connection connection) throws DAOException;
+
+    public abstract TelephoneDAO getTelephoneDAO(Connection connection) throws DAOException;
+
+    public abstract Connection getConnection() throws DAOException;
+
+    public static DAOFactory getDAOFactory(TypeDAOFactory typeDAOFactory) {
         switch (typeDAOFactory) {
             case MySQL:
                 return new MySQLDAOFactory();
@@ -22,29 +25,33 @@ public abstract class DAOFactory {
         }
     }
 }
+
 //TO DO Уточнить правильно ли, что при каждом get создаеться новый DAO
 class MySQLDAOFactory extends DAOFactory {
+    MySQLDAOFactory() {
+        DataSource dataSource = getDataSource();
+    }
 
 
+    public TelephoneDAO getTelephoneDAO(Connection connection) {
+        return new MySQLTelephoneDAO(connection);
 
-    public TelephoneDAO getTelephoneDAO() throws DAOException {
+    }
+
+    public ContactDAO getContactDAO(Connection connection) {
+        return new MySQLContactDAO(connection);
+
+    }
+
+    public Connection getConnection() throws DAOException {
         try {
-            return new MySQLTelephoneDAO(getDataSource());
-        } catch (NamingException|SQLException e) {
+            return getDataSource().getConnection();
+        } catch (SQLException e) {
             throw new DAOException(e);
         }
     }
-    public ContactDAO getContactDAO() throws DAOException {
-        try {
-            return new MySQLContactDAO(getDataSource());
-        } catch (NamingException |SQLException e) {
-            throw new DAOException(e);
-        }
-    }
 
-    private static DataSource getDataSource() throws SQLException, NamingException {
-        //TO DO Переделать, а то для каждого вызова создаеться новый DataSource
-        //TO DO Вынести в пропери файл
+    private static DataSource getDataSource() {
         BasicDataSource ds = new BasicDataSource();
         ds.setDriverClassName("com.mysql.jdbc.Driver");
         ds.setUsername("root");

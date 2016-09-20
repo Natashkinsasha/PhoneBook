@@ -9,4 +9,5 @@ public interface DAO<T,K> {
     void delete(K id) throws DAOException;
     T getById(K id) throws DAOException;
     List<T> getAll() throws DAOException;
+    int getNumber() throws DAOException;
 }

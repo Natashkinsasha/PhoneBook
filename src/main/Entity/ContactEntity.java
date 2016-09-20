@@ -39,6 +39,10 @@ public class ContactEntity implements Entity{
         this.index = contactDTO.getIndex();
     }
 
+    public ContactEntity() {
+
+    }
+
     public String getFirstName() {
         return firstName;
     }

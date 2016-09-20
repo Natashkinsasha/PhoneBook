@@ -1,35 +1,261 @@
 package main.Repository;
 
 
-import main.DAO.DAOException;
+import com.sun.org.apache.xpath.internal.operations.Bool;
+import main.DAO.*;
 import main.DTO.ContactDTO;
+import main.DTO.TelephoneDTO;
+import main.Entity.ContactEntity;
+import main.Entity.TelephoneEntity;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-public class ContactRepositoryImpl implements ContactRepository{
+public class ContactRepositoryImpl implements ContactRepository {
 
-    @Override
-    public ContactDTO create(ContactDTO entity) throws DAOException {
-        return null;
+    private DAOFactory getDAOFactory() {
+        return DAOFactory.getDAOFactory(TypeDAOFactory.MySQL);
     }
 
     @Override
-    public void update(ContactDTO entity) throws DAOException {
-
+    public ContactDTO create(ContactDTO contactDTO) throws RepositoryException {
+        DAOFactory daoFactory = getDAOFactory();
+        Connection connection = null;
+        ContactDTO newContactDTO = null;
+        try {
+            connection = daoFactory.getConnection();
+            ContactDAO mySQLContactDAO = daoFactory.getContactDAO(connection);
+            TelephoneDAO mySQLtelephoneDAO = daoFactory.getTelephoneDAO(connection);
+            connection.setAutoCommit(false);
+            newContactDTO = new ContactDTO(mySQLContactDAO.create(new ContactEntity(contactDTO)));
+            for (TelephoneDTO telephoneDTO : contactDTO.getTelephonesDTO()) {
+                newContactDTO.getTelephonesDTO().add(new TelephoneDTO(mySQLtelephoneDAO.create(new TelephoneEntity(telephoneDTO, contactDTO.getId()))));
+            }
+            connection.commit();
+        } catch (SQLException | DAOException e) {
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                } catch (SQLException e1) {
+                    throw new RepositoryException(e1);
+                }
+            }
+            throw new RepositoryException(e);
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    throw new RepositoryException(e);
+                }
+            }
+        }
+        return newContactDTO;
     }
 
     @Override
-    public void delete(ContactDTO entity) throws DAOException {
-
+    public void update(ContactDTO dto) throws RepositoryException {
+        DAOFactory daoFactory = getDAOFactory();
+        Connection connection = null;
+        try {
+            connection = daoFactory.getConnection();
+            ContactDAO mySQLContactDAO = daoFactory.getContactDAO(connection);
+            TelephoneDAO mySQLtelephoneDAO = daoFactory.getTelephoneDAO(connection);
+            ContactEntity contactEntity = new ContactEntity(dto);
+            connection.setAutoCommit(false);
+            mySQLContactDAO.update(contactEntity);
+            for (TelephoneDTO telephoneDTO : dto.getTelephonesDTO()) {
+                TelephoneEntity telephoneEntity = new TelephoneEntity(telephoneDTO, dto.getId());
+                mySQLtelephoneDAO.update(telephoneEntity);
+            }
+            connection.commit();
+        } catch (SQLException | DAOException e) {
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                } catch (SQLException e1) {
+                    throw new RepositoryException(e1);
+                }
+            }
+            throw new RepositoryException(e);
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    throw new RepositoryException(e);
+                }
+            }
+        }
     }
 
     @Override
-    public ContactDTO getById(Integer id) throws DAOException {
-        return null;
+    public void delete(ContactDTO dto) throws RepositoryException {
+        DAOFactory daoFactory = getDAOFactory();
+        Connection connection = null;
+        //TO DO может лучше БД предоставить удаление контактов
+        try {
+            connection = daoFactory.getConnection();
+            ContactDAO mySQLContactDAO = daoFactory.getContactDAO(connection);
+            TelephoneDAO mySQLtelephoneDAO = daoFactory.getTelephoneDAO(connection);
+            ContactEntity contactEntity = new ContactEntity(dto);
+            connection.setAutoCommit(false);
+            mySQLContactDAO.delete(contactEntity.getId());
+            for (TelephoneDTO telephoneDTO : dto.getTelephonesDTO()) {
+                TelephoneEntity telephoneEntity = new TelephoneEntity(telephoneDTO, dto.getId());
+                mySQLtelephoneDAO.delete(telephoneEntity.getId());
+            }
+            connection.commit();
+        } catch (SQLException | DAOException e) {
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                } catch (SQLException e1) {
+                    throw new RepositoryException(e1);
+                }
+            }
+            throw new RepositoryException(e);
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    throw new RepositoryException(e);
+                }
+            }
+        }
     }
 
     @Override
-    public List<ContactDTO> getAll() throws DAOException {
-        return null;
+    public ContactDTO get(Integer id) throws RepositoryException {
+        DAOFactory daoFactory = getDAOFactory();
+        Connection connection = null;
+        ContactDTO newContactDTO;
+        try {
+            connection = daoFactory.getConnection();
+            ContactDAO mySQLContactDAO = daoFactory.getContactDAO(connection);
+            TelephoneDAO mySQLtelephoneDAO = daoFactory.getTelephoneDAO(connection);
+            connection.setAutoCommit(false);
+            newContactDTO = new ContactDTO(mySQLContactDAO.getById(id));
+            List<TelephoneEntity> telephoneEntities = mySQLtelephoneDAO.getByContactId(id);
+            for (TelephoneEntity telephoneEntity : telephoneEntities) {
+                newContactDTO.getTelephonesDTO().add(new TelephoneDTO(telephoneEntity));
+            }
+            connection.commit();
+        } catch (SQLException | DAOException e) {
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                } catch (SQLException e1) {
+                    throw new RepositoryException(e1);
+                }
+            }
+            throw new RepositoryException(e);
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    throw new RepositoryException(e);
+                }
+            }
+        }
+        return newContactDTO;
     }
+
+    @Override
+    public List<ContactDTO> toList() throws RepositoryException {
+        DAOFactory daoFactory = getDAOFactory();
+        Connection connection = null;
+        List<ContactDTO> contactDTOs = new ArrayList<>();
+
+        try {
+            ContactDAO mySQLContactDAO = daoFactory.getContactDAO(connection);
+            TelephoneDAO mySQLtelephoneDAO = daoFactory.getTelephoneDAO(connection);
+            connection.setAutoCommit(false);
+            for (ContactEntity contactEntity : mySQLContactDAO.getAll()) {
+                ContactDTO newContactDTO = new ContactDTO(contactEntity);
+                List<TelephoneEntity> telephoneEntities = mySQLtelephoneDAO.getByContactId(contactEntity.getId());
+                for (TelephoneEntity telephoneEntity : telephoneEntities) {
+                    newContactDTO.getTelephonesDTO().add(new TelephoneDTO(telephoneEntity));
+                }
+                contactDTOs.add(newContactDTO);
+            }
+            connection.commit();
+        } catch (SQLException | DAOException e) {
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                } catch (SQLException e1) {
+                    throw new RepositoryException(e1);
+                }
+            }
+            throw new RepositoryException(e);
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    throw new RepositoryException(e);
+                }
+            }
+        }
+        return contactDTOs;
+    }
+
+    @Override
+    public int size() throws RepositoryException {
+        DAOFactory daoFactory = getDAOFactory();
+        try (Connection connection = daoFactory.getConnection()) {
+            ContactDAO mySQLContactDAO = daoFactory.getContactDAO(connection);
+            return mySQLContactDAO.getNumber();
+        } catch (SQLException | DAOException e) {
+            throw new RepositoryException(e);
+        }
+    }
+
+    @Override
+    public List<ContactDTO> getSerchSortLimit(ContactDTO contactDTO, int offset, int number, Map<String, Boolean> sortFields) throws RepositoryException {
+        DAOFactory daoFactory = getDAOFactory();
+        Connection connection = null;
+        List<ContactDTO> contactDTOs = new ArrayList<>();
+
+        try {
+            ContactDAO mySQLContactDAO = daoFactory.getContactDAO(connection);
+            TelephoneDAO mySQLtelephoneDAO = daoFactory.getTelephoneDAO(connection);
+            connection.setAutoCommit(false);
+            for (ContactEntity contactEntity : mySQLContactDAO.getSerchSortLimit(new ContactEntity(contactDTO), offset, number, sortFields)) {
+                ContactDTO newContactDTO = new ContactDTO(contactEntity);
+                List<TelephoneEntity> telephoneEntities = mySQLtelephoneDAO.getByContactId(contactEntity.getId());
+                for (TelephoneEntity telephoneEntity : telephoneEntities) {
+                    newContactDTO.getTelephonesDTO().add(new TelephoneDTO(telephoneEntity));
+                }
+                contactDTOs.add(newContactDTO);
+            }
+            connection.commit();
+        } catch (SQLException | DAOException e) {
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                } catch (SQLException e1) {
+                    throw new RepositoryException(e1);
+                }
+            }
+            throw new RepositoryException(e);
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    throw new RepositoryException(e);
+                }
+            }
+        }
+        return contactDTOs;
+    }
+
+
 }
