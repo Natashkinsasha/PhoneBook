@@ -24,9 +24,9 @@
         page="/WEB-INF/jsp/parts/navbar.jsp"
         flush="true"/>
 <div class="container">
-<jsp:include
-        page="/WEB-INF/jsp/parts/contact_table.jsp"
-        flush="true"/>
+    <jsp:include
+            page="/WEB-INF/jsp/parts/send_email.jsp"
+            flush="true"/>
 </div>
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->

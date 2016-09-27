@@ -15,11 +15,11 @@ import java.util.*;
 public class MySQLContactDAO implements ContactDAO {
 
 
-    private static final String updateQuere = "UPDATE contact SET firstname=?, secondname=?, patronymic=?, birthday=?, male=?,  nationality=?, relationshipstatus=?, webSite=?, email=?, country=?, city=?, street=?, index=? where id=?";
-    private static final String deleteQuere = "DELETE * FROM contact WHERE id=?";
+    private static final String updateQuere = "UPDATE contact SET firstname=?, secondname=?, patronymic=?, birthday=?, male=?,  nationality=?, relationshipstatus=?, webSite=?, email=?, country=?, city=?, street=?, ind=?, company=? where id=?";
+    private static final String deleteQuere = "DELETE FROM contact WHERE id=?";
     private static final String getAllQuere = "SELECT * FROM contact";
     private static final String getByIDQuere = "SELECT * FROM contact WHERE id=?";
-    private static final String insertQuere = "INSERT INTO contact (firstname, secondname, patronymic, birthday, male,  nationality, relationshipstatus, webSite, email, country, city, street, index) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    private static final String insertQuere = "INSERT INTO contact (firstname, secondname, patronymic, birthday, male,  nationality, relationshipstatus, webSite, email, country, city, street, ind, company) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     //TO DO может есть более оптимальный запрос на количесво элементов
     private static final String getNumberQuere = "SELECT COUNT(*) FROM contact";
     private static final String getSortLimit = "SELECT * FROM contact ORDER BY ? DESC LIMIT ?, ?";
@@ -39,8 +39,8 @@ public class MySQLContactDAO implements ContactDAO {
             createPreparedStatement.setString(1, entity.getFirstName());
             createPreparedStatement.setString(2, entity.getSecondName());
             createPreparedStatement.setString(3, entity.getPatronymic());
-            createPreparedStatement.setDate(4, new Date(entity.getBirthday().getTime()));
-            createPreparedStatement.setBoolean(5, entity.isMale());
+            createPreparedStatement.setDate(4, entity.getBirthday());
+            createPreparedStatement.setBoolean(5, true);
             createPreparedStatement.setString(6, entity.getNationality());
             createPreparedStatement.setString(7, entity.getRelationshipStatus());
             createPreparedStatement.setString(8, entity.getWebSite());
@@ -49,6 +49,7 @@ public class MySQLContactDAO implements ContactDAO {
             createPreparedStatement.setString(11, entity.getCity());
             createPreparedStatement.setString(12, entity.getStreet());
             createPreparedStatement.setString(13, entity.getIndex());
+            createPreparedStatement.setString(14, entity.getCompany());
             boolean result = createPreparedStatement.execute();
             //TO DO добавить проверку на добавление
             ResultSet resultSet = createPreparedStatement.executeQuery("SELECT * FROM contact WHERE id = last_insert_id()");
@@ -64,8 +65,8 @@ public class MySQLContactDAO implements ContactDAO {
             updatePreparedStatement.setString(1, entity.getFirstName());
             updatePreparedStatement.setString(2, entity.getSecondName());
             updatePreparedStatement.setString(3, entity.getPatronymic());
-            updatePreparedStatement.setDate(4, new Date(entity.getBirthday().getTime()));
-            updatePreparedStatement.setBoolean(5, entity.isMale());
+            updatePreparedStatement.setDate(4, entity.getBirthday());
+            updatePreparedStatement.setBoolean(5, entity.getMale());
             updatePreparedStatement.setString(6, entity.getNationality());
             updatePreparedStatement.setString(7, entity.getRelationshipStatus());
             updatePreparedStatement.setString(8, entity.getWebSite());
@@ -74,8 +75,9 @@ public class MySQLContactDAO implements ContactDAO {
             updatePreparedStatement.setString(11, entity.getCity());
             updatePreparedStatement.setString(12, entity.getStreet());
             updatePreparedStatement.setString(13, entity.getIndex());
-            updatePreparedStatement.setInt(14, entity.getId());
-            int result = updatePreparedStatement.executeUpdate();
+            updatePreparedStatement.setString(14, entity.getCompany());
+            updatePreparedStatement.setInt(15, entity.getId());
+            updatePreparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new DAOException(e);
         }
@@ -101,7 +103,10 @@ public class MySQLContactDAO implements ContactDAO {
         } catch (SQLException e) {
             throw new DAOException(e);
         }
-        return contactEntities.get(0);
+        if (contactEntities.size() != 0) {
+            return contactEntities.get(0);
+        }
+        return null;
     }
 
     @Override
@@ -120,8 +125,8 @@ public class MySQLContactDAO implements ContactDAO {
     public int getNumber() throws DAOException {
         int number;
         try (PreparedStatement getNumberStatement = getConnection().prepareStatement(getNumberQuere)) {
-
             ResultSet resultSet = getNumberStatement.executeQuery();
+            resultSet.next();
             number = resultSet.getInt(1);
         } catch (SQLException e) {
             throw new DAOException(e);
@@ -135,20 +140,22 @@ public class MySQLContactDAO implements ContactDAO {
             while (resultSet.next()) {
                 ContactEntity contactEntity = new ContactEntity();
                 contactEntity.setId(resultSet.getInt("id"));
-                contactEntity.setBirthday(new java.util.Date(resultSet.getDate("birthday").getTime()));
+                contactEntity.setBirthday(resultSet.getDate("birthday"));
                 contactEntity.setCity(resultSet.getString("city"));
                 contactEntity.setCompany(resultSet.getString("company"));
                 contactEntity.setEmail(resultSet.getString("email"));
                 contactEntity.setCountry(resultSet.getString("country"));
                 contactEntity.setFirstName(resultSet.getString("firstname"));
                 contactEntity.setSecondName(resultSet.getString("secondname"));
-                contactEntity.setIndex(resultSet.getString("index"));
+                contactEntity.setIndex(resultSet.getString("ind"));
                 contactEntity.setMale(resultSet.getBoolean("male"));
+                contactEntity.setStreet(resultSet.getString("street"));
                 contactEntity.setNationality(resultSet.getString("nationality"));
                 contactEntity.setPatronymic(resultSet.getString("patronymic"));
-                contactEntity.setRelationshipStatus(resultSet.getString("relationshhipstatus"));
-                contactEntity.setStreet(resultSet.getString(resultSet.getString("street")));
+                contactEntity.setRelationshipStatus(resultSet.getString("relationshipstatus"));
                 contactEntity.setWebSite(resultSet.getString("website"));
+                contactEntity.setCompany(resultSet.getString("company"));
+
                 contactEntities.add(contactEntity);
             }
         } catch (Exception e) {
@@ -159,17 +166,24 @@ public class MySQLContactDAO implements ContactDAO {
 
     @Override
     public List<ContactEntity> getSerchSortLimit(ContactEntity contactEntity, int offset, int count, Map<String, Boolean> sortFields) throws DAOException {
-        StringQuere stringQuere = StringQuereBuilder.getStringQuere().select().from("contact").where().like("firstname", contactEntity.getFirstName()).
-                like("secondname", contactEntity.getSecondName()).like("patronymic", contactEntity.getBirthday().toString()).like("male", String.valueOf(contactEntity.isMale())).
-                like("nationality", contactEntity.getNationality()).like("relationshipstatus", contactEntity.getRelationshipStatus()).like("country", contactEntity.getCountry()).
-                like("city", contactEntity.getCity()).like("street", contactEntity.getStreet());
-        List<ContactEntity> contactEntities;
-        Set<String> fields = sortFields.keySet();
-        for (String field : fields) {
-            Boolean isDesc = sortFields.get(field);
-            stringQuere.orderBy(field, isDesc);
+        //TO Do добавить день рождение и пол
+        //Разобраться что бы работал поиск с пустыми полями
+        StringQuere stringQuere = StringQuereBuilder.getStringQuere().select("*").from("contact");
+        if (contactEntity != null) {
+            stringQuere.where().like("firstname", contactEntity.getFirstName()).
+                    like("secondname", contactEntity.getSecondName()).like("patronymic", contactEntity.getPatronymic()).
+                    like("nationality", contactEntity.getNationality()).like("relationshipstatus", contactEntity.getRelationshipStatus()).like("country", contactEntity.getCountry()).
+                    like("city", contactEntity.getCity()).like("street", contactEntity.getStreet()).like("ind", contactEntity.getIndex()).like("company", contactEntity.getCompany());
         }
-        stringQuere.limit(offset,count);
+        if (sortFields != null) {
+            Set<String> fields = sortFields.keySet();
+            for (String field : fields) {
+                Boolean isDesc = sortFields.get(field);
+                stringQuere.orderBy(field, isDesc);
+            }
+        }
+        stringQuere.limit(offset, count);
+        List<ContactEntity> contactEntities;
         try (PreparedStatement getAllPreparedStatement = getConnection().prepareStatement(stringQuere.toString())) {
             ResultSet resultSet = getAllPreparedStatement.executeQuery();
             contactEntities = parseResultSet(resultSet);
@@ -177,5 +191,26 @@ public class MySQLContactDAO implements ContactDAO {
             throw new DAOException(e);
         }
         return contactEntities;
+    }
+
+    @Override
+    public int getNumberSerch(ContactEntity contactEntity) throws DAOException {
+        //TO Do добавить день рождение и пол
+        StringQuere stringQuere = StringQuereBuilder.getStringQuere().select("COUNT(*)").from("contact");
+        if (contactEntity != null) {
+            stringQuere.where().like("firstname", contactEntity.getFirstName()).
+                    like("secondname", contactEntity.getSecondName()).like("patronymic", contactEntity.getPatronymic()).
+                    like("nationality", contactEntity.getNationality()).like("relationshipstatus", contactEntity.getRelationshipStatus()).like("country", contactEntity.getCountry()).
+                    like("city", contactEntity.getCity()).like("street", contactEntity.getStreet()).like("ind", contactEntity.getIndex()).like("company", contactEntity.getCompany());
+        }
+        int number;
+        try (PreparedStatement getNumberSerchStatement = getConnection().prepareStatement(stringQuere.toString())) {
+            ResultSet resultSet = getNumberSerchStatement.executeQuery();
+            resultSet.next();
+            number = resultSet.getInt(1);
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        }
+        return number;
     }
 }

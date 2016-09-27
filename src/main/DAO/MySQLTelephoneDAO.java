@@ -14,11 +14,11 @@ import java.util.List;
 
 public class MySQLTelephoneDAO implements TelephoneDAO {
 
-    private static final String updateQuere = "UPDATE telephone SET number=?, type=?, comment=?, contact_id=? where id=?";
+    private static final String updateQuere = "UPDATE telephone SET number=?, type=?, comment=?, country_code=?, operator_code=?, contact_id=? where id=?";
     private static final String deleteQuere = "DELETE * FROM telephone WHERE id=?";
     private static final String getAllQuere = "SELECT * FROM telephone";
     private static final String getByIDQuere = "SELECT * FROM telephone WHERE id=?";
-    private static final String insertQuere = "INSERT INTO telephone (number, type, comment, contact_id) VALUES (?, ?, ?, ?);";
+    private static final String insertQuere = "INSERT INTO telephone (number, type, comment, country_code, operator_code, contact_id) VALUES (?, ?, ?, ?, ?, ?);";
     private static final String getByContactIDQuere = "SELECT * FROM telephone WHERE contact_id=?";
     private static final String getNumberQuere = "SELECT COUNT(*) FROM telephone";
     private Connection connection;
@@ -36,7 +36,9 @@ public class MySQLTelephoneDAO implements TelephoneDAO {
             createPreparedStatement.setString(1, entity.getNumber());
             createPreparedStatement.setString(2, entity.getType());
             createPreparedStatement.setString(3, entity.getComments());
-            createPreparedStatement.setInt(4, entity.getContactId());
+            createPreparedStatement.setString(4, entity.getCountryCode());
+            createPreparedStatement.setString(5, entity.getOperatorCode());
+            createPreparedStatement.setInt(6, entity.getContactId());
             boolean result = createPreparedStatement.execute();
             //TO DO добавить проверку на добавление
             ResultSet resultSet =  createPreparedStatement.executeQuery("SELECT * FROM telephone WHERE id = last_insert_id()");
@@ -52,8 +54,10 @@ public class MySQLTelephoneDAO implements TelephoneDAO {
             updatePreparedStatement.setString(1, entity.getNumber());
             updatePreparedStatement.setString(2, entity.getType());
             updatePreparedStatement.setString(3, entity.getComments());
-            updatePreparedStatement.setInt(4, entity.getContactId());
-            updatePreparedStatement.setInt(5, entity.getId());
+            updatePreparedStatement.setString(4, entity.getCountryCode());
+            updatePreparedStatement.setString(5, entity.getOperatorCode());
+            updatePreparedStatement.setInt(6, entity.getContactId());
+            updatePreparedStatement.setInt(7, entity.getId());
             int result = updatePreparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new DAOException(e);

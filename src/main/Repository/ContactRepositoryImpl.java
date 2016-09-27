@@ -32,7 +32,7 @@ public class ContactRepositoryImpl implements ContactRepository {
             connection.setAutoCommit(false);
             newContactDTO = new ContactDTO(mySQLContactDAO.create(new ContactEntity(contactDTO)));
             for (TelephoneDTO telephoneDTO : contactDTO.getTelephonesDTO()) {
-                newContactDTO.getTelephonesDTO().add(new TelephoneDTO(mySQLtelephoneDAO.create(new TelephoneEntity(telephoneDTO, contactDTO.getId()))));
+                newContactDTO.getTelephonesDTO().add(new TelephoneDTO(mySQLtelephoneDAO.create(new TelephoneEntity(telephoneDTO, newContactDTO.getId()))));
             }
             connection.commit();
         } catch (SQLException | DAOException e) {
@@ -69,8 +69,13 @@ public class ContactRepositoryImpl implements ContactRepository {
             mySQLContactDAO.update(contactEntity);
             for (TelephoneDTO telephoneDTO : dto.getTelephonesDTO()) {
                 TelephoneEntity telephoneEntity = new TelephoneEntity(telephoneDTO, dto.getId());
-                mySQLtelephoneDAO.update(telephoneEntity);
+                if (telephoneDTO.getId()==0){
+                    mySQLtelephoneDAO.create(telephoneEntity);
+                } else{
+                    mySQLtelephoneDAO.update(telephoneEntity);
+                }
             }
+
             connection.commit();
         } catch (SQLException | DAOException e) {
             if (connection != null) {
@@ -93,21 +98,21 @@ public class ContactRepositoryImpl implements ContactRepository {
     }
 
     @Override
-    public void delete(ContactDTO dto) throws RepositoryException {
+    public void delete(Integer id) throws RepositoryException {
         DAOFactory daoFactory = getDAOFactory();
         Connection connection = null;
-        //TO DO может лучше БД предоставить удаление контактов
         try {
             connection = daoFactory.getConnection();
             ContactDAO mySQLContactDAO = daoFactory.getContactDAO(connection);
             TelephoneDAO mySQLtelephoneDAO = daoFactory.getTelephoneDAO(connection);
-            ContactEntity contactEntity = new ContactEntity(dto);
             connection.setAutoCommit(false);
-            mySQLContactDAO.delete(contactEntity.getId());
+            mySQLContactDAO.delete(id);
+            /*
             for (TelephoneDTO telephoneDTO : dto.getTelephonesDTO()) {
                 TelephoneEntity telephoneEntity = new TelephoneEntity(telephoneDTO, dto.getId());
                 mySQLtelephoneDAO.delete(telephoneEntity.getId());
             }
+            */
             connection.commit();
         } catch (SQLException | DAOException e) {
             if (connection != null) {
@@ -217,17 +222,22 @@ public class ContactRepositoryImpl implements ContactRepository {
         }
     }
 
+
     @Override
     public List<ContactDTO> getSerchSortLimit(ContactDTO contactDTO, int offset, int number, Map<String, Boolean> sortFields) throws RepositoryException {
         DAOFactory daoFactory = getDAOFactory();
         Connection connection = null;
         List<ContactDTO> contactDTOs = new ArrayList<>();
-
+        ContactEntity sortContactEntity = null;
+        if (contactDTO != null) {
+            sortContactEntity = new ContactEntity(contactDTO);
+        }
         try {
+            connection = daoFactory.getConnection();
             ContactDAO mySQLContactDAO = daoFactory.getContactDAO(connection);
             TelephoneDAO mySQLtelephoneDAO = daoFactory.getTelephoneDAO(connection);
-            connection.setAutoCommit(false);
-            for (ContactEntity contactEntity : mySQLContactDAO.getSerchSortLimit(new ContactEntity(contactDTO), offset, number, sortFields)) {
+
+            for (ContactEntity contactEntity : mySQLContactDAO.getSerchSortLimit(sortContactEntity, offset, number, sortFields)) {
                 ContactDTO newContactDTO = new ContactDTO(contactEntity);
                 List<TelephoneEntity> telephoneEntities = mySQLtelephoneDAO.getByContactId(contactEntity.getId());
                 for (TelephoneEntity telephoneEntity : telephoneEntities) {
@@ -235,15 +245,8 @@ public class ContactRepositoryImpl implements ContactRepository {
                 }
                 contactDTOs.add(newContactDTO);
             }
-            connection.commit();
-        } catch (SQLException | DAOException e) {
-            if (connection != null) {
-                try {
-                    connection.rollback();
-                } catch (SQLException e1) {
-                    throw new RepositoryException(e1);
-                }
-            }
+
+        } catch (DAOException e) {
             throw new RepositoryException(e);
         } finally {
             if (connection != null) {
@@ -255,6 +258,21 @@ public class ContactRepositoryImpl implements ContactRepository {
             }
         }
         return contactDTOs;
+    }
+
+    @Override
+    public int sizeWithSerch(ContactDTO contactDTO) throws RepositoryException {
+        DAOFactory daoFactory = getDAOFactory();
+        ContactEntity sortContactEntity = null;
+        if (contactDTO != null) {
+            sortContactEntity = new ContactEntity(contactDTO);
+        }
+        try (Connection connection = daoFactory.getConnection()) {
+            ContactDAO mySQLContactDAO = daoFactory.getContactDAO(connection);
+            return mySQLContactDAO.getNumberSerch(sortContactEntity);
+        } catch (SQLException | DAOException e) {
+            throw new RepositoryException(e);
+        }
     }
 
 

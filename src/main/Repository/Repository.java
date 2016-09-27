@@ -10,7 +10,7 @@ public interface Repository <T,K> {
 
     void update(T dto) throws  RepositoryException;
 
-    void delete(T dto) throws RepositoryException;
+    void delete(K id) throws RepositoryException;
 
     T get(K id) throws RepositoryException;
 

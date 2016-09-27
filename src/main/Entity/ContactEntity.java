@@ -2,7 +2,7 @@ package main.Entity;
 
 import main.DTO.ContactDTO;
 
-import java.util.Date;
+import java.sql.Date;
 
 public class ContactEntity implements Entity{
     private int id;
@@ -10,7 +10,7 @@ public class ContactEntity implements Entity{
     private String secondName;
     private String patronymic;
     private Date birthday;
-    private boolean male;
+    private Boolean male;
     private String nationality;
     private String relationshipStatus;
     private String webSite;
@@ -20,6 +20,7 @@ public class ContactEntity implements Entity{
     private String city;
     private String street;
     private String index;
+    private String photo;
 
     public ContactEntity(ContactDTO contactDTO) {
         this.id = contactDTO.getId();
@@ -27,7 +28,7 @@ public class ContactEntity implements Entity{
         this.secondName = contactDTO.getSecondName();
         this.patronymic = contactDTO.getPatronymic();
         this.birthday = contactDTO.getBirthday();
-        this.male = contactDTO.isMale();
+        this.male = contactDTO.getMale();
         this.nationality = contactDTO.getNationality();
         this.relationshipStatus = contactDTO.getRelationshipStatus();
         this.webSite = contactDTO.getWebSite();
@@ -37,6 +38,10 @@ public class ContactEntity implements Entity{
         this.city = contactDTO.getCity();
         this.street = contactDTO.getStreet();
         this.index = contactDTO.getIndex();
+    }
+
+    public Boolean getMale() {
+        return male;
     }
 
     public ContactEntity() {
@@ -79,9 +84,7 @@ public class ContactEntity implements Entity{
         return this;
     }
 
-    public boolean isMale() {
-        return male;
-    }
+
 
     public ContactEntity setMale(boolean male) {
         this.male = male;
@@ -175,8 +178,34 @@ public class ContactEntity implements Entity{
     }
 
     @Override
-    public Entity setId(int id) {
+    public ContactEntity setId(int id) {
         this.id=id;
         return this;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ContactEntity)) return false;
+
+        ContactEntity that = (ContactEntity) o;
+
+        if (male != that.male) return false;
+        if (firstName != null ? !firstName.equals(that.firstName) : that.firstName != null) return false;
+        if (secondName != null ? !secondName.equals(that.secondName) : that.secondName != null) return false;
+        if (patronymic != null ? !patronymic.equals(that.patronymic) : that.patronymic != null) return false;
+        if (birthday != null ? !birthday.equals(that.birthday) : that.birthday != null) return false;
+        if (nationality != null ? !nationality.equals(that.nationality) : that.nationality != null) return false;
+        if (relationshipStatus != null ? !relationshipStatus.equals(that.relationshipStatus) : that.relationshipStatus != null)
+            return false;
+        if (webSite != null ? !webSite.equals(that.webSite) : that.webSite != null) return false;
+        if (email != null ? !email.equals(that.email) : that.email != null) return false;
+        if (company != null ? !company.equals(that.company) : that.company != null) return false;
+        if (country != null ? !country.equals(that.country) : that.country != null) return false;
+        if (city != null ? !city.equals(that.city) : that.city != null) return false;
+        if (street != null ? !street.equals(that.street) : that.street != null) return false;
+        return index != null ? index.equals(that.index) : that.index == null;
+
+    }
+
 }

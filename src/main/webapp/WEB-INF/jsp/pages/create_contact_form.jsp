@@ -19,14 +19,15 @@
     <![endif]-->
 </head>
 <body>
-    <div class="container">
-        <jsp:include
-                page="/main/webapp/WEB-INF/jsp/parts/navbar.jsp"
-                flush="true"/>
-        <jsp:include
-                page="/main/webapp/WEB-INF/jsp/parts/create_contact.jsp"
-                flush="true"/>
-    </div>
+
+<jsp:include
+        page="/WEB-INF/jsp/parts/navbar.jsp"
+        flush="true"/>
+<div class="container">
+<jsp:include
+        page="/WEB-INF/jsp/parts/create_contact.jsp"
+        flush="true"/>
+</div>
 
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->

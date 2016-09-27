@@ -1,29 +1,21 @@
 package main.Servlet;
 
-import main.DTO.ContactDTO;
-import main.Servic.*;
 
+import main.DTO.ContactDTO;
+import main.DTO.TelephoneDTO;
+import main.Servic.TelephoneService;
+import main.Servic.TelephoneServiceImpl;
+
+import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+@WebServlet("/createtelephone")
+public class CreatePhoneServlet extends HttpServlet {
 
-@WebServlet("/createcontact")
-public class CreateContactServlet extends HttpServlet {
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if (req.getSession().getAttribute("createContactDTO")==null){
-            req.getSession().setAttribute("createContactDTO", new ContactDTO());
-        }
-        ContactDTO contactDTO = (ContactDTO) req.getSession().getAttribute("createContactDTO");
-
-        req.getRequestDispatcher("WEB-INF/jsp/pages/create_contact_form.jsp").forward(req, resp);
-    }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -43,18 +35,14 @@ public class CreateContactServlet extends HttpServlet {
         String index = req.getParameter("index");
         ContactDTO contactDTO = (ContactDTO) req.getSession().getAttribute("createContactDTO");
         contactDTO.setFirstName(fistName).setSecondName(secondName).setPatronymic(patronymice).setBirthday(birthday).setMale(sex).setNationality(nationality).setRelationshipStatus(relationshipStatus).setWebSite(webSite).setEmail(email).setCountry(country).setCity(city).setStreet(street).setIndex(index).setCompany(workPlace);
-        ContactService contactService = new ContactServiceImpl();
-        try {
-            if (contactDTO.getId()==0) {
-                contactService.createContact(contactDTO);
-            } else {
-                contactService.updateContact(contactDTO);
-            }
-        } catch (ServiceException e) {
-            e.printStackTrace();
-        }
-        req.getSession().removeAttribute("createContactDTO");
-        resp.sendRedirect("/");
+        String countryCode = req.getParameter("country_code");
+        String operatorCode = req.getParameter("operator_code");
+        String phoneNumber = req.getParameter("phone_number");
+        String phoneType = req.getParameter("phone_type");
+        String comment = req.getParameter("comment");
+        TelephoneDTO telephoneDTO = new TelephoneDTO();
+        telephoneDTO.setCountryCode(countryCode).setOperatorCode(operatorCode).setNumber(phoneNumber).setType(phoneType).setComments(comment);
+        contactDTO.addTelephone(telephoneDTO);
+        resp.sendRedirect("/createcontact");
     }
 }
-

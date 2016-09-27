@@ -9,13 +9,14 @@ import java.util.List;
 import java.util.Map;
 
 public class MainTableServiceImpl implements MainTableService{
-    public static final int PAGESAIZE = 20;
+    public static final int PAGESAIZE = 10;
 
     @Override
-    public int getCountTablePage() throws ServiceException {
+    public int getCountTablePage(ContactDTO contactDTO) throws ServiceException {
         ContactRepository contactRepository = new ContactRepositoryImpl();
         try {
-            return (int) Math.ceil(contactRepository.size()/PAGESAIZE);
+
+            return (int) Math.ceil((double) contactRepository.sizeWithSerch(contactDTO)/PAGESAIZE);
         } catch (RepositoryException e) {
             throw new ServiceException(e);
         }
@@ -23,13 +24,17 @@ public class MainTableServiceImpl implements MainTableService{
     }
 
     @Override
-    public List<ContactDTO> getSerchSortLimitContacts(ContactDTO serchContactDTO, int page, Map<String, Boolean> sortFields) throws ServiceException {
+    public List<ContactDTO> getSerchSortLimitContacts(ContactDTO serchContactDTO, Integer page, Map<String, Boolean> sortFields) throws ServiceException {
         ContactRepository contactRepository = new ContactRepositoryImpl();
+        if (page==null){
+            page=new Integer(1);
+        }
         try {
-            contactRepository.getSerchSortLimit(serchContactDTO,(page-1)*PAGESAIZE,page*PAGESAIZE, sortFields);
+            return contactRepository.getSerchSortLimit(serchContactDTO,(page-1)*PAGESAIZE, PAGESAIZE, sortFields);
         } catch (RepositoryException e) {
             throw new ServiceException(e);
         }
-        return null;
     }
+
+
 }

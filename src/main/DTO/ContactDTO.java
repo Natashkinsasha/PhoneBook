@@ -1,19 +1,23 @@
 package main.DTO;
 
 
+import com.mysql.jdbc.StringUtils;
 import main.Entity.ContactEntity;
 
+import java.awt.image.BufferedImage;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
-public class ContactDTO implements DTO{
+public class ContactDTO implements DTO {
     private int id;
     private String firstName;
     private String secondName;
     private String patronymic;
     private Date birthday;
-    private boolean male;
+    private Boolean male;
     private String nationality;
     private String relationshipStatus;
     private String webSite;
@@ -24,19 +28,20 @@ public class ContactDTO implements DTO{
     private String street;
     private String index;
     private List<TelephoneDTO> telephonesDTO;
+    private BufferedImage photo;
 
     public ContactDTO() {
-        telephonesDTO =new ArrayList<>();
+        telephonesDTO = new ArrayList<>();
     }
 
-    public ContactDTO(ContactEntity contactEntity){
-        super();
+    public ContactDTO(ContactEntity contactEntity) {
+        this();
         this.id = contactEntity.getId();
         this.firstName = contactEntity.getFirstName();
         this.secondName = contactEntity.getSecondName();
         this.patronymic = contactEntity.getPatronymic();
         this.birthday = contactEntity.getBirthday();
-        this.male = contactEntity.isMale();
+        this.male = contactEntity.getMale();
         this.nationality = contactEntity.getNationality();
         this.relationshipStatus = contactEntity.getRelationshipStatus();
         this.webSite = contactEntity.getWebSite();
@@ -47,6 +52,109 @@ public class ContactDTO implements DTO{
         this.street = contactEntity.getStreet();
         this.index = contactEntity.getIndex();
     }
+
+
+    public String getIdString() {
+        return id + "";
+    }
+
+    public String getFirstNameString() {
+        if (firstName == null) {
+            return "";
+        }
+        return firstName;
+    }
+
+    public String getSecondNameString() {
+        if (secondName == null) {
+            return "";
+        }
+        return secondName;
+    }
+
+    public String getPatronymicString() {
+        if (patronymic == null) {
+            return "";
+        }
+        return patronymic;
+    }
+
+
+    public String getBirthdayString() {
+        if (birthday == null) {
+            return "";
+        }
+        return birthday.toString();
+    }
+
+    public String getRelationshipStatusString() {
+        if (relationshipStatus == null) {
+            return "";
+        }
+        return relationshipStatus.toString();
+    }
+
+    public String getNationalityString() {
+        if (nationality == null) {
+            return "";
+        }
+        return nationality.toString();
+    }
+
+    public String getWebSiteString() {
+        if (webSite == null) {
+            return "";
+        }
+        return webSite.toString();
+    }
+
+    public String getEmailString() {
+        if (email == null) {
+            return "";
+        }
+        return email.toString();
+    }
+
+
+    public String getCompanyString() {
+        if (company == null) {
+            return "";
+        }
+        return company.toString();
+    }
+
+
+    public String getCountryString() {
+        if (country == null) {
+            return "";
+        }
+        return country.toString();
+    }
+
+
+    public String getCityString() {
+        if (city == null) {
+            return "";
+        }
+        return city.toString();
+    }
+
+
+    public String getStreetString() {
+        if (street == null) {
+            return "";
+        }
+        return street.toString();
+    }
+
+
+    public String getIndexString() {
+        if (street == null) {
+            return "";
+        }
+        return street.toString();
+    }
+
 
     @Override
     public int getId() {
@@ -79,7 +187,11 @@ public class ContactDTO implements DTO{
     }
 
     public ContactDTO setFirstName(String firstName) {
-        this.firstName = firstName;
+        if (StringUtils.isNullOrEmpty(firstName)) {
+            this.firstName = null;
+        } else {
+            this.firstName = firstName;
+        }
         return this;
     }
 
@@ -88,7 +200,11 @@ public class ContactDTO implements DTO{
     }
 
     public ContactDTO setSecondName(String secondName) {
-        this.secondName = secondName;
+        if (StringUtils.isNullOrEmpty(secondName)) {
+            this.secondName = null;
+        } else {
+            this.secondName = secondName;
+        }
         return this;
     }
 
@@ -97,7 +213,11 @@ public class ContactDTO implements DTO{
     }
 
     public ContactDTO setPatronymic(String patronymic) {
-        this.patronymic = patronymic;
+        if (StringUtils.isNullOrEmpty(patronymic)) {
+            this.patronymic = null;
+        } else {
+            this.patronymic = patronymic;
+        }
         return this;
     }
 
@@ -110,8 +230,37 @@ public class ContactDTO implements DTO{
         return this;
     }
 
-    public boolean isMale() {
+    public ContactDTO setBirthday(String birthday) {
+        if (StringUtils.isNullOrEmpty(birthday)) {
+            this.birthday = null;
+        } else {
+            SimpleDateFormat format = new SimpleDateFormat();
+            format.applyPattern("yyyy-mm-dd");
+            java.util.Date date = null;
+            try {
+                date = format.parse(birthday);
+            } catch (ParseException e) {
+                this.birthday = null;
+            }
+            this.birthday = new Date(date.getTime());
+        }
+        return this;
+    }
+
+    public Boolean getMale() {
         return male;
+    }
+
+    public String getMaleString() {
+        if (male == null) {
+            return "";
+        } else if (male == true) {
+            return "Male";
+        } else if (male == false) {
+            return "Female";
+        } else {
+            return "";
+        }
     }
 
     public ContactDTO setMale(boolean male) {
@@ -124,7 +273,11 @@ public class ContactDTO implements DTO{
     }
 
     public ContactDTO setNationality(String nationality) {
-        this.nationality = nationality;
+        if (StringUtils.isNullOrEmpty(nationality)) {
+            this.nationality = null;
+        } else {
+            this.nationality = nationality;
+        }
         return this;
     }
 
@@ -133,7 +286,11 @@ public class ContactDTO implements DTO{
     }
 
     public ContactDTO setRelationshipStatus(String relationshipStatus) {
-        this.relationshipStatus = relationshipStatus;
+        if (StringUtils.isNullOrEmpty(relationshipStatus)) {
+            this.relationshipStatus = null;
+        } else {
+            this.relationshipStatus = relationshipStatus;
+        }
         return this;
     }
 
@@ -142,7 +299,11 @@ public class ContactDTO implements DTO{
     }
 
     public ContactDTO setWebSite(String webSite) {
-        this.webSite = webSite;
+        if (StringUtils.isNullOrEmpty(webSite)) {
+            this.webSite = null;
+        } else {
+            this.webSite = webSite;
+        }
         return this;
     }
 
@@ -151,7 +312,11 @@ public class ContactDTO implements DTO{
     }
 
     public ContactDTO setEmail(String email) {
-        this.email = email;
+        if (StringUtils.isNullOrEmpty(email)) {
+            this.email = null;
+        } else {
+            this.email = email;
+        }
         return this;
     }
 
@@ -160,7 +325,11 @@ public class ContactDTO implements DTO{
     }
 
     public ContactDTO setCompany(String company) {
-        this.company = company;
+        if (StringUtils.isNullOrEmpty(company)) {
+            this.company = null;
+        } else {
+            this.company = company;
+        }
         return this;
     }
 
@@ -169,7 +338,11 @@ public class ContactDTO implements DTO{
     }
 
     public ContactDTO setCountry(String country) {
-        this.country = country;
+        if (StringUtils.isNullOrEmpty(country)) {
+            this.country = null;
+        } else {
+            this.country = country;
+        }
         return this;
     }
 
@@ -178,7 +351,11 @@ public class ContactDTO implements DTO{
     }
 
     public ContactDTO setCity(String city) {
-        this.city = city;
+        if (StringUtils.isNullOrEmpty(city)) {
+            this.city = null;
+        } else {
+            this.city = city;
+        }
         return this;
     }
 
@@ -187,7 +364,11 @@ public class ContactDTO implements DTO{
     }
 
     public ContactDTO setStreet(String street) {
-        this.street = street;
+        if (StringUtils.isNullOrEmpty(street)) {
+            this.street = null;
+        } else {
+            this.street = street;
+        }
         return this;
     }
 
@@ -196,7 +377,11 @@ public class ContactDTO implements DTO{
     }
 
     public ContactDTO setIndex(String index) {
-        this.index = index;
+        if (StringUtils.isNullOrEmpty(index)) {
+            this.index = null;
+        } else {
+            this.index = index;
+        }
         return this;
     }
 
@@ -209,4 +394,19 @@ public class ContactDTO implements DTO{
         return this;
     }
 
+    public ContactDTO setMale(String sex) {
+        if (StringUtils.isNullOrEmpty(street)) {
+            this.street = null;
+        } else if (sex.toLowerCase().equals("male")) {
+            this.male = true;
+        } else if (sex.toLowerCase().equals("female")) {
+            this.male = false;
+        }
+        return this;
+    }
+
+    public ContactDTO addTelephone(TelephoneDTO telephoneDTO) {
+        this.telephonesDTO.add(telephoneDTO);
+        return this;
+    }
 }

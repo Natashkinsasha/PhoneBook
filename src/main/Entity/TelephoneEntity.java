@@ -8,6 +8,8 @@ public class TelephoneEntity {
     private String number;
     private String type;
     private String comments;
+    private String countryCode;
+    private String operatorCode;
     private int contactId;
     public  TelephoneEntity(){};
     public TelephoneEntity(TelephoneDTO telephoneDTO, int contactId) {
@@ -15,6 +17,8 @@ public class TelephoneEntity {
         setNumber(telephoneDTO.getNumber());
         setType(telephoneDTO.getType());
         setContactId(contactId);
+        setCountryCode(telephoneDTO.getCountryCode());
+        setOperatorCode(telephoneDTO.getOperatorCode());
     }
 
     @Override
@@ -26,6 +30,24 @@ public class TelephoneEntity {
                 ", comments='" + comments + '\'' +
                 ", contactId=" + contactId +
                 '}';
+    }
+
+    public String getCountryCode() {
+        return countryCode;
+    }
+
+    public TelephoneEntity setCountryCode(String countryCode) {
+        this.countryCode = countryCode;
+        return this;
+    }
+
+    public String getOperatorCode() {
+        return operatorCode;
+    }
+
+    public TelephoneEntity setOperatorCode(String operatorCode) {
+        this.operatorCode = operatorCode;
+        return this;
     }
 
     public String getNumber() {
