@@ -2,26 +2,33 @@ package main.Servlet;
 
 import main.DTO.ContactDTO;
 import main.Servic.*;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.UploadContext;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 @WebServlet("/createcontact")
 public class CreateContactServlet extends HttpServlet {
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         if (req.getSession().getAttribute("createContactDTO")==null){
             req.getSession().setAttribute("createContactDTO", new ContactDTO());
         }
-        ContactDTO contactDTO = (ContactDTO) req.getSession().getAttribute("createContactDTO");
-
         req.getRequestDispatcher("WEB-INF/jsp/pages/create_contact_form.jsp").forward(req, resp);
     }
 

@@ -15,11 +15,11 @@ import java.util.*;
 public class MySQLContactDAO implements ContactDAO {
 
 
-    private static final String updateQuere = "UPDATE contact SET firstname=?, secondname=?, patronymic=?, birthday=?, male=?,  nationality=?, relationshipstatus=?, webSite=?, email=?, country=?, city=?, street=?, ind=?, company=? where id=?";
+    private static final String updateQuere = "UPDATE contact SET firstname=?, secondname=?, patronymic=?, birthday=?, male=?,  nationality=?, relationshipstatus=?, webSite=?, email=?, country=?, city=?, street=?, ind=?, company=?, photo_path=? where id=?";
     private static final String deleteQuere = "DELETE FROM contact WHERE id=?";
     private static final String getAllQuere = "SELECT * FROM contact";
     private static final String getByIDQuere = "SELECT * FROM contact WHERE id=?";
-    private static final String insertQuere = "INSERT INTO contact (firstname, secondname, patronymic, birthday, male,  nationality, relationshipstatus, webSite, email, country, city, street, ind, company) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    private static final String insertQuere = "INSERT INTO contact (firstname, secondname, patronymic, birthday, male,  nationality, relationshipstatus, webSite, email, country, city, street, ind, company, photo_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     //TO DO может есть более оптимальный запрос на количесво элементов
     private static final String getNumberQuere = "SELECT COUNT(*) FROM contact";
     private static final String getSortLimit = "SELECT * FROM contact ORDER BY ? DESC LIMIT ?, ?";
@@ -50,6 +50,7 @@ public class MySQLContactDAO implements ContactDAO {
             createPreparedStatement.setString(12, entity.getStreet());
             createPreparedStatement.setString(13, entity.getIndex());
             createPreparedStatement.setString(14, entity.getCompany());
+            createPreparedStatement.setString(15, entity.getPhotoPath());
             boolean result = createPreparedStatement.execute();
             //TO DO добавить проверку на добавление
             ResultSet resultSet = createPreparedStatement.executeQuery("SELECT * FROM contact WHERE id = last_insert_id()");
@@ -76,7 +77,8 @@ public class MySQLContactDAO implements ContactDAO {
             updatePreparedStatement.setString(12, entity.getStreet());
             updatePreparedStatement.setString(13, entity.getIndex());
             updatePreparedStatement.setString(14, entity.getCompany());
-            updatePreparedStatement.setInt(15, entity.getId());
+            updatePreparedStatement.setString(15, entity.getPhotoPath());
+            updatePreparedStatement.setInt(16, entity.getId());
             updatePreparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new DAOException(e);
@@ -85,9 +87,9 @@ public class MySQLContactDAO implements ContactDAO {
     }
 
     public void delete(Integer id) throws DAOException {
-        try (PreparedStatement updatePreparedStatement = getConnection().prepareStatement(deleteQuere)) {
-            updatePreparedStatement.setInt(1, id);
-            boolean resultSet = updatePreparedStatement.execute();
+        try (PreparedStatement deletePreparedStatement = getConnection().prepareStatement(deleteQuere)) {
+            deletePreparedStatement.setInt(1, id);
+            deletePreparedStatement.execute();
         } catch (SQLException e) {
             throw new DAOException(e);
         }
@@ -155,7 +157,7 @@ public class MySQLContactDAO implements ContactDAO {
                 contactEntity.setRelationshipStatus(resultSet.getString("relationshipstatus"));
                 contactEntity.setWebSite(resultSet.getString("website"));
                 contactEntity.setCompany(resultSet.getString("company"));
-
+                contactEntity.setPhotoPath(resultSet.getString("photo_path"));
                 contactEntities.add(contactEntity);
             }
         } catch (Exception e) {

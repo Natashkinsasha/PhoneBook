@@ -4,12 +4,12 @@ package main.DTO;
 import com.mysql.jdbc.StringUtils;
 import main.Entity.ContactEntity;
 
-import java.awt.image.BufferedImage;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.sql.Date;
 import java.util.List;
+
 
 public class ContactDTO implements DTO {
     private int id;
@@ -27,8 +27,9 @@ public class ContactDTO implements DTO {
     private String city;
     private String street;
     private String index;
+    private String photoPath;
     private List<TelephoneDTO> telephonesDTO;
-    private BufferedImage photo;
+
 
     public ContactDTO() {
         telephonesDTO = new ArrayList<>();
@@ -51,9 +52,35 @@ public class ContactDTO implements DTO {
         this.city = contactEntity.getCity();
         this.street = contactEntity.getStreet();
         this.index = contactEntity.getIndex();
+        this.photoPath=contactEntity.getPhotoPath();
+    }
+
+    public String getPhotoPath() {
+        return photoPath;
+    }
+
+    public ContactDTO setPhotoPath(String photoPath) {
+        if (StringUtils.isNullOrEmpty(photoPath)) {
+            this.photoPath = null;
+        } else {
+            this.photoPath = photoPath;
+        }
+        return this;
+    }
+
+    public String getPhotoPathString() {
+        if (photoPath==null){
+            return "";
+        }
+        return photoPath;
     }
 
 
+
+    public ContactDTO deleteTelephone(int id){
+        telephonesDTO.remove(telephonesDTO.stream().filter(telephone -> telephone.getId() == id).findAny().get());
+        return this;
+    }
     public String getIdString() {
         return id + "";
     }

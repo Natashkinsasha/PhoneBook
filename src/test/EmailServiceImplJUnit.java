@@ -11,6 +11,5 @@ public class EmailServiceImplJUnit extends Assert{
     @Test
     public void sendEmailTest() throws ServiceException {
         EmailServise emailServise = new EmailServiceImpl();
-        emailServise.sendEmail("natashkinsasha@gmail.com", "Natashkinsasha6426384", "natashkinsasha@gmail.com", "Test", "Test");
     }
 }

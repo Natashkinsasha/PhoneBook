@@ -20,7 +20,7 @@ public class ContactEntity implements Entity{
     private String city;
     private String street;
     private String index;
-    private String photo;
+    private String photoPath;
 
     public ContactEntity(ContactDTO contactDTO) {
         this.id = contactDTO.getId();
@@ -38,6 +38,7 @@ public class ContactEntity implements Entity{
         this.city = contactDTO.getCity();
         this.street = contactDTO.getStreet();
         this.index = contactDTO.getIndex();
+        this.photoPath=contactDTO.getPhotoPath();
     }
 
     public Boolean getMale() {
@@ -46,6 +47,15 @@ public class ContactEntity implements Entity{
 
     public ContactEntity() {
 
+    }
+
+    public String getPhotoPath() {
+        return photoPath;
+    }
+
+    public ContactEntity setPhotoPath(String photoPath) {
+        this.photoPath = photoPath;
+        return this;
     }
 
     public String getFirstName() {

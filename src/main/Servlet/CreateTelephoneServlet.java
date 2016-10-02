@@ -2,21 +2,23 @@ package main.Servlet;
 
 
 import main.DTO.ContactDTO;
-import main.Servic.*;
+import main.DTO.TelephoneDTO;
+import main.Servic.TelephoneService;
+import main.Servic.TelephoneServiceImpl;
 
+import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-@WebServlet("/deletetelephone")
-public class DeleteTelephoneServlet extends HttpServlet{
+@WebServlet("/createtelephone")
+public class CreateTelephoneServlet extends HttpServlet {
+
+
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        TelephoneService telephoneService = new TelephoneServiceImpl();
-        ContactDTO contactDTO = (ContactDTO) req.getSession().getAttribute("createContactDTO");
-        contactDTO.deleteTelephone(Integer.valueOf(req.getParameter("id")));
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String fistName = req.getParameter("first_name");
         String secondName = req.getParameter("second_name");
         String patronymice = req.getParameter("patronymic");
@@ -31,7 +33,16 @@ public class DeleteTelephoneServlet extends HttpServlet{
         String city = req.getParameter("city");
         String street = req.getParameter("street");
         String index = req.getParameter("index");
+        ContactDTO contactDTO = (ContactDTO) req.getSession().getAttribute("createContactDTO");
         contactDTO.setFirstName(fistName).setSecondName(secondName).setPatronymic(patronymice).setBirthday(birthday).setMale(sex).setNationality(nationality).setRelationshipStatus(relationshipStatus).setWebSite(webSite).setEmail(email).setCountry(country).setCity(city).setStreet(street).setIndex(index).setCompany(workPlace);
+        String countryCode = req.getParameter("country_code");
+        String operatorCode = req.getParameter("operator_code");
+        String phoneNumber = req.getParameter("phone_number");
+        String phoneType = req.getParameter("phone_type");
+        String comment = req.getParameter("comment");
+        TelephoneDTO telephoneDTO = new TelephoneDTO();
+        telephoneDTO.setCountryCode(countryCode).setOperatorCode(operatorCode).setNumber(phoneNumber).setType(phoneType).setComments(comment);
+        contactDTO.addTelephone(telephoneDTO);
         resp.sendRedirect("/createcontact");
     }
 }

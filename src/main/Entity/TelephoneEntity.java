@@ -16,9 +16,10 @@ public class TelephoneEntity {
         setId(telephoneDTO.getId());
         setNumber(telephoneDTO.getNumber());
         setType(telephoneDTO.getType());
-        setContactId(contactId);
         setCountryCode(telephoneDTO.getCountryCode());
         setOperatorCode(telephoneDTO.getOperatorCode());
+        setContactId(contactId);
+        setComments(telephoneDTO.getComments());
     }
 
     @Override
@@ -28,6 +29,8 @@ public class TelephoneEntity {
                 ", number='" + number + '\'' +
                 ", type='" + type + '\'' +
                 ", comments='" + comments + '\'' +
+                ", countryCode='" + countryCode + '\'' +
+                ", operatorCode='" + operatorCode + '\'' +
                 ", contactId=" + contactId +
                 '}';
     }

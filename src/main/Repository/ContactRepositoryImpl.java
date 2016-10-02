@@ -67,13 +67,14 @@ public class ContactRepositoryImpl implements ContactRepository {
             ContactEntity contactEntity = new ContactEntity(dto);
             connection.setAutoCommit(false);
             mySQLContactDAO.update(contactEntity);
+            List<TelephoneEntity> telephoneEntityList = mySQLtelephoneDAO.getByContactId(contactEntity.getId());
+            for (TelephoneEntity telephoneEntity : telephoneEntityList) {
+                mySQLtelephoneDAO.delete(telephoneEntity.getId());
+            }
             for (TelephoneDTO telephoneDTO : dto.getTelephonesDTO()) {
                 TelephoneEntity telephoneEntity = new TelephoneEntity(telephoneDTO, dto.getId());
-                if (telephoneDTO.getId()==0){
-                    mySQLtelephoneDAO.create(telephoneEntity);
-                } else{
-                    mySQLtelephoneDAO.update(telephoneEntity);
-                }
+                mySQLtelephoneDAO.create(telephoneEntity);
+
             }
 
             connection.commit();

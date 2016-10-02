@@ -5,11 +5,20 @@
 <html lang="en">
 <head></head>
 <body>
+<%
+    ContactDTO contactDTO = (ContactDTO) request.getSession().getAttribute("createContactDTO");
+%>
 
-<form id="create_contact_form" method="post" action="/createcontact" novalidate>
-    <%
-        ContactDTO contactDTO = (ContactDTO) request.getSession().getAttribute("createContactDTO");
-    %>
+<form method="post" action="/download_photo" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="first_name">Photo:</label>
+        <p><img src="/get_photo?photo_path=<%=contactDTO.getPhotoPathString()%>" height="200px" alt="Contact photo"></p>
+        <input type="file" name="upfile" accept="image/*">
+        <input type="submit" value="Upload">
+    </div>
+</form>
+
+<form id="create_contact_form" method="post" action="/createcontact"  novalidate>
     <div class="form-group">
         <label for="first_name">Firstname:</label>
         <input type="text" maxlength="32" required class="form-control" id="first_name" name="first_name"
@@ -96,7 +105,8 @@
                 <th>Phone type</th>
                 <th>Comment</th>
                 <th>
-                    <button type="button" class="btn" data-toggle="modal" data-target="#myModal" aria-haspopup="true" aria-expanded="true" style="border: 0px">
+                    <button type="button" class="btn" data-toggle="modal" data-target="#modal" aria-haspopup="true"
+                            aria-expanded="true" style="border: 0px">
                         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                     </button>
                 </th>
@@ -126,8 +136,9 @@
                             <span class="glyphicon glyphicon-option-vertical"></span>
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                            <li><a href="/deletetelephone?id=<%=telephoneDTO.getId()%>">Delete</a></li>
-                            <li><a href="" data-toggle="modal" data-target="#myModal">Edit</a></li>
+                            <li><a href="/deletetelephone?id=<%=telephoneDTO.getIdString()%>">Delete</a></li>
+                            <li><a href="" data-toggle="modal" data-target="#modal_<%=telephoneDTO.getId()%>">Edit</a>
+                            </li>
                         </ul>
                     </div>
                 </td>
@@ -136,55 +147,7 @@
                 }
             %>
             </tbody>
-            <div id="myModal" class="modal fade" role="dialog">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            <h4 class="modal-title">Create telephone</h4>
-                        </div>
 
-                        <div class="modal-body">
-                            <div class="form-group">
-                                <label for="country_code">Country code</label>
-                                <input type="text" maxlength="32" class="form-control" id="country_code"
-                                       name="country_code">
-                            </div>
-                            <div class="form-group">
-                                <label for="operator_code">Operator code</label>
-                                <input type="text" maxlength="32" class="form-control" id="operator_code"
-                                       name="operator_code">
-                            </div>
-                            <div class="form-group">
-                                <label for="phone_number">Phone number</label>
-                                <input type="text" maxlength="32" class="form-control" id="phone_number"
-                                       name="phone_number">
-                            </div>
-                            <div class="form-group">
-                                <label for="phone_type">Phone type</label>
-                                <input type="text" maxlength="32" class="form-control" id="phone_type"
-                                       name="phone_type">
-                            </div>
-                            <div class="form-group">
-                                <label for="comment">Comment</label>
-                                <input type="text" maxlength="32" class="form-control" id="comment"
-                                       name="comment">
-                            </div>
-                            <div class="modal-footer">
-                                <div class="btn-group" role="group" aria-label="...">
-                                    <button type="button" class="btn btn-danger" data-dismiss="modal">
-                                        Close
-                                    </button>
-                                    <button onclick="sbmt(this)" class="btn btn-success">
-                                        Create
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
         </table>
     </div>
     <div class="btn-group" role="group" aria-label="...">
@@ -194,19 +157,12 @@
                 onclick="location.href='/deleteservlet?id=<%=contactDTO.getId()%>'">Delete
         </button>
     </div>
+    <div class="container">
+        <jsp:include
+                page="/WEB-INF/jsp/parts/create_telephone_dialog.jsp"
+                flush="true"/>
+    </div>
 </form>
-
-
-<script>
-
-    function sbmt(btn) {
-        var knopka = document.getElementById(btn);
-        var act = document.forms["create_contact_form"];
-        act.action = "/createtelephone";
-        act.method = "post";
-        act.submit();
-    }
-</script>
 
 
 </div>

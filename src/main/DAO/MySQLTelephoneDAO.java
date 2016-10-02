@@ -15,7 +15,7 @@ import java.util.List;
 public class MySQLTelephoneDAO implements TelephoneDAO {
 
     private static final String updateQuere = "UPDATE telephone SET number=?, type=?, comment=?, country_code=?, operator_code=?, contact_id=? where id=?";
-    private static final String deleteQuere = "DELETE * FROM telephone WHERE id=?";
+    private static final String deleteQuere = "DELETE  FROM telephone WHERE id=?";
     private static final String getAllQuere = "SELECT * FROM telephone";
     private static final String getByIDQuere = "SELECT * FROM telephone WHERE id=?";
     private static final String insertQuere = "INSERT INTO telephone (number, type, comment, country_code, operator_code, contact_id) VALUES (?, ?, ?, ?, ?, ?);";
@@ -39,7 +39,7 @@ public class MySQLTelephoneDAO implements TelephoneDAO {
             createPreparedStatement.setString(4, entity.getCountryCode());
             createPreparedStatement.setString(5, entity.getOperatorCode());
             createPreparedStatement.setInt(6, entity.getContactId());
-            boolean result = createPreparedStatement.execute();
+            createPreparedStatement.execute();
             //TO DO добавить проверку на добавление
             ResultSet resultSet =  createPreparedStatement.executeQuery("SELECT * FROM telephone WHERE id = last_insert_id()");
             telephoneEntities = parseResultSet(resultSet);
@@ -58,7 +58,7 @@ public class MySQLTelephoneDAO implements TelephoneDAO {
             updatePreparedStatement.setString(5, entity.getOperatorCode());
             updatePreparedStatement.setInt(6, entity.getContactId());
             updatePreparedStatement.setInt(7, entity.getId());
-            int result = updatePreparedStatement.executeUpdate();
+            updatePreparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new DAOException(e);
         }
@@ -66,9 +66,9 @@ public class MySQLTelephoneDAO implements TelephoneDAO {
     }
 
     public void delete(Integer id) throws DAOException {
-        try (PreparedStatement updatePreparedStatement = getConnection().prepareStatement(deleteQuere)) {
-            updatePreparedStatement.setInt(1, id);
-            boolean resultSet = updatePreparedStatement.execute();
+        try (PreparedStatement deletePreparedStatement = getConnection().prepareStatement(deleteQuere)) {
+            deletePreparedStatement.setInt(1, id);
+            deletePreparedStatement.execute();
         } catch (SQLException e) {
             throw new DAOException(e);
         }
@@ -108,6 +108,8 @@ public class MySQLTelephoneDAO implements TelephoneDAO {
                 telephoneEntity.setType(resultSet.getString("type"));
                 telephoneEntity.setComments(resultSet.getString("comment"));
                 telephoneEntity.setContactId(resultSet.getInt("contact_id"));
+                telephoneEntity.setOperatorCode(resultSet.getString("operator_code"));
+                telephoneEntity.setCountryCode(resultSet.getString("country_code"));
                 telephoneEntities.add(telephoneEntity);
             }
         } catch (Exception e) {

@@ -1,6 +1,7 @@
 package main.DTO;
 
 
+import com.mysql.jdbc.StringUtils;
 import main.Entity.TelephoneEntity;
 
 public class TelephoneDTO implements DTO {
@@ -71,7 +72,10 @@ public class TelephoneDTO implements DTO {
     @Override
     public String toString() {
         return "TelephoneDTO{" +
-                "number='" + number + '\'' +
+                "id=" + id +
+                ", countryCode='" + countryCode + '\'' +
+                ", operatorCode='" + operatorCode + '\'' +
+                ", number='" + number + '\'' +
                 ", type='" + type + '\'' +
                 ", comments='" + comments + '\'' +
                 '}';
@@ -82,7 +86,12 @@ public class TelephoneDTO implements DTO {
     }
 
     public TelephoneDTO setCountryCode(String countryCode) {
-        this.countryCode = countryCode;
+
+        if (StringUtils.isNullOrEmpty(countryCode)){
+            this.countryCode = null;
+        } else {
+            this.countryCode = countryCode;
+        }
         return this;
     }
 
@@ -91,7 +100,11 @@ public class TelephoneDTO implements DTO {
     }
 
     public TelephoneDTO setOperatorCode(String operatorCode) {
-        this.operatorCode = operatorCode;
+        if (StringUtils.isNullOrEmpty(operatorCode)) {
+            this.operatorCode = null;
+        } else {
+            this.operatorCode = operatorCode;
+        }
         return this;
     }
 
@@ -100,8 +113,13 @@ public class TelephoneDTO implements DTO {
     }
 
     public TelephoneDTO setNumber(String number) {
-        this.number = number;
+        if (StringUtils.isNullOrEmpty(number)) {
+            this.number = null;
+        } else {
+            this.number = number;
+        }
         return this;
+
     }
 
     public String getType() {
@@ -109,7 +127,11 @@ public class TelephoneDTO implements DTO {
     }
 
     public TelephoneDTO setType(String type) {
-        this.type = type;
+        if (StringUtils.isNullOrEmpty(type)) {
+            this.type = null;
+        } else {
+            this.type= type;
+        }
         return this;
     }
 
@@ -118,7 +140,11 @@ public class TelephoneDTO implements DTO {
     }
 
     public TelephoneDTO setComments(String comments) {
-        this.comments = comments;
+        if (StringUtils.isNullOrEmpty(comments)) {
+            this.comments = null;
+        } else {
+            this.comments = comments;
+        }
         return this;
     }
 }

@@ -20,6 +20,7 @@ public class ContactListServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         MainTableService mainTableService = new MainTableServiceImpl();
+        req.getSession().removeAttribute("createContactDTO");
         String page = req.getParameter("page");
         HttpSession session = req.getSession();
         if (page != null) {
