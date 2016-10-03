@@ -10,7 +10,7 @@
 <head>
 </head>
 <body>
-<form method="post" action="/serchcontact" novalidate>
+<form method="post" action="/page/serchcontact" novalidate>
     <div class="form-group">
         <label for="first_name">Firstname:</label>
         <input type="text" maxlength="32" required class="form-control" id="first_name" name="first_name">
@@ -73,7 +73,7 @@
         <input type="text" maxlength="32" class="form-control" id="index" name="index">
     </div>
     <div class="btn-group" role="group" aria-label="...">
-        <button type="button" class="btn btn-danger" onclick="location.href='/'">Close</button>
+        <button type="button" class="btn btn-danger" onclick="location.href='/page'">Close</button>
         <button type="submit" class="btn btn-info">Serch</button>
     </div>
 </form>

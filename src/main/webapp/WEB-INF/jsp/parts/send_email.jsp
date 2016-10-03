@@ -10,7 +10,7 @@
 <head>
 </head>
 <body>
-<form method="post" action="/sendemail">
+<form method="post" action="/page/sendemail">
     <div class="form-group">
         <label for="whom">Whom</label>
         <input type="text" maxlength="32" class="form-control" id="whom" name="whom" value="<%=request.getParameter("email")%>">

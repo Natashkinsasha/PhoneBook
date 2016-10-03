@@ -12,13 +12,13 @@
 <form method="post" action="/download_photo" enctype="multipart/form-data">
     <div class="form-group">
         <label for="first_name">Photo:</label>
-        <p><img src="/get_photo?photo_path=<%=contactDTO.getPhotoPathString()%>" height="200px" alt="Contact photo"></p>
+        <p><img src="/page/get_photo?photo_path=<%=contactDTO.getPhotoPathString()%>" height="200px" alt="Contact photo"></p>
         <input type="file" name="upfile" accept="image/*">
         <input type="submit" value="Upload">
     </div>
 </form>
 
-<form id="create_contact_form" method="post" action="/createcontact"  novalidate>
+<form id="create_contact_form" method="post" action="/page/createcontact"  novalidate>
     <div class="form-group">
         <label for="first_name">Firstname:</label>
         <input type="text" maxlength="32" required class="form-control" id="first_name" name="first_name"
@@ -136,7 +136,7 @@
                             <span class="glyphicon glyphicon-option-vertical"></span>
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                            <li><a href="/deletetelephone?id=<%=telephoneDTO.getIdString()%>">Delete</a></li>
+                            <li><a href="/page/deletetelephone?id=<%=telephoneDTO.getIdString()%>">Delete</a></li>
                             <li><a href="" data-toggle="modal" data-target="#modal_<%=telephoneDTO.getId()%>">Edit</a>
                             </li>
                         </ul>
@@ -154,7 +154,7 @@
         <button type="button" class="btn btn-danger" onclick="location.href='/'">Close</button>
         <button type="submit" class="btn btn-success">Save</button>
         <button type="button" class="btn btn-warning"
-                onclick="location.href='/deleteservlet?id=<%=contactDTO.getId()%>'">Delete
+                onclick="location.href='/page/deletecontact?id=<%=contactDTO.getId()%>'">Delete
         </button>
     </div>
     <div class="container">
