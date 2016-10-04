@@ -4,6 +4,7 @@ package main.Controller;
 import main.DTO.ContactDTO;
 import main.MVC.RequestMapping;
 import main.Servic.*;
+import main.Validator.Validator;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,7 +13,7 @@ import java.util.Enumeration;
 import java.util.List;
 
 public class ContactsFormController {
-    @RequestMapping(value = "/page",method = RequestMapping.Method.GET)
+    @RequestMapping(uri = "/",method = RequestMapping.Method.GET)
     public String mainPage(HttpServletRequest req, HttpServletResponse resp){
         MainTableService mainTableService = new MainTableServiceImpl();
         req.getSession().removeAttribute("createContactDTO");
@@ -38,7 +39,7 @@ public class ContactsFormController {
         return "/WEB-INF/jsp/pages/contact_list.jsp";
     }
 
-    @RequestMapping(value = "/page/createcontact",method = RequestMapping.Method.POST)
+    @RequestMapping(uri = "/createcontact",method = RequestMapping.Method.POST)
     public String createContact(HttpServletRequest req, HttpServletResponse resp){
         String fistName = req.getParameter("first_name");
         String secondName = req.getParameter("second_name");
@@ -56,6 +57,11 @@ public class ContactsFormController {
         String index = req.getParameter("index");
         ContactDTO contactDTO = (ContactDTO) req.getSession().getAttribute("createContactDTO");
         contactDTO.setFirstName(fistName).setSecondName(secondName).setPatronymic(patronymice).setBirthday(birthday).setMale(sex).setNationality(nationality).setRelationshipStatus(relationshipStatus).setWebSite(webSite).setEmail(email).setCountry(country).setCity(city).setStreet(street).setIndex(index).setCompany(workPlace);
+        Validator validator = new Validator();
+        if (validator.check(contactDTO).hasErroe()){
+            return "/WEB-INF/jsp/pages/valid_contact_erroe_create_contact_form.jsp";
+        }
+
         ContactService contactService = new ContactServiceImpl();
         try {
             if (contactDTO.getId()==0) {
@@ -89,7 +95,7 @@ public class ContactsFormController {
         session.setAttribute("pageCol",pageCol);
         return "/WEB-INF/jsp/pages/contact_list.jsp";
     }
-    @RequestMapping(value = "/page/deletecontact",method = RequestMapping.Method.GET)
+    @RequestMapping(uri = "/deletecontact",method = RequestMapping.Method.GET)
     public String deleteOneContact(HttpServletRequest req, HttpServletResponse resp){
         ContactService contactService = new ContactServiceImpl();
         try {
@@ -122,7 +128,7 @@ public class ContactsFormController {
     }
 
 
-    @RequestMapping(value = "/page/deletesomecontact",method = RequestMapping.Method.POST)
+    @RequestMapping(uri = "/deletesomecontact",method = RequestMapping.Method.POST)
     public String deleteSomeContact(HttpServletRequest req, HttpServletResponse resp){
         ContactService contactService = new ContactServiceImpl();
         for (Enumeration<String> parametrs = req.getParameterNames(); parametrs.hasMoreElements();){
@@ -156,7 +162,7 @@ public class ContactsFormController {
         session.setAttribute("pageCol",pageCol);
         return "/WEB-INF/jsp/pages/contact_list.jsp";
     }
-    @RequestMapping(value = "/page/serchcontact",method = RequestMapping.Method.POST)
+    @RequestMapping(uri = "/serchcontact",method = RequestMapping.Method.POST)
     public String serchContact(HttpServletRequest req, HttpServletResponse resp){
         String fistName = req.getParameter("first_name");
         String secondName = req.getParameter("second_name");
@@ -172,8 +178,12 @@ public class ContactsFormController {
         String city = req.getParameter("city");
         String street = req.getParameter("street");
         String index = req.getParameter("index");
+        Boolean moreThanDB =false;
+        if(req.getParameter("moreThanDB")!=null){
+            moreThanDB = true;
+        }
         ContactDTO contactDTO = new ContactDTO();
-        contactDTO.setFirstName(fistName).setSecondName(secondName).setPatronymic(patronymice).setBirthday(birthday).setMale(sex).setNationality(nationality).setRelationshipStatus(relationshipStatus).setWebSite(webSite).setEmail(email).setCountry(country).setCity(city).setStreet(street).setIndex(index).setCompany(workPlace);
+        contactDTO.setFirstName(fistName).setSecondName(secondName).setPatronymic(patronymice).setBirthday(birthday).setMale(sex).setNationality(nationality).setRelationshipStatus(relationshipStatus).setWebSite(webSite).setEmail(email).setCountry(country).setCity(city).setStreet(street).setIndex(index).setCompany(workPlace).setMoreThanBD(moreThanDB);
         ContactService contactService = new ContactServiceImpl();
 
         HttpSession session = req.getSession();
@@ -203,7 +213,7 @@ public class ContactsFormController {
         return "/WEB-INF/jsp/pages/contact_list.jsp";
     }
 
-    @RequestMapping(value = "/page/cancelserch",method = RequestMapping.Method.GET)
+    @RequestMapping(uri = "/cancelserch",method = RequestMapping.Method.GET)
     public String cancelSerchContacts(HttpServletRequest req, HttpServletResponse resp){
         req.getSession().removeAttribute("serchPattern");
         req.getSession().removeAttribute("page");

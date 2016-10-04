@@ -1,4 +1,4 @@
-<%--
+<%@ page import="main.DTO.EmailDTO" %><%--
   Created by IntelliJ IDEA.
   User: Seven
   Date: 23.09.2016
@@ -10,18 +10,19 @@
 <head>
 </head>
 <body>
-<form method="post" action="/page/sendemail">
+<form method="post" action="/sendemail">
+    <%EmailDTO emailDTO = (EmailDTO) request.getSession().getAttribute("EmailDTO");%>
     <div class="form-group">
         <label for="whom">Whom</label>
-        <input type="text" maxlength="32" class="form-control" id="whom" name="whom" value="<%=request.getParameter("email")%>">
+        <input type="text" maxlength="32" class="form-control" id="whom" name="whom" value="<%=emailDTO.getWhomString()%>">
     </div>
     <div class="form-group">
         <label for="whom">Theme</label>
-        <input type="text" maxlength="32" class="form-control" id="theme" name="theme">
+        <input type="text" maxlength="32" class="form-control" id="theme" name="theme" value="<%=emailDTO.getSubjectString()%>">
     </div>
     <div class="form-group">
         <label for="template">Template</label>
-        <select type="text" class="form-control" id="template" name="template">
+        <select type="text" class="form-control" id="template" name="template" onchange="location.href='/choosetemplate'">
             <option value=""></option>
             <option value="male">template 1</option>
             <option value="female">template 2</option>
@@ -29,7 +30,7 @@
     </div>
     <div class="form-group">
         <label for="text">Text</label>
-        <textarea class="form-control" rows="7" id="text" name="text"></textarea>
+        <textarea class="form-control" rows="7" id="text" name="text" value="<%=emailDTO.getTextString()%>"></textarea>
     </div>
 </form>
 </body>

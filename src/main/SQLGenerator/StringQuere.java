@@ -58,6 +58,19 @@ public class StringQuere {
         return this;
     }
 
+    /*public StringQuere more(String field, String pattern) {
+        if (pattern != null) {
+            if (likeCounter != 0) {
+                stringQuere.append("and");
+            }
+            stringQuere.append(" ").append(field).append(">").append(pattern != null ? pattern : "");
+            likeCounter++;
+        }
+        return this;
+    }*/
+
+
+
     public StringQuere like(String field, boolean pattern) {
         if (likeCounter != 0) {
             stringQuere.append(",");

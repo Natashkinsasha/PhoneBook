@@ -19,7 +19,7 @@ import java.io.IOException;
 
 @WebServlet("/")
 public class DispatcherServlet extends HttpServlet {
-    private final static Logger log =Logger.getLogger(DispatcherServlet.class);
+    private final static Logger log = Logger.getLogger(DispatcherServlet.class);
 
     @Override
     public void init() throws ServletException {
@@ -40,13 +40,15 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        log.info("uri "+req.getRequestURI()+" method "+req.getMethod());
+        log.info("uri " + req.getRequestURI() + " method " + req.getMethod());
+        resp.setContentType("text/html; charset=cp1251");
         HandlerMapping handlerMapping = (HandlerMapping) getServletContext().getAttribute("HandlerMapping");
         HandlerAdapter handlerAdapter = (HandlerAdapter) getServletContext().getAttribute("HandlerAdapter");
         Handler handler = handlerMapping.getHandler(req);
-        String view = handlerAdapter.handle(req, resp, handler);
-        log.info("view "+view);
-
-        getServletContext().getRequestDispatcher(view).forward(req, resp);
+        if (handler != null) {
+            String view = handlerAdapter.handle(req, resp, handler);
+            log.info("view " + view);
+            getServletContext().getRequestDispatcher(view).forward(req, resp);
+        }
     }
 }

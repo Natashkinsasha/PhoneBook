@@ -3,13 +3,25 @@ package main.DTO;
 
 import com.mysql.jdbc.StringUtils;
 import main.Entity.TelephoneEntity;
+import main.Validator.NotNull;
+import main.Validator.Pattern;
+import main.Validator.Size;
 
 public class TelephoneDTO implements DTO {
     private int id;
+    @Size(45)
+    @Pattern("^\\d{3}$")
     private String countryCode;
+    @Size(45)
+    @Pattern("^\\d{2}$")
     private String operatorCode;
+    @NotNull
+    @Size(45)
+    @Pattern("^\\d{7}$")
     private String number;
+    @Size(45)
     private String type;
+    @Size(45)
     private String comments;
 
     public TelephoneDTO() {

@@ -21,6 +21,7 @@ public class ContactEntity implements Entity{
     private String street;
     private String index;
     private String photoPath;
+    private Boolean moreThanBD;
 
     public ContactEntity(ContactDTO contactDTO) {
         this.id = contactDTO.getId();
@@ -39,6 +40,16 @@ public class ContactEntity implements Entity{
         this.street = contactDTO.getStreet();
         this.index = contactDTO.getIndex();
         this.photoPath=contactDTO.getPhotoPath();
+        this.moreThanBD=contactDTO.getMoreThanBD();
+    }
+
+    public Boolean getMoreThanBD() {
+        return moreThanBD;
+    }
+
+    public ContactEntity setMoreThanBD(Boolean moreThanBD) {
+        this.moreThanBD = moreThanBD;
+        return this;
     }
 
     public Boolean getMale() {
