@@ -4,16 +4,19 @@ package main.Controller;
 import main.DTO.ContactDTO;
 import main.MVC.RequestMapping;
 import main.Servic.*;
+import main.Validator.Validator;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.Enumeration;
 import java.util.List;
 
 public class ContactsFormController {
-    @RequestMapping(value = "/page",method = RequestMapping.Method.GET)
-    public String mainPage(HttpServletRequest req, HttpServletResponse resp){
+    @RequestMapping(uri = "/",method = RequestMapping.Method.GET)
+    public void mainPage(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         MainTableService mainTableService = new MainTableServiceImpl();
         req.getSession().removeAttribute("createContactDTO");
         String page = req.getParameter("page");
@@ -35,11 +38,11 @@ public class ContactsFormController {
             e.printStackTrace();
         }
         session.setAttribute("pageCol",pageCol);
-        return "/WEB-INF/jsp/pages/contact_list.jsp";
+        req.getServletContext().getRequestDispatcher("/WEB-INF/jsp/pages/contact_list.jsp").forward(req, resp);
     }
 
-    @RequestMapping(value = "/page/createcontact",method = RequestMapping.Method.POST)
-    public String createContact(HttpServletRequest req, HttpServletResponse resp){
+    @RequestMapping(uri = "/createcontact",method = RequestMapping.Method.POST)
+    public void createContact(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
         String fistName = req.getParameter("first_name");
         String secondName = req.getParameter("second_name");
         String patronymice = req.getParameter("patronymic");
@@ -56,6 +59,11 @@ public class ContactsFormController {
         String index = req.getParameter("index");
         ContactDTO contactDTO = (ContactDTO) req.getSession().getAttribute("createContactDTO");
         contactDTO.setFirstName(fistName).setSecondName(secondName).setPatronymic(patronymice).setBirthday(birthday).setMale(sex).setNationality(nationality).setRelationshipStatus(relationshipStatus).setWebSite(webSite).setEmail(email).setCountry(country).setCity(city).setStreet(street).setIndex(index).setCompany(workPlace);
+        Validator validator = new Validator();
+        /*if (validator.check(contactDTO).hasErroe()){
+            req.getServletContext().getRequestDispatcher("/WEB-INF/jsp/pages/valid_contact_erroe_create_contact_form.jsp").forward(req, resp);
+            return;
+        }*/
         ContactService contactService = new ContactServiceImpl();
         try {
             if (contactDTO.getId()==0) {
@@ -87,10 +95,10 @@ public class ContactsFormController {
             e.printStackTrace();
         }
         session.setAttribute("pageCol",pageCol);
-        return "/WEB-INF/jsp/pages/contact_list.jsp";
+        resp.sendRedirect("/");
     }
-    @RequestMapping(value = "/page/deletecontact",method = RequestMapping.Method.GET)
-    public String deleteOneContact(HttpServletRequest req, HttpServletResponse resp){
+    @RequestMapping(uri = "/deletecontact",method = RequestMapping.Method.GET)
+    public void deleteOneContact(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         ContactService contactService = new ContactServiceImpl();
         try {
             contactService.deleteContact(Integer.valueOf(req.getParameter("id")));
@@ -118,12 +126,12 @@ public class ContactsFormController {
             e.printStackTrace();
         }
         session.setAttribute("pageCol",pageCol);
-        return "/WEB-INF/jsp/pages/contact_list.jsp";
+        resp.sendRedirect("/");
     }
 
 
-    @RequestMapping(value = "/page/deletesomecontact",method = RequestMapping.Method.POST)
-    public String deleteSomeContact(HttpServletRequest req, HttpServletResponse resp){
+    @RequestMapping(uri = "/deletesomecontact",method = RequestMapping.Method.POST)
+    public void deleteSomeContact(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         ContactService contactService = new ContactServiceImpl();
         for (Enumeration<String> parametrs = req.getParameterNames(); parametrs.hasMoreElements();){
             try {
@@ -154,10 +162,10 @@ public class ContactsFormController {
             e.printStackTrace();
         }
         session.setAttribute("pageCol",pageCol);
-        return "/WEB-INF/jsp/pages/contact_list.jsp";
+        resp.sendRedirect("/");
     }
-    @RequestMapping(value = "/page/serchcontact",method = RequestMapping.Method.POST)
-    public String serchContact(HttpServletRequest req, HttpServletResponse resp){
+    @RequestMapping(uri = "/serchcontact",method = RequestMapping.Method.POST)
+    public void serchContact(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         String fistName = req.getParameter("first_name");
         String secondName = req.getParameter("second_name");
         String patronymice = req.getParameter("patronymic");
@@ -200,11 +208,11 @@ public class ContactsFormController {
             e.printStackTrace();
         }
         session.setAttribute("pageCol",pageCol);
-        return "/WEB-INF/jsp/pages/contact_list.jsp";
+        resp.sendRedirect("/");
     }
 
-    @RequestMapping(value = "/page/cancelserch",method = RequestMapping.Method.GET)
-    public String cancelSerchContacts(HttpServletRequest req, HttpServletResponse resp){
+    @RequestMapping(uri = "/cancelserch",method = RequestMapping.Method.GET)
+    public void cancelSerchContacts(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         req.getSession().removeAttribute("serchPattern");
         req.getSession().removeAttribute("page");
         MainTableService mainTableService = new MainTableServiceImpl();
@@ -228,6 +236,6 @@ public class ContactsFormController {
             e.printStackTrace();
         }
         session.setAttribute("pageCol",pageCol);
-        return "/WEB-INF/jsp/pages/contact_list.jsp";
+        resp.sendRedirect("/");
     }
 }

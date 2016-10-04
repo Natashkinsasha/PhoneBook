@@ -5,10 +5,12 @@ import main.DTO.ContactDTO;
 import main.DTO.TelephoneDTO;
 import main.MVC.RequestMapping;
 import main.Servic.*;
+import main.Validator.Validator;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -19,16 +21,26 @@ import java.util.List;
 
 public class CreateContactFormController {
 
-    @RequestMapping(value = "/page/createcontact", method = RequestMapping.Method.GET)
-    public String openCreateContactForm(HttpServletRequest req, HttpServletResponse resp) {
-
-        req.getSession().setAttribute("createContactDTO", new ContactDTO());
-
-        return "/WEB-INF/jsp/pages/create_contact_form.jsp";
+    @RequestMapping(uri = "/createcontact", method = RequestMapping.Method.GET)
+    public void openCreateContactForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        if (req.getSession().getAttribute("createContactDTO") == null) {
+            req.getSession().setAttribute("createContactDTO", new ContactDTO());
+        }
+        req.getServletContext().getRequestDispatcher("/WEB-INF/jsp/pages/create_contact_form.jsp").forward(req, resp);
     }
 
-    @RequestMapping(value = "/page/createtelephone", method = RequestMapping.Method.POST)
-    public String createTelephone(HttpServletRequest req, HttpServletResponse resp) {
+    @RequestMapping(uri = "/createcontactwitherror", method = RequestMapping.Method.GET)
+    public void openErrorCreateContactForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        if (req.getSession().getAttribute("createContactDTO") == null) {
+            req.getSession().setAttribute("createContactDTO", new ContactDTO());
+        }
+        req.getServletContext().getRequestDispatcher("/WEB-INF/jsp/pages/valid_telephone_erroe_create_contact_form.jsp").forward(req, resp);
+    }
+
+
+
+    @RequestMapping(uri = "/createtelephone", method = RequestMapping.Method.POST)
+    public void createTelephone(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String fistName = req.getParameter("first_name");
         String secondName = req.getParameter("second_name");
         String patronymice = req.getParameter("patronymic");
@@ -52,15 +64,19 @@ public class CreateContactFormController {
         String comment = req.getParameter("comment");
         TelephoneDTO telephoneDTO = new TelephoneDTO();
         telephoneDTO.setCountryCode(countryCode).setOperatorCode(operatorCode).setNumber(phoneNumber).setType(phoneType).setComments(comment);
+        /*if (new Validator().check(telephoneDTO).hasErroe()) {
+            resp.sendRedirect("/createcontactwitherror");
+            return;
+        }*/
         contactDTO.addTelephone(telephoneDTO);
         if (req.getSession().getAttribute("createContactDTO") == null) {
             req.getSession().setAttribute("createContactDTO", new ContactDTO());
         }
-        return "/WEB-INF/jsp/pages/create_contact_form.jsp";
+        resp.sendRedirect("/createcontact");
     }
 
-    @RequestMapping(value = "/page/deletetelephone", method = RequestMapping.Method.GET)
-    public String deleteTelephone(HttpServletRequest req, HttpServletResponse resp) {
+    @RequestMapping(uri = "/deletetelephone", method = RequestMapping.Method.GET)
+    public void deleteTelephone(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         TelephoneService telephoneService = new TelephoneServiceImpl();
         ContactDTO contactDTO = (ContactDTO) req.getSession().getAttribute("createContactDTO");
         contactDTO.deleteTelephone(Integer.valueOf(req.getParameter("id")));
@@ -82,11 +98,11 @@ public class CreateContactFormController {
         if (req.getSession().getAttribute("createContactDTO") == null) {
             req.getSession().setAttribute("createContactDTO", new ContactDTO());
         }
-        return "/WEB-INF/jsp/pages/create_contact_form.jsp";
+        resp.sendRedirect("/createcontact");
     }
 
-    @RequestMapping(value = "/page/updatelephone", method = RequestMapping.Method.POST)
-    public String updateTelephone(HttpServletRequest req, HttpServletResponse resp) {
+    @RequestMapping(uri = "/updatelephone", method = RequestMapping.Method.POST)
+    public void updateTelephone(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
         String fistName = req.getParameter("first_name");
         String secondName = req.getParameter("second_name");
         String patronymice = req.getParameter("patronymic");
@@ -112,15 +128,19 @@ public class CreateContactFormController {
         for (TelephoneDTO telephoneDTO : contactDTO.getTelephonesDTO()) {
             if (telephoneDTO.getId() == id) {
                 telephoneDTO.setCountryCode(countryCode).setOperatorCode(operatorCode).setNumber(phoneNumber).setType(phoneType).setComments(comment);
+                /*if (new Validator().check(telephoneDTO).hasErroe()) {
+                    req.getServletContext().getRequestDispatcher("/WEB-INF/jsp/pages/valid_telephone_erroe_create_contact_form.jsp").forward(req, resp);
+                    return;
+                }*/
                 break;
             }
         }
-        return "/WEB-INF/jsp/pages/create_contact_form.jsp";
+        resp.sendRedirect("/createcontact");
     }
 
 
-    @RequestMapping(value = "/page/editcontact", method = RequestMapping.Method.GET)
-    public String editContact(HttpServletRequest req, HttpServletResponse resp) {
+    @RequestMapping(uri = "/editcontact", method = RequestMapping.Method.GET)
+    public void editContact(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         TelephoneService telephoneService = new TelephoneServiceImpl();
         ContactService contactService = new ContactServiceImpl();
         ContactDTO contactDTO = null;
@@ -134,36 +154,37 @@ public class CreateContactFormController {
         if (req.getSession().getAttribute("createContactDTO") == null) {
             req.getSession().setAttribute("createContactDTO", new ContactDTO());
         }
-        return "/WEB-INF/jsp/pages/create_contact_form.jsp";
+        resp.sendRedirect("/createcontact");
     }
 
-    final static String UPLOAD_DIRECTORY = "META-INF"+File.separator+"photo";
-    @RequestMapping(value = "/page/download_photo", method = RequestMapping.Method.POST)
-    public String downloadPhoto(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        if(!ServletFileUpload.isMultipartContent(req)){
+    final static String UPLOAD_DIRECTORY = "META-INF" + File.separator + "photo";
+
+    @RequestMapping(uri = "/download_photo", method = RequestMapping.Method.POST)
+    public void downloadPhoto(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        if (!ServletFileUpload.isMultipartContent(req)) {
             PrintWriter writer = resp.getWriter();
             writer.println("Error: Form must has enctype=multipart/form-data.");
             writer.flush();
             if (req.getSession().getAttribute("createContactDTO") == null) {
                 req.getSession().setAttribute("createContactDTO", new ContactDTO());
             }
-            return "WEB-INF/jsp/pages/create_contact_form.jsp";
+            resp.sendRedirect("/createcontact");
         }
         DiskFileItemFactory factory = new DiskFileItemFactory();
         ServletFileUpload upload = new ServletFileUpload(factory);
-        String uploadPath = req.getServletContext().getRealPath("")+ File.separator + UPLOAD_DIRECTORY;
+        String uploadPath = req.getServletContext().getRealPath("") + File.separator + UPLOAD_DIRECTORY;
         File uploadDir = new File(uploadPath);
-        if(!uploadDir.exists()){
+        if (!uploadDir.exists()) {
             uploadDir.mkdir();
         }
         try {
             List<FileItem> formItems = upload.parseRequest(req);
             ContactDTO contactDTO = (ContactDTO) req.getSession().getAttribute("createContactDTO");
-            if (formItems!=null&&formItems.size()>0){
-                for(FileItem item: formItems){
-                    if(!item.isFormField()){
+            if (formItems != null && formItems.size() > 0) {
+                for (FileItem item : formItems) {
+                    if (!item.isFormField()) {
                         String fileName = new File(item.getName()).getName();
-                        String filePath = uploadPath+File.separator+fileName;
+                        String filePath = uploadPath + File.separator + fileName;
                         File storeFile = new File(filePath);
                         item.write(storeFile);
                         contactDTO.setPhotoPath(filePath);
@@ -179,6 +200,6 @@ public class CreateContactFormController {
         if (req.getSession().getAttribute("createContactDTO") == null) {
             req.getSession().setAttribute("createContactDTO", new ContactDTO());
         }
-        return "/WEB-INF/jsp/pages/create_contact_form.jsp";
+        resp.sendRedirect("/createcontact");
     }
 }

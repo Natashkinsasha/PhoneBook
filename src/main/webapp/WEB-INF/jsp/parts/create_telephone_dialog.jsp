@@ -131,11 +131,11 @@
             var knopka = document.getElementById(btn);
             var act = document.forms["create_contact_form"];
             if (btn.id=="create_telephone"){
-                act.action = "/page/createtelephone";
+                act.action = "/createtelephone";
                 act.method = "post";
                 act.submit();
             } else if (btn.id=="update_telephone"){
-                act.action = "/page/updatelephone?id="+id;
+                act.action = "/updatelephone?id="+id;
                 act.method = "post";
                 act.submit();
             }

@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public class HandlerAdapterImpl implements HandlerAdapter{
     @Override
-    public String handle(HttpServletRequest request, HttpServletResponse response, Handler handler) {
-        return handler.setRequest(request).setResponce(response).execute();
+    public void handle(HttpServletRequest request, HttpServletResponse response, Handler handler) {
+        handler.setRequest(request).setResponce(response).execute();
     }
 }

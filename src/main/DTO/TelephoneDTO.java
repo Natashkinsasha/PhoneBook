@@ -3,13 +3,25 @@ package main.DTO;
 
 import com.mysql.jdbc.StringUtils;
 import main.Entity.TelephoneEntity;
+import main.Validator.NotNull;
+import main.Validator.Pattern;
+import main.Validator.Size;
 
 public class TelephoneDTO implements DTO {
     private int id;
+    @Size(45)
+    @Pattern("^\\d{3}$")
     private String countryCode;
+    @Size(45)
+    @Pattern("^\\d{2}$")
     private String operatorCode;
+    @NotNull
+    @Size(45)
+    @Pattern("^\\d{7}$")
     private String number;
+    @Size(45)
     private String type;
+    @Size(45)
     private String comments;
 
     public TelephoneDTO() {
@@ -19,46 +31,46 @@ public class TelephoneDTO implements DTO {
         this.id = telephoneEntity.getId();
         this.number = telephoneEntity.getNumber();
         this.type = telephoneEntity.getType();
-        this.countryCode=telephoneEntity.getCountryCode();
-        this.operatorCode=telephoneEntity.getOperatorCode();
+        this.countryCode = telephoneEntity.getCountryCode();
+        this.operatorCode = telephoneEntity.getOperatorCode();
     }
 
-    public String getIdString(){
-        return id+"";
+    public String getIdString() {
+        return id + "";
     }
 
-    public String getCountryCodeString(){
-        if (countryCode==null){
+    public String getCountryCodeString() {
+        if (countryCode == null) {
             return "";
         }
         return countryCode.toString();
     }
 
 
-    public String getOperatorCodeString(){
-        if (operatorCode==null){
+    public String getOperatorCodeString() {
+        if (operatorCode == null) {
             return "";
         }
         return operatorCode.toString();
     }
 
 
-    public String getNumberString(){
-        if (number==null){
+    public String getNumberString() {
+        if (number == null) {
             return "";
         }
         return number.toString();
     }
 
-    public String getTypeString(){
-        if (number==null){
+    public String getTypeString() {
+        if (number == null) {
             return "";
         }
         return type.toString();
     }
 
-    public String getCommentsString(){
-        if (comments==null){
+    public String getCommentsString() {
+        if (comments == null) {
             return "";
         }
         return comments.toString();
@@ -87,7 +99,7 @@ public class TelephoneDTO implements DTO {
 
     public TelephoneDTO setCountryCode(String countryCode) {
 
-        if (StringUtils.isNullOrEmpty(countryCode)){
+        if (StringUtils.isNullOrEmpty(countryCode)) {
             this.countryCode = null;
         } else {
             this.countryCode = countryCode;
@@ -130,7 +142,7 @@ public class TelephoneDTO implements DTO {
         if (StringUtils.isNullOrEmpty(type)) {
             this.type = null;
         } else {
-            this.type= type;
+            this.type = type;
         }
         return this;
     }

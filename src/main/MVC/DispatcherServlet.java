@@ -40,13 +40,13 @@ public class DispatcherServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.setCharacterEncoding("UTF-8");
         log.info("uri "+req.getRequestURI()+" method "+req.getMethod());
         HandlerMapping handlerMapping = (HandlerMapping) getServletContext().getAttribute("HandlerMapping");
         HandlerAdapter handlerAdapter = (HandlerAdapter) getServletContext().getAttribute("HandlerAdapter");
         Handler handler = handlerMapping.getHandler(req);
-        String view = handlerAdapter.handle(req, resp, handler);
-        log.info("view "+view);
+        handlerAdapter.handle(req, resp, handler);
 
-        getServletContext().getRequestDispatcher(view).forward(req, resp);
+
     }
 }

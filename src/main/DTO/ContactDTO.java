@@ -3,6 +3,9 @@ package main.DTO;
 
 import com.mysql.jdbc.StringUtils;
 import main.Entity.ContactEntity;
+import main.Validator.NotNull;
+import main.Validator.Pattern;
+import main.Validator.Size;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -13,21 +16,37 @@ import java.util.List;
 
 public class ContactDTO implements DTO {
     private int id;
+    @NotNull
+    @Size(45)
     private String firstName;
+    @NotNull
+    @Size(45)
     private String secondName;
+    @Size(45)
     private String patronymic;
     private Date birthday;
     private Boolean male;
+    @Size(45)
     private String nationality;
+    @Size(45)
     private String relationshipStatus;
+    @Size(45)
     private String webSite;
+    @Pattern("^[^@]+@[^@\\.]+\\.[^@]+$")
     private String email;
+    @Size(45)
     private String company;
+    @Size(45)
     private String country;
+    @Size(45)
     private String city;
+    @Size(45)
     private String street;
+    @Size(45)
     private String index;
+    @Size(244)
     private String photoPath;
+    private Boolean moreThanBD;
     private List<TelephoneDTO> telephonesDTO;
 
 
@@ -52,7 +71,7 @@ public class ContactDTO implements DTO {
         this.city = contactEntity.getCity();
         this.street = contactEntity.getStreet();
         this.index = contactEntity.getIndex();
-        this.photoPath=contactEntity.getPhotoPath();
+        this.photoPath = contactEntity.getPhotoPath();
     }
 
     public String getPhotoPath() {
@@ -69,18 +88,18 @@ public class ContactDTO implements DTO {
     }
 
     public String getPhotoPathString() {
-        if (photoPath==null){
+        if (photoPath == null) {
             return "";
         }
         return photoPath;
     }
 
 
-
-    public ContactDTO deleteTelephone(int id){
+    public ContactDTO deleteTelephone(int id) {
         telephonesDTO.remove(telephonesDTO.stream().filter(telephone -> telephone.getId() == id).findAny().get());
         return this;
     }
+
     public String getIdString() {
         return id + "";
     }

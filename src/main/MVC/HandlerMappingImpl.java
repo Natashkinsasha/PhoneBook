@@ -8,7 +8,6 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class HandlerMappingImpl implements HandlerMapping {
     Map<Entry<String, RequestMapping.Method>, Handler> handlerMap;
@@ -37,7 +36,7 @@ public class HandlerMappingImpl implements HandlerMapping {
         for (Method method : methods) {
             if(method.isAnnotationPresent(RequestMapping.class)){
                 RequestMapping annotation = method.getAnnotation(RequestMapping.class);
-                String value = annotation.value();
+                String value = annotation.uri();
                 RequestMapping.Method method1 = annotation.method();
                 handlerMap.put(Entry.e(value,method1), new Handler() {
                     HttpServletRequest request;

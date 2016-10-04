@@ -1,4 +1,4 @@
-<%--
+<%@ page import="main.DTO.EmailDTO" %><%--
   Created by IntelliJ IDEA.
   User: Seven
   Date: 23.09.2016
@@ -10,10 +10,15 @@
 <head>
 </head>
 <body>
-<form method="post" action="/page/sendemail">
+
+<%
+    EmailDTO emailDTO = (EmailDTO) request.getSession().getAttribute("emailDTO");
+%>
+
+<form method="post" action="/sendemail">
     <div class="form-group">
         <label for="whom">Whom</label>
-        <input type="text" maxlength="32" class="form-control" id="whom" name="whom" value="<%=request.getParameter("email")%>">
+        <input type="text" maxlength="32" class="form-control" id="whom" name="whom" value="<%=emailDTO.getWhomString()%>">
     </div>
     <div class="form-group">
         <label for="whom">Theme</label>
@@ -29,7 +34,7 @@
     </div>
     <div class="form-group">
         <label for="text">Text</label>
-        <textarea class="form-control" rows="7" id="text" name="text"></textarea>
+        <textarea class="form-control" rows="7" id="text" name="text" value = "<%=emailDTO.getTextString()%>"></textarea>
     </div>
 </form>
 </body>
