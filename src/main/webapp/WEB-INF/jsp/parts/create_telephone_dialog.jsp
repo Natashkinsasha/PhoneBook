@@ -138,6 +138,10 @@
                 act.action = "/updatelephone?id="+id;
                 act.method = "post";
                 act.submit();
+            } if (btn.id=="delete_telephone"){
+                act.action = "/deletetelephone?id="+id;
+                act.method = "post";
+                act.submit();
             }
         }
     </script>

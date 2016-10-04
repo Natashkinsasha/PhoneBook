@@ -36,6 +36,10 @@
         <label for="text">Text</label>
         <textarea class="form-control" rows="7" id="text" name="text" value = "<%=emailDTO.getTextString()%>"></textarea>
     </div>
+    <div class="btn-group" role="group" aria-label="...">
+        <button type="submit" class="btn btn-success">Send</button>
+        <button type="button" class="btn btn-danger" onclick="location.href='/'">Сancel</button>
+    </div>
 </form>
 </body>
 </html>

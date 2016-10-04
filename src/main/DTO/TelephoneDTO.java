@@ -27,6 +27,11 @@ public class TelephoneDTO implements DTO {
     public TelephoneDTO() {
     }
 
+    public TelephoneDTO setId(int id) {
+        this.id = id;
+        return this;
+    }
+
     public TelephoneDTO(TelephoneEntity telephoneEntity) {
         this.id = telephoneEntity.getId();
         this.number = telephoneEntity.getNumber();

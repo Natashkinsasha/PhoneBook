@@ -118,25 +118,22 @@
                 List<TelephoneDTO> telephoneDTOs = contactDTO.getTelephonesDTO();
                 for (TelephoneDTO telephoneDTO : telephoneDTOs) {%>
             <tr>
-                <td><label><input type="checkbox" id="<%=contactDTO.getId()%>"></label></td>
-                <td><%=telephoneDTO.getCountryCodeString()%>
-                </td>
-                <td><%=telephoneDTO.getOperatorCodeString()%>
-                </td>
-                <td><%=telephoneDTO.getNumberString()%>
-                </td>
-                <td><%=telephoneDTO.getTypeString()%>
-                </td>
-                <td><%=telephoneDTO.getCommentsString()%>
-                </td>
+                <td><label><input type="checkbox" id="<%=telephoneDTO.getId()%>"></label></td>
+                <td><%=telephoneDTO.getCountryCodeString()%></td>
+                <td><%=telephoneDTO.getOperatorCodeString()%></td>
+                <td><%=telephoneDTO.getNumberString()%></td>
+                <td><%=telephoneDTO.getTypeString()%></td>
+                <td><%=telephoneDTO.getCommentsString()%></td>
                 <td>
                     <div class="dropdown">
                         <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" style="border: 0px">
                             <span class="glyphicon glyphicon-option-vertical"></span>
                         </button>
+                        <button id="delete_telephone" onclick="sbmt(this, <%=telephoneDTO.getIdString()%>)" class="btn btn-default " type="button" aria-haspopup="true" aria-expanded="true" style="border: 0px">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </button>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                            <li><a href="/deletetelephone?id=<%=telephoneDTO.getIdString()%>">Delete</a></li>
                             <li><a href="" data-toggle="modal" data-target="#modal_<%=telephoneDTO.getId()%>">Edit</a>
                             </li>
                         </ul>

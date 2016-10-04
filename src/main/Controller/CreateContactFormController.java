@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.UUID;
 
 public class CreateContactFormController {
 
@@ -29,15 +30,30 @@ public class CreateContactFormController {
         req.getServletContext().getRequestDispatcher("/WEB-INF/jsp/pages/create_contact_form.jsp").forward(req, resp);
     }
 
-    @RequestMapping(uri = "/createcontactwitherror", method = RequestMapping.Method.GET)
-    public void openErrorCreateContactForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if (req.getSession().getAttribute("createContactDTO") == null) {
-            req.getSession().setAttribute("createContactDTO", new ContactDTO());
+
+    @RequestMapping(uri = "/editcontact", method = RequestMapping.Method.GET)
+    public void editContact(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        TelephoneService telephoneService = new TelephoneServiceImpl();
+        ContactService contactService = new ContactServiceImpl();
+        ContactDTO contactDTO = null;
+        try {
+            contactDTO = contactService.getContactById(Integer.valueOf(req.getParameter("id")));
+        } catch (ServiceException e) {
+            e.printStackTrace();
         }
-        req.getServletContext().getRequestDispatcher("/WEB-INF/jsp/pages/valid_telephone_erroe_create_contact_form.jsp").forward(req, resp);
+        HttpSession session = req.getSession();
+        session.setAttribute("createContactDTO", contactDTO);
+        resp.sendRedirect("/createcontact");
     }
 
-
+    private static int generateUniqueId() {
+        UUID idOne = UUID.randomUUID();
+        String str=""+idOne;
+        int uid=str.hashCode();
+        String filterStr=""+uid;
+        str=filterStr.replaceAll("-", "");
+        return Integer.parseInt(str);
+    }
 
     @RequestMapping(uri = "/createtelephone", method = RequestMapping.Method.POST)
     public void createTelephone(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -63,19 +79,16 @@ public class CreateContactFormController {
         String phoneType = req.getParameter("phone_type");
         String comment = req.getParameter("comment");
         TelephoneDTO telephoneDTO = new TelephoneDTO();
-        telephoneDTO.setCountryCode(countryCode).setOperatorCode(operatorCode).setNumber(phoneNumber).setType(phoneType).setComments(comment);
+        telephoneDTO.setId(generateUniqueId()).setCountryCode(countryCode).setOperatorCode(operatorCode).setNumber(phoneNumber).setType(phoneType).setComments(comment);
         /*if (new Validator().check(telephoneDTO).hasErroe()) {
             resp.sendRedirect("/createcontactwitherror");
             return;
         }*/
         contactDTO.addTelephone(telephoneDTO);
-        if (req.getSession().getAttribute("createContactDTO") == null) {
-            req.getSession().setAttribute("createContactDTO", new ContactDTO());
-        }
         resp.sendRedirect("/createcontact");
     }
 
-    @RequestMapping(uri = "/deletetelephone", method = RequestMapping.Method.GET)
+    @RequestMapping(uri = "/deletetelephone", method = RequestMapping.Method.POST)
     public void deleteTelephone(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         TelephoneService telephoneService = new TelephoneServiceImpl();
         ContactDTO contactDTO = (ContactDTO) req.getSession().getAttribute("createContactDTO");
@@ -95,9 +108,6 @@ public class CreateContactFormController {
         String street = req.getParameter("street");
         String index = req.getParameter("index");
         contactDTO.setFirstName(fistName).setSecondName(secondName).setPatronymic(patronymice).setBirthday(birthday).setMale(sex).setNationality(nationality).setRelationshipStatus(relationshipStatus).setWebSite(webSite).setEmail(email).setCountry(country).setCity(city).setStreet(street).setIndex(index).setCompany(workPlace);
-        if (req.getSession().getAttribute("createContactDTO") == null) {
-            req.getSession().setAttribute("createContactDTO", new ContactDTO());
-        }
         resp.sendRedirect("/createcontact");
     }
 
@@ -135,27 +145,12 @@ public class CreateContactFormController {
                 break;
             }
         }
+        //req.getSession().setAttribute("marker", true);
         resp.sendRedirect("/createcontact");
     }
 
 
-    @RequestMapping(uri = "/editcontact", method = RequestMapping.Method.GET)
-    public void editContact(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        TelephoneService telephoneService = new TelephoneServiceImpl();
-        ContactService contactService = new ContactServiceImpl();
-        ContactDTO contactDTO = null;
-        try {
-            contactDTO = contactService.getContactById(Integer.valueOf(req.getParameter("id")));
-        } catch (ServiceException e) {
-            e.printStackTrace();
-        }
-        HttpSession session = req.getSession();
-        session.setAttribute("createContactDTO", contactDTO);
-        if (req.getSession().getAttribute("createContactDTO") == null) {
-            req.getSession().setAttribute("createContactDTO", new ContactDTO());
-        }
-        resp.sendRedirect("/createcontact");
-    }
+
 
     final static String UPLOAD_DIRECTORY = "META-INF" + File.separator + "photo";
 
@@ -200,6 +195,7 @@ public class CreateContactFormController {
         if (req.getSession().getAttribute("createContactDTO") == null) {
             req.getSession().setAttribute("createContactDTO", new ContactDTO());
         }
+        //req.getSession().setAttribute("marker", true);
         resp.sendRedirect("/createcontact");
     }
 }
