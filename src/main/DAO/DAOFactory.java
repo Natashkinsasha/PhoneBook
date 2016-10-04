@@ -55,10 +55,10 @@ class MySQLDAOFactory extends DAOFactory {
 
     private static DataSource getDataSource() {
         BasicDataSource ds = new BasicDataSource();
-        /*Properties prop = new Properties();
+        Properties prop = new Properties();
         InputStream input = null;
         try {
-            input = new FileInputStream("db.properties");
+            input = new FileInputStream("properties");
             prop.load(input);
             ds.setDriverClassName(prop.getProperty("driverclassname"));
             ds.setUsername(prop.getProperty("username"));
@@ -74,11 +74,11 @@ class MySQLDAOFactory extends DAOFactory {
                     e.printStackTrace();
                 }
             }
-        }*/
-        ds.setDriverClassName("com.mysql.jdbc.Driver");
-        ds.setUsername("root");
-        ds.setPassword("root");
-        ds.setUrl("jdbc:mysql://localhost:3306/phonebook?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC");
+        }
+        //ds.setDriverClassName("com.mysql.jdbc.Driver");
+        //ds.setUsername("alex");
+        //ds.setPassword("123456789");
+        //ds.setUrl("jdbc:mysql://localhost:3306/phonebooknatashkin?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC");
 
         return ds;
     }

@@ -300,16 +300,16 @@ public class ContactDTO implements DTO {
     public String getMaleString() {
         if (male == null) {
             return "";
-        } else if (male == true) {
+        } else if (male) {
             return "Male";
-        } else if (male == false) {
-            return "Female";
         } else {
-            return "";
+            return "Female";
         }
     }
 
-    public ContactDTO setMale(boolean male) {
+
+
+    public ContactDTO setMale(Boolean male) {
         this.male = male;
         return this;
     }

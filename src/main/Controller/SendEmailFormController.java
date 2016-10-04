@@ -56,8 +56,8 @@ public class SendEmailFormController {
         String them = req.getParameter("theme");
         String text = req.getParameter("text");
         Sender tlsSender = new Sender("natashkinsasha@gmail.com", "Natashkinsasha6426384");
-        tlsSender.send(them, text, "natashkinsasha@gmail.com", "natashkinsasha@gmail.com");
-
+        tlsSender.send(them, text, "natashkinsasha@gmail.com", whom);
+        req.getServletContext().getRequestDispatcher("/WEB-INF/jsp/pages/send_email_form.jsp").forward(req, resp);
 
     }
 

@@ -71,6 +71,7 @@ public class StringQuere {
 
     @Override
     public String toString() {
+
         return stringQuere.toString();
     }
 }
