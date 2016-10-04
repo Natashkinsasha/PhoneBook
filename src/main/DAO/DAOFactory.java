@@ -6,8 +6,10 @@ import org.apache.commons.dbcp.BasicDataSource;
 
 import javax.naming.NamingException;
 import javax.sql.DataSource;
+import java.io.*;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Properties;
 
 public abstract class DAOFactory {
     public abstract ContactDAO getContactDAO(Connection connection) throws DAOException;
@@ -53,10 +55,26 @@ class MySQLDAOFactory extends DAOFactory {
 
     private static DataSource getDataSource() {
         BasicDataSource ds = new BasicDataSource();
-        ds.setDriverClassName("com.mysql.jdbc.Driver");
-        ds.setUsername("root");
-        ds.setPassword("root");
-        ds.setUrl("jdbc:mysql://localhost:3306/phonebook?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC");
+        Properties prop = new Properties();
+        InputStream input = null;
+        try {
+            input = new FileInputStream(File.separator+"resources"+File.separator+"db.properties");
+            prop.load(input);
+            ds.setDriverClassName(prop.getProperty("driverclassname"));
+            ds.setUsername(prop.getProperty("username"));
+            ds.setPassword(prop.getProperty("password"));
+            ds.setUrl(prop.getProperty("url"));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } finally {
+            if (input != null) {
+                try {
+                    input.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
         return ds;
     }
 
