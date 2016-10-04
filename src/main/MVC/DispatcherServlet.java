@@ -33,6 +33,7 @@ public class DispatcherServlet extends HttpServlet {
             e.printStackTrace();
         }
         servletContext.setAttribute("HandlerMapping", handlerMapping);
+        
         servletContext.setAttribute("HandlerAdapter", new HandlerAdapterImpl());
         log.info(handlerMapping.getHandlerMap().toString());
 
