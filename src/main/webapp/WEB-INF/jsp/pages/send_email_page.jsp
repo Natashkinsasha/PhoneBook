@@ -11,6 +11,7 @@
     <!-- Bootstrap -->
     <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 
+
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -19,24 +20,19 @@
     <![endif]-->
 </head>
 <body>
-
 <jsp:include
         page="/WEB-INF/jsp/parts/navbar.jsp"
         flush="true"/>
 <div class="container">
-    <div class="alert alert-danger" role="alert">
-        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-        <span class="sr-only">Error:</span>
-        Enter a valid date
-    </div>
-
     <jsp:include
-            page="/main/webapp/WEB-INF/jsp/parts/create_contact_form.jsp"
+            page="/main/webapp/WEB-INF/jsp/parts/send_email_form.jsp"
             flush="true"/>
 </div>
 
-
-
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 </body>
 </html>

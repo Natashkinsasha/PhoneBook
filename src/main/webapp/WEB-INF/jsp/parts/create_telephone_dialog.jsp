@@ -1,5 +1,5 @@
-<%@ page import="main.DTO.ContactDTO" %>
-<%@ page import="main.DTO.TelephoneDTO" %>
+<%@ page import="main.java.DTO.ContactDTO" %>
+<%@ page import="main.java.DTO.TelephoneDTO" %>
 <%@ page import="java.util.List" %><%--
   Created by IntelliJ IDEA.
   User: Seven

@@ -1,16 +1,15 @@
 package test;
 
 
-import main.DAO.ContactDAO;
-import main.DAO.DAOException;
-import main.DAO.DAOFactory;
-import main.DAO.TypeDAOFactory;
-import main.Entity.ContactEntity;
+import main.java.DAO.ContactDAO;
+import main.java.DAO.DAOException;
+import main.java.DAO.DAOFactory;
+import main.java.DAO.TypeDAOFactory;
+import main.java.Entity.ContactEntity;
 import org.junit.*;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.List;
 
 public class ContactDAOJUnit extends Assert{

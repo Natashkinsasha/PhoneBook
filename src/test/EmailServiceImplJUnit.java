@@ -1,9 +1,9 @@
 package test;
 
 
-import main.Servic.EmailServiceImpl;
-import main.Servic.EmailServise;
-import main.Servic.ServiceException;
+import main.java.Servic.EmailServiceImpl;
+import main.java.Servic.EmailServise;
+import main.java.Servic.ServiceException;
 import org.junit.Assert;
 import org.junit.Test;
 
