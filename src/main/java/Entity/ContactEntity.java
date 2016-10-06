@@ -96,7 +96,7 @@ public class ContactEntity implements Entity{
 
 
 
-    public ContactEntity setMale(boolean male) {
+    public ContactEntity setMale(Boolean male) {
         this.male = male;
         return this;
     }

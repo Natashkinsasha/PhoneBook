@@ -68,7 +68,7 @@ public class TelephoneDTO implements DTO {
     }
 
     public String getTypeString() {
-        if (number == null) {
+        if (type == null) {
             return "";
         }
         return type.toString();

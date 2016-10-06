@@ -18,7 +18,7 @@
     </div>
 </form>
 
-<form id="create_contact_form" method="post" action="/createcontact"  novalidate>
+<form id="create_contact_form" method="post" action="/createcontact">
     <div class="form-group">
         <label for="first_name">Firstname:</label>
         <input type="text" maxlength="32" required class="form-control" id="first_name" name="first_name"
@@ -65,10 +65,12 @@
     </div>
     <div class="form-group">
         <label for="email">Email</label>
-        <input type="text" maxlength="32" class="form-control" required
+        <input type="text" maxlength="32" class="form-control"
                pattern="^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" id="email" name="email"
                value="<%=contactDTO.getEmailString()%>">
     </div>
+
+
     <div class="form-group">
         <label for="work_place">Work place</label>
         <input type="text" maxlength="32" class="form-control" id="work_place" name="work_place"
