@@ -1,6 +1,8 @@
-<%@ page import="main.java.DTO.ContactDTO" %>
-<%@ page import="main.java.DTO.TelephoneDTO" %>
-<%@ page import="java.util.List" %><%--
+
+<%@ page import="java.util.List" %>
+<%@ page import="by.itechart.phonebook.DTO.ContactDTO" %>
+<%@ page import="by.itechart.phonebook.DTO.TelephoneDTO" %>
+<%--
   Created by IntelliJ IDEA.
   User: Seven
   Date: 28.09.2016

@@ -1,6 +1,6 @@
-<%@ page import="main.java.Servic.MainTableServiceImpl" %>
-<%@ page import="main.java.DTO.ContactDTO" %>
+
 <%@ page import="java.util.List" %>
+<%@ page import="by.itechart.phonebook.DTO.ContactDTO" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <html lang="en">

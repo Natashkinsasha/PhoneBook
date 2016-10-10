@@ -31,7 +31,7 @@
     </div>
 
     <jsp:include
-            page="/main/webapp/WEB-INF/jsp/parts/create_contact_form.jsp"
+            page="/WEB-INF/jsp/parts/create_contact_form.jsp"
             flush="true"/>
 </div>
 

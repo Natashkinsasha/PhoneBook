@@ -25,7 +25,7 @@
         flush="true"/>
 <div class="container">
 <jsp:include
-        page="/main/webapp/WEB-INF/jsp/parts/contact_list_form.jsp"
+        page="/WEB-INF/jsp/parts/contact_list_form.jsp"
         flush="true"/>
 </div>
 

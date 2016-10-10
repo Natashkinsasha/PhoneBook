@@ -1,4 +1,4 @@
-<%@ page import="main.java.DTO.EmailDTO" %><%--
+<%@ page import="by.itechart.phonebook.DTO.EmailDTO" %><%--
   Created by IntelliJ IDEA.
   User: Seven
   Date: 23.09.2016
