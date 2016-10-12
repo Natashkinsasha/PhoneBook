@@ -71,6 +71,7 @@ public class ContactRepositoryImpl implements ContactRepository {
             connection = daoFactory.getConnection();
             ContactDAO mySQLContactDAO = daoFactory.getContactDAO(connection);
             TelephoneDAO mySQLtelephoneDAO = daoFactory.getTelephoneDAO(connection);
+            AttachmentDAO mySQLAttachmentDAO = daoFactory.getAttachmentDAO(connection);
             ContactEntity contactEntity = new ContactEntity(dto);
             connection.setAutoCommit(false);
             mySQLContactDAO.update(contactEntity);
@@ -81,7 +82,15 @@ public class ContactRepositoryImpl implements ContactRepository {
             for (TelephoneDTO telephoneDTO : dto.getTelephonesDTO()) {
                 TelephoneEntity telephoneEntity = new TelephoneEntity(telephoneDTO, dto.getId());
                 mySQLtelephoneDAO.create(telephoneEntity);
+            }
 
+            List<AttachmentEntity> attachmentEntities = mySQLAttachmentDAO.getByContactId(contactEntity.getId());
+            for (AttachmentEntity attachmentEntity : attachmentEntities) {
+                mySQLAttachmentDAO.delete(attachmentEntity.getId());
+            }
+            for (AttachmentDTO attachmentDTO : dto.getAttachmentDTOs()) {
+                AttachmentEntity attachmentEntity = new AttachmentEntity(attachmentDTO, dto.getId());
+                mySQLAttachmentDAO.create(attachmentEntity);
             }
 
             connection.commit();
@@ -115,12 +124,6 @@ public class ContactRepositoryImpl implements ContactRepository {
             TelephoneDAO mySQLtelephoneDAO = daoFactory.getTelephoneDAO(connection);
             connection.setAutoCommit(false);
             mySQLContactDAO.delete(id);
-            /*
-            for (TelephoneDTO telephoneDTO : dto.getTelephonesDTO()) {
-                TelephoneEntity telephoneEntity = new TelephoneEntity(telephoneDTO, dto.getId());
-                mySQLtelephoneDAO.delete(telephoneEntity.getId());
-            }
-            */
             connection.commit();
         } catch (SQLException | DAOException e) {
             if (connection != null) {

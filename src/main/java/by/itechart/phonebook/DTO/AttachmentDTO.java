@@ -13,6 +13,9 @@ public class AttachmentDTO implements DTO {
     private Date creationDate;
     private String comment;
 
+    public AttachmentDTO() {
+    }
+
     public AttachmentDTO(AttachmentEntity entity) {
         this.id=entity.getId();
         this.name=entity.getName();
@@ -33,11 +36,12 @@ public class AttachmentDTO implements DTO {
         }
     }
 
-    public void setName(String name) {
+    public AttachmentDTO setName(String name) {
         if (StringUtils.isNullOrEmpty(name)){
             this.name=null;
         }
         this.name = name;
+        return this;
     }
 
 
@@ -111,4 +115,16 @@ public class AttachmentDTO implements DTO {
     public int getId() {
         return id;
     }
+
+    public String getIdString() {
+        return new Integer(id).toString();
+    }
+
+    public AttachmentDTO setId(int id) {
+        this.id=id;
+        return this;
+    }
+
+
+
 }

@@ -1,6 +1,8 @@
 
 <%@ page import="java.util.List" %>
 <%@ page import="by.itechart.phonebook.DTO.ContactDTO" %>
+<%@ page import="by.itechart.phonebook.DTO.TelephoneDTO" %>
+<%@ page import="by.itechart.phonebook.DTO.AttachmentDTO" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html lang="en">
 <head></head>
@@ -9,16 +11,14 @@
     ContactDTO contactDTO = (ContactDTO) request.getSession().getAttribute("createContactDTO");
 %>
 
-<form method="post" action="/download_photo" enctype="multipart/form-data">
-    <div class="form-group">
-        <label for="first_name">Photo:</label>
-        <p><img src="/get_photo?photo_path=<%=contactDTO.getPhotoPathString()%>" height="200px" alt="Contact photo"></p>
-        <input type="file" name="upfile" accept="image/*">
-        <input type="submit" value="Upload">
-    </div>
-</form>
 
-<form id="create_contact_form" method="post" action="/createcontact">
+
+<form id="create_contact_form" method="post" action="/createcontact" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="up_photo">Photo:</label>
+        <p><img src="/get_photo?photo_path=<%=contactDTO.getPhotoPathString()%>" height="200px" alt="Contact photo"></p>
+        <input id="up_photo" type="file" name="up_photo" accept="image/*">
+    </div>
     <div class="form-group">
         <label for="first_name">Firstname:</label>
         <input type="text" maxlength="32" required class="form-control" id="first_name" name="first_name"
@@ -107,9 +107,8 @@
                 <th>Phone type</th>
                 <th>Comment</th>
                 <th>
-                    <button type="button" class="btn" data-toggle="modal" data-target="#modal" aria-haspopup="true"
-                            aria-expanded="true" style="border: 0px">
-                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+                    <button data-toggle="modal" data-target="#modal_telephone"  class="btn btn-default " type="button" aria-haspopup="true" aria-expanded="true" style="border: 0px">
+                        <span class="glyphicon glyphicon-plus"></span>
                     </button>
                 </th>
             </tr>
@@ -127,19 +126,57 @@
                 <td><%=telephoneDTO.getTypeString()%></td>
                 <td><%=telephoneDTO.getCommentsString()%></td>
                 <td>
-                    <div class="dropdown">
-                        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" style="border: 0px">
-                            <span class="glyphicon glyphicon-option-vertical"></span>
-                        </button>
-                        <button id="delete_telephone" onclick="sbmt(this, <%=telephoneDTO.getIdString()%>)" class="btn btn-default " type="button" aria-haspopup="true" aria-expanded="true" style="border: 0px">
-                            <span class="glyphicon glyphicon-trash"></span>
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                            <li><a href="" data-toggle="modal" data-target="#modal_<%=telephoneDTO.getId()%>">Edit</a>
-                            </li>
-                        </ul>
-                    </div>
+                    <button id="delete_telephone" onclick="sbmt(this, <%=telephoneDTO.getIdString()%>)" class="btn btn-default " type="button" aria-haspopup="true" aria-expanded="true" style="border: 0px">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </button>
+                    <button id="edit_telephone" data-toggle="modal" data-target="#modal_telephone_<%=telephoneDTO.getId()%>" class="btn btn-default " type="button" aria-haspopup="true" aria-expanded="true" style="border: 0px">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </button>
+                </td>
+            </tr>
+            <%
+                }
+            %>
+            </tbody>
+
+        </table>
+    </div>
+
+    <div class="row">
+        <table class="table">
+            <thead>
+            <tr>
+                <th><label><input type="checkbox"></label></th>
+                <th>Name</th>
+                <th>Date</th>
+                <th>Comment</th>
+                <th>
+                    <button data-toggle="modal" data-target="#modal_attachment"  class="btn btn-default " type="button" aria-haspopup="true" aria-expanded="true" style="border: 0px">
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </button>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+
+            <%
+                List<AttachmentDTO> attachmentDTOs = contactDTO.getAttachmentDTOs();
+                for (AttachmentDTO attachmentDTO : attachmentDTOs) {%>
+            <tr>
+                <td><label><input type="checkbox" id="<%=attachmentDTO.getId()%>"></label></td>
+                <td><%=attachmentDTO.getNameString()%></td>
+                <td><%=attachmentDTO.getCreationDateString()%></td>
+                <td><%=attachmentDTO.getCommentString()%></td>
+                <td>
+                    <button id="dowload_attachment" onclick="location.href='/dowloadattachment?id=<%=attachmentDTO.getId()%>'" class="btn btn-default " type="button" aria-haspopup="true" aria-expanded="true" style="border: 0px">
+                        <span class="glyphicon glyphicon-download"></span>
+                    </button>
+                    <button id="delete_attachment" onclick="sbmt(this, <%=attachmentDTO.getId()%>)" class="btn btn-default " type="button" aria-haspopup="true" aria-expanded="true" style="border: 0px">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </button>
+                    <button id="edit_attachment" data-toggle="modal" data-target="#modal_attachment_<%=attachmentDTO.getId()%>" class="btn btn-default " type="button" aria-haspopup="true" aria-expanded="true" style="border: 0px">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </button>
                 </td>
             </tr>
             <%
@@ -161,6 +198,43 @@
                 page="/WEB-INF/jsp/parts/create_telephone_dialog.jsp"
                 flush="true"/>
     </div>
+    <div class="container">
+        <jsp:include
+                page="/WEB-INF/jsp/parts/create_attachment_dialog.jsp"
+                flush="true"/>
+    </div>
+
+    <script>
+        function sbmt(btn, id) {
+            var knopka = document.getElementById(btn);
+            var act = document.forms["create_contact_form"];
+            if (btn.id=="create_telephone"){
+                act.action = "/createtelephone";
+                act.method = "post";
+                act.submit();
+            } else if (btn.id=="update_telephone"){
+                act.action = "/updatetelephone?id="+id;
+                act.method = "post";
+                act.submit();
+            } else if (btn.id=="delete_telephone"){
+                act.action = "/deletetelephone?id="+id;
+                act.method = "post";
+                act.submit();
+            } else if (btn.id=="create_attachment"){
+                act.action = "/createattachment";
+                act.method = "post";
+                act.submit();
+            } else if (btn.id=="update_attachment"){
+                act.action = "/updateattachment?id="+id;
+                act.method = "post";
+                act.submit();
+            } else if (btn.id=="delete_attachment"){
+                act.action = "/deleteattachment?id="+id;
+                act.method = "post";
+                act.submit();
+            }
+        }
+    </script>
 </form>
 
 

@@ -18,7 +18,7 @@ public class MySQLAttachmentDAO implements AttachmentDAO{
     private static final String deleteQuere = "DELETE FROM attachment WHERE id=?";
     private static final String getAllQuere = "SELECT * FROM attachment";
     private static final String getByIDQuere = "SELECT * FROM attachment WHERE id=?";
-    private static final String insertQuere = "INSERT INTO attachment (path, creation_date, name, comment) VALUES (?, ?, ?, ?)";
+    private static final String insertQuere = "INSERT INTO attachment (path, creation_date, name, comment, contact_id) VALUES (?, ?, ?, ?, ?)";
     private static final String getNumberQuere = "SELECT COUNT(*) FROM attachments";
     private static final String getByContactIDQuere = "SELECT * FROM attachment WHERE contact_id=?";
 
@@ -39,6 +39,7 @@ public class MySQLAttachmentDAO implements AttachmentDAO{
             createPreparedStatement.setDate(2, entity.getCreationDate());
             createPreparedStatement.setString(3, entity.getName());
             createPreparedStatement.setString(4, entity.getComment());
+            createPreparedStatement.setInt(5, entity.getContactId());
             createPreparedStatement.execute();
             ResultSet resultSet =  createPreparedStatement.executeQuery("SELECT * FROM attachment WHERE id = last_insert_id()");
             attachmentEntities = parseResultSet(resultSet);
@@ -58,6 +59,7 @@ public class MySQLAttachmentDAO implements AttachmentDAO{
                 attachmentEntity.setCreationDate(resultSet.getDate("creation_date"));
                 attachmentEntity.setName(resultSet.getString("name"));
                 attachmentEntity.setPath(resultSet.getString("path"));
+                attachmentEntities.add(attachmentEntity);
             }
         } catch (Exception e) {
             throw new DAOException(e);

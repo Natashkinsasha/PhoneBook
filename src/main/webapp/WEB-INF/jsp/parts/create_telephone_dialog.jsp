@@ -1,8 +1,6 @@
-
 <%@ page import="java.util.List" %>
 <%@ page import="by.itechart.phonebook.DTO.ContactDTO" %>
-<%@ page import="by.itechart.phonebook.DTO.TelephoneDTO" %>
-<%--
+<%@ page import="by.itechart.phonebook.DTO.TelephoneDTO" %><%--
   Created by IntelliJ IDEA.
   User: Seven
   Date: 28.09.2016
@@ -21,7 +19,7 @@
 <%
     List<TelephoneDTO> telephoneDTOs = contactDTO.getTelephonesDTO();
     for (TelephoneDTO telephoneDTO : telephoneDTOs) {%>
-<div id="modal_<%=telephoneDTO.getId()%>" class="modal fade" role="dialog">
+<div id="modal_telephone_<%=telephoneDTO.getId()%>" class="modal fade" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -38,7 +36,8 @@
                 </div>
                 <div class="form-group">
                     <label for="operator_code_<%=telephoneDTO.getIdString()%>">Operator code</label>
-                    <input type="text" maxlength="32" class="form-control" id="operator_code_<%=telephoneDTO.getIdString()%>"
+                    <input type="text" maxlength="32" class="form-control"
+                           id="operator_code_<%=telephoneDTO.getIdString()%>"
                            name="operator_code_<%=telephoneDTO.getIdString()%>"
                            value="<%=telephoneDTO.getOperatorCodeString()%>">
                 </div>
@@ -65,7 +64,8 @@
                         <button type="button" class="btn btn-danger" data-dismiss="modal">
                             Close
                         </button>
-                        <button id="update_telephone"onclick="sbmt(this, <%=telephoneDTO.getIdString()%>)" class="btn btn-success">
+                        <button id="update_telephone" onclick="sbmt(this, <%=telephoneDTO.getIdString()%>)"
+                                class="btn btn-success">
                             Update
                         </button>
                     </div>
@@ -74,8 +74,8 @@
         </div>
     </div>
 </div>
-        <%}%>
-<div id="modal" class="modal fade" role="dialog">
+<%}%>
+<div id="modal_telephone" class="modal fade" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -126,26 +126,5 @@
         </div>
     </div>
 </div>
-
-
-    <script>
-        function sbmt(btn, id) {
-            var knopka = document.getElementById(btn);
-            var act = document.forms["create_contact_form"];
-            if (btn.id=="create_telephone"){
-                act.action = "/createtelephone";
-                act.method = "post";
-                act.submit();
-            } else if (btn.id=="update_telephone"){
-                act.action = "/updatelephone?id="+id;
-                act.method = "post";
-                act.submit();
-            } if (btn.id=="delete_telephone"){
-                act.action = "/deletetelephone?id="+id;
-                act.method = "post";
-                act.submit();
-            }
-        }
-    </script>
 </body>
 </html>

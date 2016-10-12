@@ -103,6 +103,11 @@ public class ContactDTO implements DTO {
         return this;
     }
 
+    public ContactDTO deleteAttachment(int id) {
+        attachmentDTOs.remove(attachmentDTOs.stream().filter(attachmentDTO -> attachmentDTO.getId() == id).findAny().get());
+        return this;
+    }
+
     public String getIdString() {
         return id + "";
     }
@@ -444,8 +449,8 @@ public class ContactDTO implements DTO {
     }
 
     public ContactDTO setMale(String sex) {
-        if (StringUtils.isNullOrEmpty(street)) {
-            this.street = null;
+        if (StringUtils.isNullOrEmpty(sex)) {
+            this.male = null;
         } else if (sex.toLowerCase().equals("male")) {
             this.male = true;
         } else if (sex.toLowerCase().equals("female")) {

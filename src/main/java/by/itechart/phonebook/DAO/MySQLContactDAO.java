@@ -37,7 +37,8 @@ public class MySQLContactDAO implements ContactDAO {
             createPreparedStatement.setString(2, entity.getSecondName());
             createPreparedStatement.setString(3, entity.getPatronymic());
             createPreparedStatement.setDate(4, entity.getBirthday());
-            createPreparedStatement.setBoolean(5, true);
+           // createPreparedStatement.setBoolean(5, entity.getMale());
+            createPreparedStatement.setObject(5,entity.getMale());
             createPreparedStatement.setString(6, entity.getNationality());
             createPreparedStatement.setString(7, entity.getRelationshipStatus());
             createPreparedStatement.setString(8, entity.getWebSite());
@@ -64,7 +65,7 @@ public class MySQLContactDAO implements ContactDAO {
             updatePreparedStatement.setString(2, entity.getSecondName());
             updatePreparedStatement.setString(3, entity.getPatronymic());
             updatePreparedStatement.setDate(4, entity.getBirthday());
-            updatePreparedStatement.setBoolean(5, entity.getMale());
+            updatePreparedStatement.setObject(5,entity.getMale());
             updatePreparedStatement.setString(6, entity.getNationality());
             updatePreparedStatement.setString(7, entity.getRelationshipStatus());
             updatePreparedStatement.setString(8, entity.getWebSite());

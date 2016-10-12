@@ -14,6 +14,14 @@ public class AttachmentEntity implements Entity {
     private String comment;
     private int contactId;
 
+    public int getContactId() {
+        return contactId;
+    }
+
+    public AttachmentEntity setContactId(int contactId) {
+        this.contactId = contactId;
+        return this;
+    }
 
     public AttachmentEntity() {
     }

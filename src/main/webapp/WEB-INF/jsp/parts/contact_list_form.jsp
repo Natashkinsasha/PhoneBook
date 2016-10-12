@@ -1,4 +1,3 @@
-
 <%@ page import="java.util.List" %>
 <%@ page import="by.itechart.phonebook.DTO.ContactDTO" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -12,7 +11,9 @@
             <button type="button" class="btn btn-success" onclick="location.href='/createcontact'">Create</button>
             <button type="button" class="btn btn-info" onclick="location.href='/serchcontact'">Serch</button>
             <button type="button" class="btn btn-info" onclick="location.href='/cancelserch'">Сancel search</button>
-            <button id="send_email" type="button" class="btn btn-warning" onclick="location.href='/sendemail'">Send email</button>
+            <button id="send_email" type="button" class="btn btn-warning" onclick="location.href='/sendemail'">Send
+                email
+            </button>
             <button type="submit" class="btn btn-danger">Delete</button>
         </div>
     </div>
@@ -47,15 +48,17 @@
                 <td><%=contactDTO.getCompanyString()%>
                 </td>
                 <td>
-                    <div class="dropdown">
-                        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="true" style="border: 0px">
-                            <span class="glyphicon glyphicon-option-vertical"></span>
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                            <li><a href="/deletecontact?id=<%=contactDTO.getId()%>">Delete</a></li>
-                        </ul>
-                    </div>
+                    <button id="delete_contact" onclick="location.href='/deletecontact?id=<%=contactDTO.getId()%>'"
+                            class="btn btn-default " type="button" aria-haspopup="true" aria-expanded="true"
+                            style="border: 0px">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </button>
+                    <button id="edit_contact" onclick="location.href='/editcontact?id=<%=contactDTO.getIdString()%>'"
+                            class="btn btn-default " type="button" aria-haspopup="true" aria-expanded="true"
+                            style="border: 0px">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </button>
+
                 </td>
             </tr>
             <%
