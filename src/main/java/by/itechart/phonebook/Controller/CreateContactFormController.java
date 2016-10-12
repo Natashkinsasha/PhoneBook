@@ -14,10 +14,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.sql.Date;
 import java.util.Calendar;
 import java.util.List;
@@ -32,46 +29,46 @@ public class CreateContactFormController {
                 if (item.isFormField()) {
                     switch (item.getFieldName()) {
                         case "first_name":
-                            contactDTO.setFirstName(item.getString());
+                            contactDTO.setFirstName(item.getString("UTF-8"));
                             break;
                         case "second_name":
-                            contactDTO.setSecondName(item.getString());
+                            contactDTO.setSecondName(item.getString("UTF-8"));
                             break;
                         case "patronymic":
-                            contactDTO.setPatronymic(item.getString());
+                            contactDTO.setPatronymic(item.getString("UTF-8"));
                             break;
                         case "birthday":
-                            contactDTO.setBirthday(item.getString());
+                            contactDTO.setBirthday(item.getString("UTF-8"));
                             break;
                         case "sex":
-                            contactDTO.setMale(item.getString());
+                            contactDTO.setMale(item.getString("UTF-8"));
                             break;
                         case "nationality":
-                            contactDTO.setNationality(item.getString());
+                            contactDTO.setNationality(item.getString("UTF-8"));
                             break;
                         case "relationship_status":
-                            contactDTO.setRelationshipStatus(item.getString());
+                            contactDTO.setRelationshipStatus(item.getString("UTF-8"));
                             break;
                         case "web_site":
-                            contactDTO.setWebSite(item.getString());
+                            contactDTO.setWebSite(item.getString("UTF-8"));
                             break;
                         case "email":
-                            contactDTO.setEmail(item.getString());
+                            contactDTO.setEmail(item.getString("UTF-8"));
                             break;
                         case "country":
-                            contactDTO.setCountry(item.getString());
+                            contactDTO.setCountry(item.getString("UTF-8"));
                             break;
                         case "work_place":
-                            contactDTO.setCompany(item.getString());
+                            contactDTO.setCompany(item.getString("UTF-8"));
                             break;
                         case "city":
-                            contactDTO.setCity(item.getString());
+                            contactDTO.setCity(item.getString("UTF-8"));
                             break;
                         case "street":
-                            contactDTO.setStreet(item.getString());
+                            contactDTO.setStreet(item.getString("UTF-8"));
                             break;
                         case "index":
-                            contactDTO.setIndex(item.getString());
+                            contactDTO.setIndex(item.getString("UTF-8"));
                             break;
                     }
                 }
@@ -80,26 +77,26 @@ public class CreateContactFormController {
         return contactDTO;
     }
 
-    private TelephoneDTO getTelephoneDTOFileItems(List<FileItem> formItems) {
+    private TelephoneDTO getTelephoneDTOFileItems(List<FileItem> formItems) throws UnsupportedEncodingException {
         TelephoneDTO telephoneDTO = new TelephoneDTO();
         if (formItems != null && formItems.size() > 0) {
             for (FileItem item : formItems) {
                 if (item.isFormField() && item.getSize() > 0) {
                     switch (item.getFieldName()) {
                         case "phone_type":
-                            telephoneDTO.setType(item.getString());
+                            telephoneDTO.setType(item.getString("UTF-8"));
                             break;
                         case "country_code":
-                            telephoneDTO.setCountryCode(item.getString());
+                            telephoneDTO.setCountryCode(item.getString("UTF-8"));
                             break;
                         case "comment":
-                            telephoneDTO.setComments(item.getString());
+                            telephoneDTO.setComments(item.getString("UTF-8"));
                             break;
                         case "operator_code":
-                            telephoneDTO.setOperatorCode(item.getString());
+                            telephoneDTO.setOperatorCode(item.getString("UTF-8"));
                             break;
                         case "phone_number":
-                            telephoneDTO.setNumber(item.getString());
+                            telephoneDTO.setNumber(item.getString("UTF-8"));
                             break;
                     }
                 }
@@ -108,25 +105,25 @@ public class CreateContactFormController {
         return telephoneDTO;
     }
 
-    private TelephoneDTO getTelephoneDTOWithIDFileItems(List<FileItem> formItems, int id) {
+    private TelephoneDTO getTelephoneDTOWithIDFileItems(List<FileItem> formItems, int id) throws UnsupportedEncodingException {
         TelephoneDTO telephoneDTO = new TelephoneDTO();
         if (formItems != null && formItems.size() > 0) {
             for (FileItem item : formItems) {
                 if (item.isFormField()) {
                     if (item.getFieldName().equals("phone_type_" + Integer.toString(id))) {
-                        telephoneDTO.setType(item.getString());
+                        telephoneDTO.setType(item.getString("UTF-8"));
                         continue;
                     } else if (item.getFieldName().equals("country_code_" + Integer.toString(id))) {
-                        telephoneDTO.setCountryCode(item.getString());
+                        telephoneDTO.setCountryCode(item.getString("UTF-8"));
                         continue;
                     } else if (item.getFieldName().equals("comment_" + Integer.toString(id))) {
-                        telephoneDTO.setComments(item.getString());
+                        telephoneDTO.setComments(item.getString("UTF-8"));
                         continue;
                     } else if (item.getFieldName().equals("operator_code_" + Integer.toString(id))) {
-                        telephoneDTO.setOperatorCode(item.getString());
+                        telephoneDTO.setOperatorCode(item.getString("UTF-8"));
                         continue;
                     } else if (item.getFieldName().equals("phone_number_" + Integer.toString(id))) {
-                        telephoneDTO.setNumber(item.getString());
+                        telephoneDTO.setNumber(item.getString("UTF-8"));
                         continue;
                     }
                 }
@@ -141,10 +138,10 @@ public class CreateContactFormController {
             for (FileItem item : formItems) {
                 if (item.isFormField()) {
                     if (item.getFieldName().equals("name_" + Integer.toString(id))) {
-                        attachmentDTO.setName(item.getString());
+                        attachmentDTO.setName(item.getString("UTF-8"));
                         continue;
                     } else if (item.getFieldName().equals("attachment_comment_" + Integer.toString(id))) {
-                        attachmentDTO.setComment(item.getString());
+                        attachmentDTO.setComment(item.getString("UTF-8"));
                         continue;
                     }
                 }
@@ -173,10 +170,10 @@ public class CreateContactFormController {
                 } else if (item.isFormField()) {
                     switch (item.getFieldName()) {
                         case "name":
-                            attachmentDTO.setName(item.getString());
+                            attachmentDTO.setName(item.getString("UTF-8"));
                             break;
                         case "attachment_comment":
-                            attachmentDTO.setComment(item.getString());
+                            attachmentDTO.setComment(item.getString("UTF-8"));
                             break;
                     }
                 }

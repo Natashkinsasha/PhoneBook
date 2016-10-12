@@ -47,7 +47,8 @@
                         <button type="button" class="btn btn-danger" data-dismiss="modal">
                             Close
                         </button>
-                        <button id="update_attachment"onclick="sbmt(this, <%=attachmentDTO.getIdString()%>)" class="btn btn-success">
+                        <button id="update_attachment" onclick="sbmt(this, <%=attachmentDTO.getIdString()%>)"
+                                class="btn btn-success">
                             Update
                         </button>
                     </div>
@@ -66,10 +67,11 @@
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="name">Name</label>
+                    <label for="name" class="required">Name</label>
                     <input type="text" maxlength="32" class="form-control"
                            id="name"
-                           name="name">
+                           name="name"
+                           required>
                 </div>
                 <div class="form-group">
                     <label for="attachment_comment">Comment</label>
@@ -78,8 +80,8 @@
                            name="attachment_comment">
                 </div>
                 <div class="form-group">
-                    <label for="up_file">Attachment:</label>
-                    <input id="up_file" type="file" name="up_file" accept="*">
+                    <label for="up_file" class="required">Attachment:</label>
+                    <input id="up_file" type="file" name="up_file" accept="*" required>
                 </div>
                 <div class="modal-footer">
                     <div class="btn-group" role="group" aria-label="...">
@@ -95,7 +97,6 @@
         </div>
     </div>
 </div>
-
 
 
 </body>

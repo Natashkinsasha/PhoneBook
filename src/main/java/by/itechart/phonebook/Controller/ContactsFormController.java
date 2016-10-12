@@ -95,46 +95,46 @@ public class ContactsFormController {
                 } else if (item.isFormField()&& item.getSize()>0) {
                     switch (item.getFieldName()) {
                         case "first_name":
-                            contactDTO.setFirstName(item.getString());
+                            contactDTO.setFirstName(item.getString("UTF-8"));
                             break;
                         case "second_name":
-                            contactDTO.setSecondName(item.getString());
+                            contactDTO.setSecondName(item.getString("UTF-8"));
                             break;
                         case "patronymic":
-                            contactDTO.setPatronymic(item.getString());
+                            contactDTO.setPatronymic(item.getString("UTF-8"));
                             break;
                         case "birthday":
-                            contactDTO.setBirthday(item.getString());
+                            contactDTO.setBirthday(item.getString("UTF-8"));
                             break;
                         case "sex":
-                            contactDTO.setMale(item.getString());
+                            contactDTO.setMale(item.getString("UTF-8"));
                             break;
                         case "nationality":
-                            contactDTO.setNationality(item.getString());
+                            contactDTO.setNationality(item.getString("UTF-8"));
                             break;
                         case "relationship_status":
-                            contactDTO.setRelationshipStatus(item.getString());
+                            contactDTO.setRelationshipStatus(item.getString("UTF-8"));
                             break;
                         case "web_site":
-                            contactDTO.setWebSite(item.getString());
+                            contactDTO.setWebSite(item.getString("UTF-8"));
                             break;
                         case "email":
-                            contactDTO.setEmail(item.getString());
+                            contactDTO.setEmail(item.getString("UTF-8"));
                             break;
                         case "country":
-                            contactDTO.setCountry(item.getString());
+                            contactDTO.setCountry(item.getString("UTF-8"));
                             break;
                         case "work_place":
-                            contactDTO.setCompany(item.getString());
+                            contactDTO.setCompany(item.getString("UTF-8"));
                             break;
                         case "city":
-                            contactDTO.setCity(item.getString());
+                            contactDTO.setCity(item.getString("UTF-8"));
                             break;
                         case "street":
-                            contactDTO.setStreet(item.getString());
+                            contactDTO.setStreet(item.getString("UTF-8"));
                             break;
                         case "index":
-                            contactDTO.setIndex(item.getString());
+                            contactDTO.setIndex(item.getString("UTF-8"));
                             break;
                     }
                 }
