@@ -84,7 +84,7 @@ public class ContactDTO implements DTO {
 
     public ContactDTO setPhotoPath(String photoPath) {
         if (StringUtils.isNullOrEmpty(photoPath)) {
-            this.photoPath = null;
+           // this.photoPath = null;
         } else {
             this.photoPath = photoPath;
         }

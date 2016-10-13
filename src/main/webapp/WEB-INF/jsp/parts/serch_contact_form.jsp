@@ -24,10 +24,6 @@
         <input type="text" maxlength="32" class="form-control" id="patronymic" name="patronymic">
     </div>
     <div class="form-group">
-        <label for="birthday">Birthday</label>
-        <input type="date" class="form-control" id="birthday" name="birthday">
-    </div>
-    <div class="form-group">
         <label for="sex">Sex</label>
         <select type="text" class="form-control" id="sex" name="sex">
             <option value=""></option>

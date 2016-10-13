@@ -71,7 +71,14 @@ public class StringQuere {
 
     @Override
     public String toString() {
-
+        if (likeCounter == 0) {
+            String substring = "WHERE";
+            String replacement = "";
+            int position = stringQuere.lastIndexOf(substring);
+            if (position != -1) {
+                stringQuere.replace(position, position + substring.length(), replacement);
+            }
+        }
         return stringQuere.toString();
     }
 }
