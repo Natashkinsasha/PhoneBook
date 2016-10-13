@@ -4,7 +4,7 @@ package by.itechart.phonebook.DTO;
 import by.itechart.phonebook.Entity.ContactEntity;
 import by.itechart.phonebook.Validator.NotNull;
 import by.itechart.phonebook.Validator.Pattern;
-import by.itechart.phonebook.Validator.Size;
+import by.itechart.phonebook.Validator.MaxSize;
 import com.mysql.jdbc.StringUtils;
 
 
@@ -19,34 +19,34 @@ import java.util.List;
 public class ContactDTO implements DTO {
     private int id;
     @NotNull
-    @Size(45)
+    @MaxSize(45)
     private String firstName;
     @NotNull
-    @Size(45)
+    @MaxSize(45)
     private String secondName;
-    @Size(45)
+    @MaxSize(45)
     private String patronymic;
     private Date birthday;
     private Boolean male;
-    @Size(45)
+    @MaxSize(45)
     private String nationality;
-    @Size(45)
+    @MaxSize(45)
     private String relationshipStatus;
-    @Size(45)
+    @MaxSize(45)
     private String webSite;
     @Pattern("^[^@]+@[^@\\.]+\\.[^@]+$")
     private String email;
-    @Size(45)
+    @MaxSize(45)
     private String company;
-    @Size(45)
+    @MaxSize(45)
     private String country;
-    @Size(45)
+    @MaxSize(45)
     private String city;
-    @Size(45)
+    @MaxSize(45)
     private String street;
-    @Size(45)
+    @MaxSize(45)
     private String index;
-    @Size(244)
+    @MaxSize(244)
     private String photoPath;
     private Boolean moreThanBD;
     private List<TelephoneDTO> telephonesDTO;

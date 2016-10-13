@@ -49,17 +49,19 @@ public class ContactsFormController {
         try {
             List<FileItem> formItems = upload.parseRequest(req);
             ContactDTO contactDTOFileItems = getContactDTOFileItems(formItems, req);
+            Validator validator = new Validator();
+            if (validator.check(contactDTOFileItems).hasErroe()){
+                req.getSession().setAttribute("error","Enter a valid date");
+                resp.sendRedirect("/editcontact");
+                return;
+            }
             contactDTO.setFirstName(contactDTOFileItems.getFirstName()).setSecondName(contactDTOFileItems.getSecondName()).setPatronymic(contactDTOFileItems.getPatronymic()).setBirthday(contactDTOFileItems.getBirthday()).setMale(contactDTOFileItems.getMale()).setNationality(contactDTOFileItems.getNationality()).setRelationshipStatus(contactDTOFileItems.getRelationshipStatus()).setWebSite(contactDTOFileItems.getWebSite()).setEmail(contactDTOFileItems.getEmail()).setCountry(contactDTOFileItems.getCountry()).setCity(contactDTOFileItems.getCity()).setStreet(contactDTOFileItems.getStreet()).setIndex(contactDTOFileItems.getIndex()).setCompany(contactDTOFileItems.getCompany()).setPhotoPath(contactDTOFileItems.getPhotoPath());
         } catch (Exception e) {
             e.printStackTrace();
         }
 
 
-        Validator validator = new Validator();
-        /*if (validator.check(contactDTO).hasErroe()){
-            req.getServletContext().getRequestDispatcher("/WEB-INF/jsp/pages/valid_contact_erroe_create_contact_form.jsp").forward(req, resp);
-            return;
-        }*/
+
         ContactService contactService = new ContactServiceImpl();
         try {
             if (contactDTO.getId() == 0) {
@@ -71,6 +73,59 @@ public class ContactsFormController {
             e.printStackTrace();
         }
 
+        resp.sendRedirect("/");
+    }
+
+
+
+
+    @RequestMapping(uri = "/deletecontact", method = RequestMapping.Method.GET)
+    public void deleteOneContact(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        ContactService contactService = new ContactServiceImpl();
+        try {
+            contactService.deleteContact(Integer.valueOf(req.getParameter("id")));
+        } catch (ServiceException e) {
+            e.printStackTrace();
+        }
+        resp.sendRedirect("/");
+    }
+
+
+    @RequestMapping(uri = "/deletesomecontact", method = RequestMapping.Method.POST)
+    public void deleteSomeContact(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        ContactService contactService = new ContactServiceImpl();
+        for (Enumeration<String> parametrs = req.getParameterNames(); parametrs.hasMoreElements(); ) {
+            try {
+                String id = parametrs.nextElement();
+                contactService.deleteContact(Integer.valueOf(id));
+            } catch (ServiceException e) {
+                e.printStackTrace();
+            }
+        }
+        resp.sendRedirect("/");
+    }
+
+    @RequestMapping(uri = "/serchcontact", method = RequestMapping.Method.POST)
+    public void serchContact(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        DiskFileItemFactory factory = new DiskFileItemFactory();
+        ServletFileUpload upload = new ServletFileUpload(factory);
+        ContactDTO contactDTO = (ContactDTO) req.getSession().getAttribute("createContactDTO");
+        try {
+            List<FileItem> formItems = upload.parseRequest(req);
+            ContactDTO contactDTOFileItems = getContactDTOFileItems(formItems, req);
+            contactDTO.setFirstName(contactDTOFileItems.getFirstName()).setSecondName(contactDTOFileItems.getSecondName()).setPatronymic(contactDTOFileItems.getPatronymic()).setBirthday(contactDTOFileItems.getBirthday()).setMale(contactDTOFileItems.getMale()).setNationality(contactDTOFileItems.getNationality()).setRelationshipStatus(contactDTOFileItems.getRelationshipStatus()).setWebSite(contactDTOFileItems.getWebSite()).setEmail(contactDTOFileItems.getEmail()).setCountry(contactDTOFileItems.getCountry()).setCity(contactDTOFileItems.getCity()).setStreet(contactDTOFileItems.getStreet()).setIndex(contactDTOFileItems.getIndex()).setCompany(contactDTOFileItems.getCompany());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        req.getSession().setAttribute("serchPattern", contactDTO);
+        req.getSession().removeAttribute("page");
+        resp.sendRedirect("/");
+    }
+
+    @RequestMapping(uri = "/cancelserch", method = RequestMapping.Method.GET)
+    public void cancelSerchContacts(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        req.getSession().removeAttribute("serchPattern");
+        req.getSession().removeAttribute("page");
         resp.sendRedirect("/");
     }
 
@@ -152,55 +207,5 @@ public class ContactsFormController {
         String filterStr = new Integer(uid).toString();
         str = filterStr.replaceAll("-", "");
         return Integer.parseInt(str);
-    }
-
-    @RequestMapping(uri = "/deletecontact", method = RequestMapping.Method.GET)
-    public void deleteOneContact(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        ContactService contactService = new ContactServiceImpl();
-        try {
-            contactService.deleteContact(Integer.valueOf(req.getParameter("id")));
-        } catch (ServiceException e) {
-            e.printStackTrace();
-        }
-        resp.sendRedirect("/");
-    }
-
-
-    @RequestMapping(uri = "/deletesomecontact", method = RequestMapping.Method.POST)
-    public void deleteSomeContact(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        ContactService contactService = new ContactServiceImpl();
-        for (Enumeration<String> parametrs = req.getParameterNames(); parametrs.hasMoreElements(); ) {
-            try {
-                String id = parametrs.nextElement();
-                contactService.deleteContact(Integer.valueOf(id));
-            } catch (ServiceException e) {
-                e.printStackTrace();
-            }
-        }
-        resp.sendRedirect("/");
-    }
-
-    @RequestMapping(uri = "/serchcontact", method = RequestMapping.Method.POST)
-    public void serchContact(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        DiskFileItemFactory factory = new DiskFileItemFactory();
-        ServletFileUpload upload = new ServletFileUpload(factory);
-        ContactDTO contactDTO = (ContactDTO) req.getSession().getAttribute("createContactDTO");
-        try {
-            List<FileItem> formItems = upload.parseRequest(req);
-            ContactDTO contactDTOFileItems = getContactDTOFileItems(formItems, req);
-            contactDTO.setFirstName(contactDTOFileItems.getFirstName()).setSecondName(contactDTOFileItems.getSecondName()).setPatronymic(contactDTOFileItems.getPatronymic()).setBirthday(contactDTOFileItems.getBirthday()).setMale(contactDTOFileItems.getMale()).setNationality(contactDTOFileItems.getNationality()).setRelationshipStatus(contactDTOFileItems.getRelationshipStatus()).setWebSite(contactDTOFileItems.getWebSite()).setEmail(contactDTOFileItems.getEmail()).setCountry(contactDTOFileItems.getCountry()).setCity(contactDTOFileItems.getCity()).setStreet(contactDTOFileItems.getStreet()).setIndex(contactDTOFileItems.getIndex()).setCompany(contactDTOFileItems.getCompany());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        req.getSession().setAttribute("serchPattern", contactDTO);
-        req.getSession().removeAttribute("page");
-        resp.sendRedirect("/");
-    }
-
-    @RequestMapping(uri = "/cancelserch", method = RequestMapping.Method.GET)
-    public void cancelSerchContacts(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        req.getSession().removeAttribute("serchPattern");
-        req.getSession().removeAttribute("page");
-        resp.sendRedirect("/");
     }
 }

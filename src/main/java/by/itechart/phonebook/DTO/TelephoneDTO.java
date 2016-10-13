@@ -4,24 +4,24 @@ package by.itechart.phonebook.DTO;
 import by.itechart.phonebook.Entity.TelephoneEntity;
 import by.itechart.phonebook.Validator.NotNull;
 import by.itechart.phonebook.Validator.Pattern;
-import by.itechart.phonebook.Validator.Size;
+import by.itechart.phonebook.Validator.MaxSize;
 import com.mysql.jdbc.StringUtils;
 
 public class TelephoneDTO implements DTO {
     private int id;
-    @Size(45)
+    @MaxSize(3)
     @Pattern("^\\d{3}$")
     private String countryCode;
-    @Size(45)
+    @MaxSize(2)
     @Pattern("^\\d{2}$")
     private String operatorCode;
     @NotNull
-    @Size(45)
+    @MaxSize(7)
     @Pattern("^\\d{7}$")
     private String number;
-    @Size(45)
+    @MaxSize(45)
     private String type;
-    @Size(45)
+    @MaxSize(45)
     private String comments;
 
     public TelephoneDTO() {

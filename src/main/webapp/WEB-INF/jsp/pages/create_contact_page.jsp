@@ -23,11 +23,22 @@
 <jsp:include
         page="/WEB-INF/jsp/parts/navbar.jsp"
         flush="true"/>
+<div class="container">
+    <%if (request.getSession().getAttribute("error") != null) {%>
+    <div class="alert alert-danger" role="alert">
+        <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+        <span class="sr-only">Error:</span>
+        <%=request.getSession().getAttribute("error")%>
+    </div>
 
+    <%
+            request.getSession().removeAttribute("error");
+        }
+    %>
+</div>
 <jsp:include
         page="/WEB-INF/jsp/parts/create_contact_form.jsp"
         flush="true"/>
-
 
 
 <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->

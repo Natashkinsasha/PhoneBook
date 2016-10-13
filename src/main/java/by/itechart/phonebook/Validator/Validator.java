@@ -25,8 +25,8 @@ public class Validator {
                         bindingResult.addError(field.getName(), new PatternMismatchException());
                     }
                 }
-                if (field.isAnnotationPresent(Size.class) && field.get(object) != null && field.getType() == String.class) {
-                    Size annotation = field.getAnnotation(Size.class);
+                if (field.isAnnotationPresent(MaxSize.class) && field.get(object) != null && field.getType() == String.class) {
+                    MaxSize annotation = field.getAnnotation(MaxSize.class);
                     String string = (String) field.get(object);
                     if (string.length() > annotation.value()) {
                         bindingResult.addError(field.getName(), new BigStrngException());

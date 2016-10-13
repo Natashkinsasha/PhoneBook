@@ -2,13 +2,18 @@ package by.itechart.phonebook.DTO;
 
 
 import by.itechart.phonebook.Entity.AttachmentEntity;
+import by.itechart.phonebook.Validator.NotNull;
+import by.itechart.phonebook.Validator.MaxSize;
 import com.mysql.jdbc.StringUtils;
 
 import java.sql.Date;
 
 public class AttachmentDTO implements DTO {
     private int id;
+    @NotNull
+    @MaxSize(254)
     private String path;
+    @NotNull
     private String name;
     private Date creationDate;
     private String comment;

@@ -6,6 +6,7 @@ import by.itechart.phonebook.DTO.ContactDTO;
 import by.itechart.phonebook.DTO.TelephoneDTO;
 import by.itechart.phonebook.MVC.RequestMapping;
 import by.itechart.phonebook.Servic.*;
+import by.itechart.phonebook.Validator.Validator;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
@@ -22,6 +23,232 @@ import java.util.UUID;
 
 public class CreateContactFormController {
     final static String UPLOAD_DIRECTORY_FILE = "META-INF" + File.separator + "file";
+
+    @RequestMapping(uri = "/createcontact", method = RequestMapping.Method.GET)
+    public void openCreateContactForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        req.getSession().setAttribute("createContactDTO", new ContactDTO());
+        req.getServletContext().getRequestDispatcher("/WEB-INF/jsp/pages/create_contact_page.jsp").forward(req, resp);
+    }
+
+
+    @RequestMapping(uri = "/editcontact", method = RequestMapping.Method.GET)
+    public void editContact(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+        TelephoneService telephoneService = new TelephoneServiceImpl();
+        ContactService contactService = new ContactServiceImpl();
+        ContactDTO contactDTO = null;
+        if (req.getParameter("id")!=null) {
+            try {
+                contactDTO = contactService.getContactById(Integer.valueOf(req.getParameter("id")));
+            } catch (ServiceException e) {
+                e.printStackTrace();
+            }
+            HttpSession session = req.getSession();
+            session.setAttribute("createContactDTO", contactDTO);
+        }
+        req.getServletContext().getRequestDispatcher("/WEB-INF/jsp/pages/create_contact_page.jsp").forward(req, resp);
+    }
+
+
+    @RequestMapping(uri = "/editcontactWithoutId", method = RequestMapping.Method.GET)
+    public void editContactTset(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+        req.getServletContext().getRequestDispatcher("/WEB-INF/jsp/pages/create_contact_page.jsp").forward(req, resp);
+    }
+
+
+    @RequestMapping(uri = "/createtelephone", method = RequestMapping.Method.POST)
+    public void createTelephone(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        DiskFileItemFactory factory = new DiskFileItemFactory();
+        ServletFileUpload upload = new ServletFileUpload(factory);
+        ContactDTO contactDTO = (ContactDTO) req.getSession().getAttribute("createContactDTO");
+        TelephoneDTO telephoneDTO = new TelephoneDTO();
+        try {
+            List<FileItem> formItems = upload.parseRequest(req);
+            ContactDTO contactDTOFileItems = getContactDTOFileItems(formItems);
+            contactDTO.setFirstName(contactDTOFileItems.getFirstName()).setSecondName(contactDTOFileItems.getSecondName()).setPatronymic(contactDTOFileItems.getPatronymic()).setBirthday(contactDTOFileItems.getBirthday()).setMale(contactDTOFileItems.getMale()).setNationality(contactDTOFileItems.getNationality()).setRelationshipStatus(contactDTOFileItems.getRelationshipStatus()).setWebSite(contactDTOFileItems.getWebSite()).setEmail(contactDTOFileItems.getEmail()).setCountry(contactDTOFileItems.getCountry()).setCity(contactDTOFileItems.getCity()).setStreet(contactDTOFileItems.getStreet()).setIndex(contactDTOFileItems.getIndex()).setCompany(contactDTOFileItems.getCompany());
+            TelephoneDTO telephoneDTOFileItems = getTelephoneDTOFileItems(formItems);
+            telephoneDTO.setId(generateUniqueId()).setCountryCode(telephoneDTOFileItems.getCountryCode()).setOperatorCode(telephoneDTOFileItems.getOperatorCode()).setNumber(telephoneDTOFileItems.getNumber()).setType(telephoneDTOFileItems.getType()).setComments(telephoneDTOFileItems.getComments());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Validator validator = new Validator();
+        if (validator.check(telephoneDTO).hasErroe()){
+            req.getSession().setAttribute("error","Telephone hasn't been added!");
+            resp.sendRedirect("/editcontactWithoutId");
+            return;
+        }
+        contactDTO.addTelephone(telephoneDTO);
+        resp.sendRedirect("/editcontactWithoutId");
+    }
+
+    @RequestMapping(uri = "/deletetelephone", method = RequestMapping.Method.POST)
+    public void deleteTelephone(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        TelephoneService telephoneService = new TelephoneServiceImpl();
+        ContactDTO contactDTO = (ContactDTO) req.getSession().getAttribute("createContactDTO");
+        contactDTO.deleteTelephone(Integer.valueOf(req.getParameter("id")));
+        DiskFileItemFactory factory = new DiskFileItemFactory();
+        ServletFileUpload upload = new ServletFileUpload(factory);
+        try {
+            List<FileItem> formItems = upload.parseRequest(req);
+            ContactDTO contactDTOFileItems = getContactDTOFileItems(formItems);
+            contactDTO.setFirstName(contactDTOFileItems.getFirstName()).setSecondName(contactDTOFileItems.getSecondName()).setPatronymic(contactDTOFileItems.getPatronymic()).setBirthday(contactDTOFileItems.getBirthday()).setMale(contactDTOFileItems.getMale()).setNationality(contactDTOFileItems.getNationality()).setRelationshipStatus(contactDTOFileItems.getRelationshipStatus()).setWebSite(contactDTOFileItems.getWebSite()).setEmail(contactDTOFileItems.getEmail()).setCountry(contactDTOFileItems.getCountry()).setCity(contactDTOFileItems.getCity()).setStreet(contactDTOFileItems.getStreet()).setIndex(contactDTOFileItems.getIndex()).setCompany(contactDTOFileItems.getCompany());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        resp.sendRedirect("/editcontactWithoutId");
+    }
+
+    @RequestMapping(uri = "/updatetelephone", method = RequestMapping.Method.POST)
+    public void updateTelephone(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+        ContactDTO contactDTO = (ContactDTO) req.getSession().getAttribute("createContactDTO");
+        DiskFileItemFactory factory = new DiskFileItemFactory();
+        ServletFileUpload upload = new ServletFileUpload(factory);
+        int id = Integer.parseInt(req.getParameter("id"));
+        try {
+            List<FileItem> formItems = upload.parseRequest(req);
+            ContactDTO contactDTOFileItems = getContactDTOFileItems(formItems);
+            contactDTO.setFirstName(contactDTOFileItems.getFirstName()).setSecondName(contactDTOFileItems.getSecondName()).setPatronymic(contactDTOFileItems.getPatronymic()).setBirthday(contactDTOFileItems.getBirthday()).setMale(contactDTOFileItems.getMale()).setNationality(contactDTOFileItems.getNationality()).setRelationshipStatus(contactDTOFileItems.getRelationshipStatus()).setWebSite(contactDTOFileItems.getWebSite()).setEmail(contactDTOFileItems.getEmail()).setCountry(contactDTOFileItems.getCountry()).setCity(contactDTOFileItems.getCity()).setStreet(contactDTOFileItems.getStreet()).setIndex(contactDTOFileItems.getIndex()).setCompany(contactDTOFileItems.getCompany());
+            TelephoneDTO telephoneDTOWithIDFileItems = getTelephoneDTOWithIDFileItems(formItems, id);
+            for (TelephoneDTO telephoneDTO : contactDTO.getTelephonesDTO()) {
+                if (telephoneDTO.getId() == id) {
+                    Validator validator = new Validator();
+                    if (validator.check(telephoneDTOWithIDFileItems).hasErroe()){
+                        req.getSession().setAttribute("error","Telephone hasn't been updated!");
+                        resp.sendRedirect("/editcontactWithoutId");
+                        return;
+                    }
+                    telephoneDTO.setCountryCode(telephoneDTOWithIDFileItems.getCountryCode()).setOperatorCode(telephoneDTOWithIDFileItems.getOperatorCode()).setNumber(telephoneDTOWithIDFileItems.getNumber()).setType(telephoneDTOWithIDFileItems.getType()).setComments(telephoneDTOWithIDFileItems.getComments());
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        resp.sendRedirect("/editcontactWithoutId");
+    }
+
+
+
+
+
+    private static int generateUniqueId() {
+        UUID idOne = UUID.randomUUID();
+        String str = "" + idOne;
+        int uid = str.hashCode();
+        String filterStr = "" + uid;
+        str = filterStr.replaceAll("-", "");
+        return Integer.parseInt(str);
+    }
+
+
+    @RequestMapping(uri = "/createattachment", method = RequestMapping.Method.POST)
+    public void createAttachment(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        DiskFileItemFactory factory = new DiskFileItemFactory();
+        ServletFileUpload upload = new ServletFileUpload(factory);
+        ContactDTO contactDTO = (ContactDTO) req.getSession().getAttribute("createContactDTO");
+        try {
+            List<FileItem> formItems = upload.parseRequest(req);
+            ContactDTO contactDTOFileItems = getContactDTOFileItems(formItems);
+            contactDTO.setFirstName(contactDTOFileItems.getFirstName()).setSecondName(contactDTOFileItems.getSecondName()).setPatronymic(contactDTOFileItems.getPatronymic()).setBirthday(contactDTOFileItems.getBirthday()).setMale(contactDTOFileItems.getMale()).setNationality(contactDTOFileItems.getNationality()).setRelationshipStatus(contactDTOFileItems.getRelationshipStatus()).setWebSite(contactDTOFileItems.getWebSite()).setEmail(contactDTOFileItems.getEmail()).setCountry(contactDTOFileItems.getCountry()).setCity(contactDTOFileItems.getCity()).setStreet(contactDTOFileItems.getStreet()).setIndex(contactDTOFileItems.getIndex()).setCompany(contactDTOFileItems.getCompany());
+            AttachmentDTO attachmentDTOFileItems = getAttachmentDTOFileItems(formItems, req);
+            attachmentDTOFileItems.setId(generateUniqueId()).setCreationDate(new Date(Calendar.getInstance().getTime().getTime()));
+            Validator validator = new Validator();
+            if (validator.check(attachmentDTOFileItems).hasErroe()){
+                req.getSession().setAttribute("error","Attachment hasn't been added!");
+                resp.sendRedirect("/editcontactWithoutId");
+                return;
+            }
+            contactDTO.addAttachment(attachmentDTOFileItems);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        /*if (new Validator().check(telephoneDTO).hasErroe()) {
+            resp.sendRedirect("/createcontactwitherror");
+            return;
+        }*/
+        resp.sendRedirect("/editcontactWithoutId");
+    }
+
+    @RequestMapping(uri = "/updateattachment", method = RequestMapping.Method.POST)
+    public void updateAttachment(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+        ContactDTO contactDTO = (ContactDTO) req.getSession().getAttribute("createContactDTO");
+        DiskFileItemFactory factory = new DiskFileItemFactory();
+        ServletFileUpload upload = new ServletFileUpload(factory);
+        int id = Integer.parseInt(req.getParameter("id"));
+        try {
+            List<FileItem> formItems = upload.parseRequest(req);
+            ContactDTO contactDTOFileItems = getContactDTOFileItems(formItems);
+            contactDTO.setFirstName(contactDTOFileItems.getFirstName()).setSecondName(contactDTOFileItems.getSecondName()).setPatronymic(contactDTOFileItems.getPatronymic()).setBirthday(contactDTOFileItems.getBirthday()).setMale(contactDTOFileItems.getMale()).setNationality(contactDTOFileItems.getNationality()).setRelationshipStatus(contactDTOFileItems.getRelationshipStatus()).setWebSite(contactDTOFileItems.getWebSite()).setEmail(contactDTOFileItems.getEmail()).setCountry(contactDTOFileItems.getCountry()).setCity(contactDTOFileItems.getCity()).setStreet(contactDTOFileItems.getStreet()).setIndex(contactDTOFileItems.getIndex()).setCompany(contactDTOFileItems.getCompany());
+            AttachmentDTO attachmentWithIdDTOFileItems = getAttachmentWithIdDTOFileItems(formItems, id);
+            for (AttachmentDTO attachmentDTO : contactDTO.getAttachmentDTOs()) {
+                if (attachmentDTO.getId() == id) {
+                    Validator validator = new Validator();
+                    if (validator.check(attachmentDTO).hasErroe()){
+                        req.getSession().setAttribute("error","Attachment hasn't been updated!");
+                        resp.sendRedirect("/editcontactWithoutId");
+                        return;
+                    }
+                    attachmentDTO.setName(attachmentWithIdDTOFileItems.getName()).setComment(attachmentWithIdDTOFileItems.getComment());
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        resp.sendRedirect("/editcontactWithoutId");
+    }
+
+    @RequestMapping(uri = "/deleteattachment", method = RequestMapping.Method.POST)
+    public void deleteAttachment(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        TelephoneService telephoneService = new TelephoneServiceImpl();
+        ContactDTO contactDTO = (ContactDTO) req.getSession().getAttribute("createContactDTO");
+        contactDTO.deleteAttachment(Integer.valueOf(req.getParameter("id")));
+        DiskFileItemFactory factory = new DiskFileItemFactory();
+        ServletFileUpload upload = new ServletFileUpload(factory);
+        try {
+            List<FileItem> formItems = upload.parseRequest(req);
+            ContactDTO contactDTOFileItems = getContactDTOFileItems(formItems);
+            contactDTO.setFirstName(contactDTOFileItems.getFirstName()).setSecondName(contactDTOFileItems.getSecondName()).setPatronymic(contactDTOFileItems.getPatronymic()).setBirthday(contactDTOFileItems.getBirthday()).setMale(contactDTOFileItems.getMale()).setNationality(contactDTOFileItems.getNationality()).setRelationshipStatus(contactDTOFileItems.getRelationshipStatus()).setWebSite(contactDTOFileItems.getWebSite()).setEmail(contactDTOFileItems.getEmail()).setCountry(contactDTOFileItems.getCountry()).setCity(contactDTOFileItems.getCity()).setStreet(contactDTOFileItems.getStreet()).setIndex(contactDTOFileItems.getIndex()).setCompany(contactDTOFileItems.getCompany());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        resp.sendRedirect("/editcontactWithoutId");
+    }
+
+    private String getFileExtension(File file) {
+        String fileName = file.getName();
+        // если в имени файла есть точка и она не является первым символом в названии файла
+        if(fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0)
+            // то вырезаем все знаки после последней точки в названии файла, то есть ХХХХХ.txt -> txt
+            return fileName.substring(fileName.lastIndexOf(".")+1);
+            // в противном случае возвращаем заглушку, то есть расширение не найдено
+        else return "";
+    }
+
+    @RequestMapping(uri = "/dowloadattachment", method = RequestMapping.Method.GET)
+    public void dowloadAttachment(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        ContactDTO contactDTO = (ContactDTO) req.getSession().getAttribute("createContactDTO");
+        int id = Integer.parseInt(req.getParameter("id"));
+        for (AttachmentDTO attachmentDTO: contactDTO.getAttachmentDTOs()){
+            if (attachmentDTO.getId()==id){
+                File my_file = new File(attachmentDTO.getPathString());
+                resp.setHeader("Content-disposition","attachment; filename="+attachmentDTO.getNameString()+"."+getFileExtension(my_file));
+                OutputStream out = resp.getOutputStream();
+                FileInputStream in = new FileInputStream(my_file);
+                byte[] buffer = new byte[4096];
+                int length;
+                while ((length = in.read(buffer)) > 0){
+                    out.write(buffer, 0, length);
+                }
+                in.close();
+                out.flush();
+                break;
+            }
+        }
+
+    }
+
+
     private ContactDTO getContactDTOFileItems(List<FileItem> formItems) throws Exception {
         ContactDTO contactDTO = new ContactDTO();
         if (formItems != null && formItems.size() > 0) {
@@ -180,212 +407,5 @@ public class CreateContactFormController {
             }
         }
         return attachmentDTO;
-    }
-
-
-    @RequestMapping(uri = "/createcontact", method = RequestMapping.Method.GET)
-    public void openCreateContactForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getSession().setAttribute("createContactDTO", new ContactDTO());
-        req.getServletContext().getRequestDispatcher("/WEB-INF/jsp/pages/create_contact_page.jsp").forward(req, resp);
-    }
-
-
-    @RequestMapping(uri = "/editcontact", method = RequestMapping.Method.GET)
-    public void editContact(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-        TelephoneService telephoneService = new TelephoneServiceImpl();
-        ContactService contactService = new ContactServiceImpl();
-        ContactDTO contactDTO = null;
-        try {
-            contactDTO = contactService.getContactById(Integer.valueOf(req.getParameter("id")));
-        } catch (ServiceException e) {
-            e.printStackTrace();
-        }
-        HttpSession session = req.getSession();
-        session.setAttribute("createContactDTO", contactDTO);
-        req.getServletContext().getRequestDispatcher("/WEB-INF/jsp/pages/create_contact_page.jsp").forward(req, resp);
-    }
-
-
-    @RequestMapping(uri = "/editcontactWithoutId", method = RequestMapping.Method.GET)
-    public void editContactTset(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-        req.getServletContext().getRequestDispatcher("/WEB-INF/jsp/pages/create_contact_page.jsp").forward(req, resp);
-    }
-
-
-    @RequestMapping(uri = "/createtelephone", method = RequestMapping.Method.POST)
-    public void createTelephone(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        DiskFileItemFactory factory = new DiskFileItemFactory();
-        ServletFileUpload upload = new ServletFileUpload(factory);
-        ContactDTO contactDTO = (ContactDTO) req.getSession().getAttribute("createContactDTO");
-        TelephoneDTO telephoneDTO = new TelephoneDTO();
-        try {
-            List<FileItem> formItems = upload.parseRequest(req);
-            ContactDTO contactDTOFileItems = getContactDTOFileItems(formItems);
-            contactDTO.setFirstName(contactDTOFileItems.getFirstName()).setSecondName(contactDTOFileItems.getSecondName()).setPatronymic(contactDTOFileItems.getPatronymic()).setBirthday(contactDTOFileItems.getBirthday()).setMale(contactDTOFileItems.getMale()).setNationality(contactDTOFileItems.getNationality()).setRelationshipStatus(contactDTOFileItems.getRelationshipStatus()).setWebSite(contactDTOFileItems.getWebSite()).setEmail(contactDTOFileItems.getEmail()).setCountry(contactDTOFileItems.getCountry()).setCity(contactDTOFileItems.getCity()).setStreet(contactDTOFileItems.getStreet()).setIndex(contactDTOFileItems.getIndex()).setCompany(contactDTOFileItems.getCompany());
-            TelephoneDTO telephoneDTOFileItems = getTelephoneDTOFileItems(formItems);
-            telephoneDTO.setId(generateUniqueId()).setCountryCode(telephoneDTOFileItems.getCountryCode()).setOperatorCode(telephoneDTOFileItems.getOperatorCode()).setNumber(telephoneDTOFileItems.getNumber()).setType(telephoneDTOFileItems.getType()).setComments(telephoneDTOFileItems.getComments());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        /*if (new Validator().check(telephoneDTO).hasErroe()) {
-            resp.sendRedirect("/createcontactwitherror");
-            return;
-        }*/
-        contactDTO.addTelephone(telephoneDTO);
-        resp.sendRedirect("/editcontactWithoutId");
-    }
-
-    @RequestMapping(uri = "/deletetelephone", method = RequestMapping.Method.POST)
-    public void deleteTelephone(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        TelephoneService telephoneService = new TelephoneServiceImpl();
-        ContactDTO contactDTO = (ContactDTO) req.getSession().getAttribute("createContactDTO");
-        contactDTO.deleteTelephone(Integer.valueOf(req.getParameter("id")));
-        DiskFileItemFactory factory = new DiskFileItemFactory();
-        ServletFileUpload upload = new ServletFileUpload(factory);
-        try {
-            List<FileItem> formItems = upload.parseRequest(req);
-            ContactDTO contactDTOFileItems = getContactDTOFileItems(formItems);
-            contactDTO.setFirstName(contactDTOFileItems.getFirstName()).setSecondName(contactDTOFileItems.getSecondName()).setPatronymic(contactDTOFileItems.getPatronymic()).setBirthday(contactDTOFileItems.getBirthday()).setMale(contactDTOFileItems.getMale()).setNationality(contactDTOFileItems.getNationality()).setRelationshipStatus(contactDTOFileItems.getRelationshipStatus()).setWebSite(contactDTOFileItems.getWebSite()).setEmail(contactDTOFileItems.getEmail()).setCountry(contactDTOFileItems.getCountry()).setCity(contactDTOFileItems.getCity()).setStreet(contactDTOFileItems.getStreet()).setIndex(contactDTOFileItems.getIndex()).setCompany(contactDTOFileItems.getCompany());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        resp.sendRedirect("/editcontactWithoutId");
-    }
-
-    @RequestMapping(uri = "/updatetelephone", method = RequestMapping.Method.POST)
-    public void updateTelephone(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-        ContactDTO contactDTO = (ContactDTO) req.getSession().getAttribute("createContactDTO");
-        DiskFileItemFactory factory = new DiskFileItemFactory();
-        ServletFileUpload upload = new ServletFileUpload(factory);
-        int id = Integer.parseInt(req.getParameter("id"));
-        try {
-            List<FileItem> formItems = upload.parseRequest(req);
-            ContactDTO contactDTOFileItems = getContactDTOFileItems(formItems);
-            contactDTO.setFirstName(contactDTOFileItems.getFirstName()).setSecondName(contactDTOFileItems.getSecondName()).setPatronymic(contactDTOFileItems.getPatronymic()).setBirthday(contactDTOFileItems.getBirthday()).setMale(contactDTOFileItems.getMale()).setNationality(contactDTOFileItems.getNationality()).setRelationshipStatus(contactDTOFileItems.getRelationshipStatus()).setWebSite(contactDTOFileItems.getWebSite()).setEmail(contactDTOFileItems.getEmail()).setCountry(contactDTOFileItems.getCountry()).setCity(contactDTOFileItems.getCity()).setStreet(contactDTOFileItems.getStreet()).setIndex(contactDTOFileItems.getIndex()).setCompany(contactDTOFileItems.getCompany());
-            TelephoneDTO telephoneDTOWithIDFileItems = getTelephoneDTOWithIDFileItems(formItems, id);
-            for (TelephoneDTO telephoneDTO : contactDTO.getTelephonesDTO()) {
-                if (telephoneDTO.getId() == id) {
-                    telephoneDTO.setCountryCode(telephoneDTOWithIDFileItems.getCountryCode()).setOperatorCode(telephoneDTOWithIDFileItems.getOperatorCode()).setNumber(telephoneDTOWithIDFileItems.getNumber()).setType(telephoneDTOWithIDFileItems.getType()).setComments(telephoneDTOWithIDFileItems.getComments());
-                /*if (new Validator().check(telephoneDTO).hasErroe()) {
-                    req.getServletContext().getRequestDispatcher("/WEB-INF/jsp/pages/valid_telephone_erroe_create_contact_form.jsp").forward(req, resp);
-                    return;
-                }*/
-                    break;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        resp.sendRedirect("/editcontactWithoutId");
-    }
-
-
-
-
-
-    private static int generateUniqueId() {
-        UUID idOne = UUID.randomUUID();
-        String str = "" + idOne;
-        int uid = str.hashCode();
-        String filterStr = "" + uid;
-        str = filterStr.replaceAll("-", "");
-        return Integer.parseInt(str);
-    }
-
-
-    @RequestMapping(uri = "/createattachment", method = RequestMapping.Method.POST)
-    public void createAttachment(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        DiskFileItemFactory factory = new DiskFileItemFactory();
-        ServletFileUpload upload = new ServletFileUpload(factory);
-        ContactDTO contactDTO = (ContactDTO) req.getSession().getAttribute("createContactDTO");
-        try {
-            List<FileItem> formItems = upload.parseRequest(req);
-            ContactDTO contactDTOFileItems = getContactDTOFileItems(formItems);
-            contactDTO.setFirstName(contactDTOFileItems.getFirstName()).setSecondName(contactDTOFileItems.getSecondName()).setPatronymic(contactDTOFileItems.getPatronymic()).setBirthday(contactDTOFileItems.getBirthday()).setMale(contactDTOFileItems.getMale()).setNationality(contactDTOFileItems.getNationality()).setRelationshipStatus(contactDTOFileItems.getRelationshipStatus()).setWebSite(contactDTOFileItems.getWebSite()).setEmail(contactDTOFileItems.getEmail()).setCountry(contactDTOFileItems.getCountry()).setCity(contactDTOFileItems.getCity()).setStreet(contactDTOFileItems.getStreet()).setIndex(contactDTOFileItems.getIndex()).setCompany(contactDTOFileItems.getCompany());
-            AttachmentDTO attachmentDTOFileItems = getAttachmentDTOFileItems(formItems, req);
-            attachmentDTOFileItems.setId(generateUniqueId()).setCreationDate(new Date(Calendar.getInstance().getTime().getTime()));
-            contactDTO.addAttachment(attachmentDTOFileItems);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        /*if (new Validator().check(telephoneDTO).hasErroe()) {
-            resp.sendRedirect("/createcontactwitherror");
-            return;
-        }*/
-        resp.sendRedirect("/editcontactWithoutId");
-    }
-
-    @RequestMapping(uri = "/updateattachment", method = RequestMapping.Method.POST)
-    public void updateAttachment(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-        ContactDTO contactDTO = (ContactDTO) req.getSession().getAttribute("createContactDTO");
-        DiskFileItemFactory factory = new DiskFileItemFactory();
-        ServletFileUpload upload = new ServletFileUpload(factory);
-        int id = Integer.parseInt(req.getParameter("id"));
-        try {
-            List<FileItem> formItems = upload.parseRequest(req);
-            ContactDTO contactDTOFileItems = getContactDTOFileItems(formItems);
-            contactDTO.setFirstName(contactDTOFileItems.getFirstName()).setSecondName(contactDTOFileItems.getSecondName()).setPatronymic(contactDTOFileItems.getPatronymic()).setBirthday(contactDTOFileItems.getBirthday()).setMale(contactDTOFileItems.getMale()).setNationality(contactDTOFileItems.getNationality()).setRelationshipStatus(contactDTOFileItems.getRelationshipStatus()).setWebSite(contactDTOFileItems.getWebSite()).setEmail(contactDTOFileItems.getEmail()).setCountry(contactDTOFileItems.getCountry()).setCity(contactDTOFileItems.getCity()).setStreet(contactDTOFileItems.getStreet()).setIndex(contactDTOFileItems.getIndex()).setCompany(contactDTOFileItems.getCompany());
-            AttachmentDTO attachmentWithIdDTOFileItems = getAttachmentWithIdDTOFileItems(formItems, id);
-            for (AttachmentDTO attachmentDTO : contactDTO.getAttachmentDTOs()) {
-                if (attachmentDTO.getId() == id) {
-                    attachmentDTO.setName(attachmentWithIdDTOFileItems.getName()).setComment(attachmentWithIdDTOFileItems.getComment());
-                    break;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        resp.sendRedirect("/editcontactWithoutId");
-    }
-
-    @RequestMapping(uri = "/deleteattachment", method = RequestMapping.Method.POST)
-    public void deleteAttachment(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        TelephoneService telephoneService = new TelephoneServiceImpl();
-        ContactDTO contactDTO = (ContactDTO) req.getSession().getAttribute("createContactDTO");
-        contactDTO.deleteAttachment(Integer.valueOf(req.getParameter("id")));
-        DiskFileItemFactory factory = new DiskFileItemFactory();
-        ServletFileUpload upload = new ServletFileUpload(factory);
-        try {
-            List<FileItem> formItems = upload.parseRequest(req);
-            ContactDTO contactDTOFileItems = getContactDTOFileItems(formItems);
-            contactDTO.setFirstName(contactDTOFileItems.getFirstName()).setSecondName(contactDTOFileItems.getSecondName()).setPatronymic(contactDTOFileItems.getPatronymic()).setBirthday(contactDTOFileItems.getBirthday()).setMale(contactDTOFileItems.getMale()).setNationality(contactDTOFileItems.getNationality()).setRelationshipStatus(contactDTOFileItems.getRelationshipStatus()).setWebSite(contactDTOFileItems.getWebSite()).setEmail(contactDTOFileItems.getEmail()).setCountry(contactDTOFileItems.getCountry()).setCity(contactDTOFileItems.getCity()).setStreet(contactDTOFileItems.getStreet()).setIndex(contactDTOFileItems.getIndex()).setCompany(contactDTOFileItems.getCompany());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        resp.sendRedirect("/editcontactWithoutId");
-    }
-
-    private String getFileExtension(File file) {
-        String fileName = file.getName();
-        // если в имени файла есть точка и она не является первым символом в названии файла
-        if(fileName.lastIndexOf(".") != -1 && fileName.lastIndexOf(".") != 0)
-            // то вырезаем все знаки после последней точки в названии файла, то есть ХХХХХ.txt -> txt
-            return fileName.substring(fileName.lastIndexOf(".")+1);
-            // в противном случае возвращаем заглушку, то есть расширение не найдено
-        else return "";
-    }
-
-    @RequestMapping(uri = "/dowloadattachment", method = RequestMapping.Method.GET)
-    public void dowloadAttachment(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        ContactDTO contactDTO = (ContactDTO) req.getSession().getAttribute("createContactDTO");
-        int id = Integer.parseInt(req.getParameter("id"));
-        for (AttachmentDTO attachmentDTO: contactDTO.getAttachmentDTOs()){
-            if (attachmentDTO.getId()==id){
-                File my_file = new File(attachmentDTO.getPathString());
-                resp.setHeader("Content-disposition","attachment; filename="+attachmentDTO.getNameString()+"."+getFileExtension(my_file));
-                OutputStream out = resp.getOutputStream();
-                FileInputStream in = new FileInputStream(my_file);
-                byte[] buffer = new byte[4096];
-                int length;
-                while ((length = in.read(buffer)) > 0){
-                    out.write(buffer, 0, length);
-                }
-                in.close();
-                out.flush();
-                break;
-            }
-        }
-
     }
 }

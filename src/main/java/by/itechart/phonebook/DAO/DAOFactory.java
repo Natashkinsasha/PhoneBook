@@ -1,12 +1,10 @@
 package by.itechart.phonebook.DAO;
 
 
-import by.itechart.phonebook.DTO.EmailTemplateDTO;
 import org.apache.commons.dbcp.BasicDataSource;
 
 
 import javax.sql.DataSource;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
@@ -14,6 +12,9 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public abstract class DAOFactory {
+
+    private static volatile DAOFactory mySQLDAOFactory;
+
     public abstract ContactDAO getContactDAO(Connection connection) throws DAOException;
 
     public abstract TelephoneDAO getTelephoneDAO(Connection connection) throws DAOException;
@@ -24,10 +25,23 @@ public abstract class DAOFactory {
 
     public abstract Connection getConnection() throws DAOException;
 
+    private static DAOFactory getMySQLDAOFactory(){
+        DAOFactory  localInstance = mySQLDAOFactory;
+        if (localInstance == null) {
+            synchronized (DAOFactory .class) {
+                localInstance = mySQLDAOFactory;
+                if (localInstance == null) {
+                    mySQLDAOFactory = localInstance = new MySQLDAOFactory();
+                }
+            }
+        }
+        return localInstance;
+    }
+
     public static DAOFactory getDAOFactory(TypeDAOFactory typeDAOFactory) {
         switch (typeDAOFactory) {
             case MySQL:
-                return new MySQLDAOFactory();
+                return getMySQLDAOFactory();
             default:
                 return null;
         }

@@ -29,7 +29,7 @@
             <div class="modal-body">
                 <div class="form-group">
                     <label for="country_code_<%=telephoneDTO.getIdString()%>">Country code</label>
-                    <input type="text" maxlength="32" class="form-control"
+                    <input type="text" maxlength="3" class="form-control"
                            id="country_code_<%=telephoneDTO.getIdString()%>"
                            name="country_code_<%=telephoneDTO.getIdString()%>"
                            value="<%=telephoneDTO.getCountryCodeString()%>"
@@ -37,7 +37,7 @@
                 </div>
                 <div class="form-group">
                     <label for="operator_code_<%=telephoneDTO.getIdString()%>">Operator code</label>
-                    <input type="text" maxlength="32" class="form-control"
+                    <input type="text" maxlength="2" class="form-control"
                            id="operator_code_<%=telephoneDTO.getIdString()%>"
                            name="operator_code_<%=telephoneDTO.getIdString()%>"
                            value="<%=telephoneDTO.getOperatorCodeString()%>"
@@ -45,7 +45,7 @@
                 </div>
                 <div class="form-group">
                     <label for="phone_number_<%=telephoneDTO.getIdString()%>" class="required">Phone number</label>
-                    <input type="text" maxlength="32" class="form-control"
+                    <input type="text" maxlength="7" class="form-control"
                            id="phone_number_<%=telephoneDTO.getIdString()%>"
                            name="phone_number_<%=telephoneDTO.getIdString()%>"
                            value="<%=telephoneDTO.getNumberString()%>"
