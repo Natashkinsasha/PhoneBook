@@ -18,7 +18,7 @@ CREATE TABLE `phonebooknatashkin`.`contact` (
   `company` varchar(45) DEFAULT NULL,
   `photo_path` varchar(244) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=180 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `phonebooknatashkin`.`telephone` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -30,20 +30,27 @@ CREATE TABLE `phonebooknatashkin`.`telephone` (
   `operator_code` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `id_idx` (`contact_id`),
-  CONSTRAINT `telephone_contact` FOREIGN KEY (`contact_id`) REFERENCES `contact` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=65 DEFAULT CHARSET=utf8;
+  CONSTRAINT `id` FOREIGN KEY (`contact_id`) REFERENCES `contact` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `phonebooknatashkin`.`attachment` (
-  `id` INT NOT NULL AUTO_INCREMENT,
-  `path` VARCHAR(244) NULL,
-  `creation_date` DATE NULL,
-  `comment` VARCHAR(100) NULL,
-  `contact_id` INT(11) NULL,
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `path` varchar(244) DEFAULT NULL,
+  `creation_date` date DEFAULT NULL,
+  `comment` varchar(100) DEFAULT NULL,
+  `contact_id` int(11) DEFAULT NULL,
+  `name` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  INDEX `id_idx` (`contact_id` ASC),
-  CONSTRAINT `attachment_contact`
-    FOREIGN KEY (`contact_id`)
-    REFERENCES `phonebooknatashkin`.`contact` (`id`)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE);
+  KEY `id_idx` (`contact_id`),
+  CONSTRAINT `` FOREIGN KEY (`contact_id`) REFERENCES `contact` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
 
+CREATE TABLE `phonebooknatashkin`.`emailtemplate` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `path` varchar(244) DEFAULT NULL,
+  `ru_name` varchar(45) DEFAULT NULL,
+  `eng_name` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+
+INSERT INTO `emailtemplate` VALUES (1,'templates/usual.vm','Привет','Hi'),(2,'templates/happy_birthday.vm','С ДР','HB');
