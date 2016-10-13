@@ -11,7 +11,11 @@ public class TelephoneEntity {
     private String countryCode;
     private String operatorCode;
     private int contactId;
-    public  TelephoneEntity(){};
+
+    public TelephoneEntity() {
+    }
+
+
     public TelephoneEntity(TelephoneDTO telephoneDTO, int contactId) {
         setId(telephoneDTO.getId());
         setNumber(telephoneDTO.getNumber());
@@ -66,7 +70,7 @@ public class TelephoneEntity {
         return type;
     }
 
-    public TelephoneEntity  setType(String type) {
+    public TelephoneEntity setType(String type) {
         this.type = type;
         return this;
     }

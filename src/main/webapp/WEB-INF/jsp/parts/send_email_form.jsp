@@ -35,6 +35,7 @@
                 onchange="document.location=this.options[this.selectedIndex].value">
             <option value="/sendemail">------</option>
             <%for (EmailTemplateDTO emailTemplateDTO : emailTemplateDTOList) {%>
+            //Сделать селектед выбранный шаблон
             <option value="/sendemail?id_template=<%=emailTemplateDTO.getId()%>"><%=emailTemplateDTO.getEngName()%>
             </option>
             <%}%>

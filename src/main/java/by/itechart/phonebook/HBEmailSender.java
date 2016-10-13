@@ -33,19 +33,22 @@ public class HBEmailSender extends Thread {
             }
         }
         ContactRepository contactRepository = new ContactRepositoryImpl();
-        List<ContactDTO> birthdaysContacts=null;
         try {
-            birthdaysContacts = contactRepository.getBirthdays();
+            List<ContactDTO> birthdaysContacts = contactRepository.getBirthdays();
+            //проверка на null
+            StringBuffer text = new StringBuffer();
+
+            for (ContactDTO contactDTO: birthdaysContacts){
+                text.append(contactDTO.toString()).append("/n");
+            }
+            //вынести в проперти
+            //добавить тимплейт
+            Sender tlsSender = new Sender("natashkinsasha@gmail.com", "Natashkinsasha6426384");
+            tlsSender.send("HB", text.toString(), "natashkinsasha@gmail.com", "natashkinsasha@gmail.com");
         } catch (RepositoryException e) {
             e.printStackTrace();
         }
-        StringBuffer text = new StringBuffer();
-        for (ContactDTO contactDTO: birthdaysContacts){
-            text.append(contactDTO.toString()).append("/n");
-        }
 
-        Sender tlsSender = new Sender("natashkinsasha@gmail.com", "Natashkinsasha6426384");
-        tlsSender.send("HB", text.toString(), "natashkinsasha@gmail.com", "natashkinsasha@gmail.com");
         try {
             sleep(24*60*60*1000);
         } catch (InterruptedException e) {

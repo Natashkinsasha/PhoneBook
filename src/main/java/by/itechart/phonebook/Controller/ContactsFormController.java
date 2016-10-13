@@ -25,7 +25,7 @@ public class ContactsFormController {
     @RequestMapping(uri = "/", method = RequestMapping.Method.GET)
     public void mainPage(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         MainTableService mainTableService = new MainTableServiceImpl();
-        req.getSession().removeAttribute("createContactDTO");
+        //req.getSession().removeAttribute("createContactDTO");
         String page = req.getParameter("page");
         if (page != null) {
             req.getSession().setAttribute("page", Integer.valueOf(req.getParameter("page")));
