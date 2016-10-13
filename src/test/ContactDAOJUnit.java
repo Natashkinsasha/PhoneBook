@@ -1,11 +1,12 @@
 package test;
 
 
-import main.java.DAO.ContactDAO;
-import main.java.DAO.DAOException;
-import main.java.DAO.DAOFactory;
-import main.java.DAO.TypeDAOFactory;
-import main.java.Entity.ContactEntity;
+
+import by.itechart.phonebook.DAO.ContactDAO;
+import by.itechart.phonebook.DAO.DAOException;
+import by.itechart.phonebook.DAO.DAOFactory;
+import by.itechart.phonebook.DAO.TypeDAOFactory;
+import by.itechart.phonebook.Entity.ContactEntity;
 import org.junit.*;
 
 import java.sql.Connection;

@@ -1,9 +1,11 @@
-package test;
 
 
-import main.DTO.ContactDTO;
-import main.Email.Sender;
-import main.Servic.ServiceException;
+
+
+
+import by.itechart.phonebook.DTO.ContactDTO;
+import by.itechart.phonebook.Email.Sender;
+import by.itechart.phonebook.Servic.ServiceException;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -12,7 +14,7 @@ import org.junit.Test;
 
 import java.io.StringWriter;
 
-public class SendEmailFormControlerJUnit extends Assert{
+public class SendEmailFormControlerJUnit extends Assert {
     @Test
     public void generateTest(){
         ContactDTO contactDTO = new ContactDTO();
