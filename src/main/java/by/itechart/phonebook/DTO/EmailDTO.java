@@ -1,12 +1,32 @@
 package by.itechart.phonebook.DTO;
 
+import by.itechart.phonebook.Validator.NotNull;
+import by.itechart.phonebook.Validator.Pattern;
+import by.itechart.phonebook.Validator.Size;
 import com.mysql.jdbc.StringUtils;
 
 public class EmailDTO implements DTO {
     private int id;
+    @NotNull
+    @Pattern("^[^@]+@[^@\\.]+\\.[^@]+$")
     private String from;
+    @Size(45)
+    @NotNull
+    @Pattern("^[^@]+@[^@\\.]+\\.[^@]+$")
     private String whom;
+    @Size(45)
     private String subject;
+    private EmailTemplateDTO emailTemplateDTO;
+
+    public EmailTemplateDTO getEmailTemplateDTO() {
+        return emailTemplateDTO;
+    }
+
+    public EmailDTO setEmailTemplateDTO(EmailTemplateDTO emailTemplateDTO) {
+        this.emailTemplateDTO = emailTemplateDTO;
+        return this;
+    }
+
     private String text;
 
     public String getFrom() {

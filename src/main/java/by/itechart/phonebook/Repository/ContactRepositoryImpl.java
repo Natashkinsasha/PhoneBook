@@ -195,6 +195,7 @@ public class ContactRepositoryImpl implements ContactRepository {
         List<ContactDTO> contactDTOs = new ArrayList<>();
 
         try {
+            connection = daoFactory.getConnection();
             ContactDAO mySQLContactDAO = daoFactory.getContactDAO(connection);
             TelephoneDAO mySQLtelephoneDAO = daoFactory.getTelephoneDAO(connection);
             AttachmentDAO mySQLAttachmentDAO = daoFactory.getAttachmentDAO(connection);
@@ -298,6 +299,22 @@ public class ContactRepositoryImpl implements ContactRepository {
         try (Connection connection = daoFactory.getConnection()) {
             ContactDAO mySQLContactDAO = daoFactory.getContactDAO(connection);
             return mySQLContactDAO.getNumberSerch(sortContactEntity);
+        } catch (SQLException | DAOException e) {
+            throw new RepositoryException(e);
+        }
+    }
+
+    @Override
+    public List<ContactDTO> getBirthdays() throws RepositoryException {
+        DAOFactory daoFactory = getDAOFactory();
+        List<ContactDTO> contactDTOs = new ArrayList<>();
+        try (Connection connection = daoFactory.getConnection()) {
+            ContactDAO mySQLContactDAO = daoFactory.getContactDAO(connection);
+            List<ContactEntity> birthdaysEntity = mySQLContactDAO.getBirthdays();
+            for (ContactEntity contactEntity: birthdaysEntity){
+                contactDTOs.add(new ContactDTO(contactEntity));
+            }
+            return contactDTOs;
         } catch (SQLException | DAOException e) {
             throw new RepositoryException(e);
         }

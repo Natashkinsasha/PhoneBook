@@ -40,32 +40,7 @@ public class HandlerMappingImpl implements HandlerMapping {
                 RequestMapping annotation = method.getAnnotation(RequestMapping.class);
                 String value = annotation.uri();
                 RequestMapping.Method method1 = annotation.method();
-                handlerMap.put(Entry.e(value,method1), new Handler() {
-                    HttpServletRequest request;
-                    HttpServletResponse response;
-                    @Override
-                    public void execute() {
-                        try {
-                           method.invoke(controller, request, response);
-                        } catch (IllegalAccessException e) {
-                            e.printStackTrace();
-                        } catch (InvocationTargetException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public Handler setRequest(HttpServletRequest request) {
-                        this.request=request;
-                        return this;
-                    }
-
-                    @Override
-                    public Handler setResponce(HttpServletResponse response) {
-                        this.response=response;
-                        return this;
-                    }
-                });
+                handlerMap.put(Entry.e(value,method1), new HandlerImpl(controller, method));
             }
         }
         return this;

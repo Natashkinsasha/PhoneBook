@@ -19,6 +19,7 @@ public class MySQLContactDAO implements ContactDAO {
     private static final String insertQuere = "INSERT INTO contact (firstname, secondname, patronymic, birthday, male,  nationality, relationshipstatus, webSite, email, country, city, street, ind, company, photo_path) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     //TO DO может есть более оптимальный запрос на количесво элементов
     private static final String getNumberQuere = "SELECT COUNT(*) FROM contact";
+    private static final String getbirthdays = "SELECT * FROM contact where DAYOFYEAR(contact.birthday)=DAYOFYEAR(CURDATE())";
     private static final String getSortLimit = "SELECT * FROM contact ORDER BY ? DESC LIMIT ?, ?";
     private Connection connection;
 
@@ -212,5 +213,17 @@ public class MySQLContactDAO implements ContactDAO {
             throw new DAOException(e);
         }
         return number;
+    }
+
+    @Override
+    public List<ContactEntity> getBirthdays() throws DAOException {
+        List<ContactEntity> contactEntities;
+        try (PreparedStatement getBirthdays = getConnection().prepareStatement(getbirthdays)) {
+            ResultSet resultSet = getBirthdays.executeQuery();
+            contactEntities = parseResultSet(resultSet);
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        }
+        return contactEntities;
     }
 }

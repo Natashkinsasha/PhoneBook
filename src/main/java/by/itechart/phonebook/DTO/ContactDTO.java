@@ -8,6 +8,7 @@ import by.itechart.phonebook.Validator.Size;
 import com.mysql.jdbc.StringUtils;
 
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -215,27 +216,6 @@ public class ContactDTO implements DTO {
         return id;
     }
 
-    @Override
-    public String toString() {
-        return "ContactDTO{" +
-                "firstName='" + firstName + '\'' +
-                ", secondName='" + secondName + '\'' +
-                ", patronymic='" + patronymic + '\'' +
-                ", birthday=" + birthday +
-                ", male=" + male +
-                ", nationality='" + nationality + '\'' +
-                ", relationshipStatus='" + relationshipStatus + '\'' +
-                ", webSite='" + webSite + '\'' +
-                ", email='" + email + '\'' +
-                ", company='" + company + '\'' +
-                ", country='" + country + '\'' +
-                ", city='" + city + '\'' +
-                ", street='" + street + '\'' +
-                ", index='" + index + '\'' +
-                ", telephonesDTO=" + telephonesDTO +
-                '}';
-    }
-
     public String getFirstName() {
         return firstName;
     }
@@ -288,15 +268,14 @@ public class ContactDTO implements DTO {
         if (StringUtils.isNullOrEmpty(birthday)) {
             this.birthday = null;
         } else {
-            SimpleDateFormat format = new SimpleDateFormat();
-            format.applyPattern("yyyy-mm-dd");
-            java.util.Date date = null;
+            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            java.util.Date formatedDate = null;
             try {
-                date = format.parse(birthday);
+                formatedDate = dateFormat.parse(birthday);
             } catch (ParseException e) {
-                this.birthday = null;
+                e.printStackTrace();
             }
-            this.birthday = new Date(date.getTime());
+            this.birthday = new java.sql.Date(formatedDate.getTime());
         }
         return this;
     }
@@ -314,7 +293,6 @@ public class ContactDTO implements DTO {
             return "Female";
         }
     }
-
 
 
     public ContactDTO setMale(Boolean male) {
@@ -464,12 +442,20 @@ public class ContactDTO implements DTO {
         return this;
     }
 
-    public ContactDTO addAttachment(AttachmentDTO attachmentDTO){
+    public ContactDTO addAttachment(AttachmentDTO attachmentDTO) {
         this.attachmentDTOs.add(attachmentDTO);
         return this;
     }
 
     public List<AttachmentDTO> getAttachmentDTOs() {
         return attachmentDTOs;
+    }
+
+    @Override
+    public String toString() {
+        return "firstName='" + firstName + '\'' +
+                ", secondName='" + secondName + '\'' +
+                ", patronymic='" + patronymic + '\'' +
+                ", birthday=" + birthday;
     }
 }

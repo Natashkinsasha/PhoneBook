@@ -1,6 +1,7 @@
 package by.itechart.phonebook.DAO;
 
 
+import by.itechart.phonebook.DTO.EmailTemplateDTO;
 import org.apache.commons.dbcp.BasicDataSource;
 
 
@@ -18,6 +19,8 @@ public abstract class DAOFactory {
     public abstract TelephoneDAO getTelephoneDAO(Connection connection) throws DAOException;
 
     public abstract AttachmentDAO getAttachmentDAO(Connection connection) throws DAOException;
+
+    public abstract EmailTemplateDAO getEmailTemplateDAO(Connection connection) throws DAOException;
 
     public abstract Connection getConnection() throws DAOException;
 
@@ -47,6 +50,11 @@ class MySQLDAOFactory extends DAOFactory {
     @Override
     public AttachmentDAO getAttachmentDAO(Connection connection) throws DAOException {
         return new MySQLAttachmentDAO(connection);
+    }
+
+    @Override
+    public EmailTemplateDAO getEmailTemplateDAO(Connection connection) throws DAOException {
+        return new MySQLEmailTemplateDAO(connection);
     }
 
     public ContactDAO getContactDAO(Connection connection) {
