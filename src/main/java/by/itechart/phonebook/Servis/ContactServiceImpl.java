@@ -1,4 +1,4 @@
-package by.itechart.phonebook.Servic;
+package by.itechart.phonebook.Servis;
 
 
 import by.itechart.phonebook.DTO.ContactDTO;
@@ -8,7 +8,7 @@ import by.itechart.phonebook.Repository.RepositoryException;
 
 public class ContactServiceImpl implements ContactService {
     @Override
-    public void deleteContact(int id) throws ServiceException {
+    public void deleteContact(Integer... id) throws ServiceException {
         ContactRepository contactRepository = new ContactRepositoryImpl();
         try {
             contactRepository.delete(id);

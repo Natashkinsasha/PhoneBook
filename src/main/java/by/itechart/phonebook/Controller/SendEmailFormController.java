@@ -8,9 +8,9 @@ import by.itechart.phonebook.MVC.RequestMapping;
 import by.itechart.phonebook.Repository.EmailTemplateRepository;
 import by.itechart.phonebook.Repository.EmailTemplateRepositoryImpl;
 import by.itechart.phonebook.Repository.RepositoryException;
-import by.itechart.phonebook.Servic.ContactService;
-import by.itechart.phonebook.Servic.ContactServiceImpl;
-import by.itechart.phonebook.Servic.ServiceException;
+import by.itechart.phonebook.Servis.ContactService;
+import by.itechart.phonebook.Servis.ContactServiceImpl;
+import by.itechart.phonebook.Servis.ServiceException;
 import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
@@ -22,7 +22,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
-import java.util.Properties;
 
 public class SendEmailFormController {
     private final static Logger log =Logger.getLogger(SendEmailFormController.class);

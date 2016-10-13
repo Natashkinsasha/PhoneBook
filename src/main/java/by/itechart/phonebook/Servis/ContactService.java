@@ -1,13 +1,11 @@
-package by.itechart.phonebook.Servic;
+package by.itechart.phonebook.Servis;
 
 import by.itechart.phonebook.DTO.ContactDTO;
-import by.itechart.phonebook.Servic.ServiceException;
 
 public interface ContactService {
 
 
-    public void deleteContact(int id) throws ServiceException;
-
+    public void deleteContact(Integer... id) throws ServiceException;
 
     public void createContact(ContactDTO contactDTO) throws ServiceException;
 

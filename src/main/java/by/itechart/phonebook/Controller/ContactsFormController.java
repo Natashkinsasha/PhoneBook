@@ -2,13 +2,14 @@ package by.itechart.phonebook.Controller;
 
 
 import by.itechart.phonebook.DTO.ContactDTO;
-import by.itechart.phonebook.MVC.DispatcherServlet;
 import by.itechart.phonebook.MVC.RequestMapping;
-import by.itechart.phonebook.Servic.*;
+import by.itechart.phonebook.Servis.*;
 import by.itechart.phonebook.Validator.Validator;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.text.StrBuilder;
 import org.apache.log4j.Logger;
 
 import javax.servlet.ServletException;
@@ -16,12 +17,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.UUID;
+import java.io.UnsupportedEncodingException;
+import java.util.*;
 
 public class ContactsFormController {
-    private final static Logger log =Logger.getLogger(ContactsFormController.class);
+    private final static Logger log = Logger.getLogger(ContactsFormController.class);
+
     @RequestMapping(uri = "/", method = RequestMapping.Method.GET)
     public void mainPage(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         MainTableService mainTableService = new MainTableServiceImpl();
@@ -40,13 +41,29 @@ public class ContactsFormController {
         req.getServletContext().getRequestDispatcher("/WEB-INF/jsp/pages/contact_list_page.jsp").forward(req, resp);
     }
 
-    final static String UPLOAD_DIRECTORY_PHOTO= "META-INF" + File.separator + "photo";
+    final static String UPLOAD_DIRECTORY_PHOTO = "META-INF" + File.separator + "photo";
+
+
+    Map<String, String> parseFormItems(List<FileItem> fileItems) throws UnsupportedEncodingException {
+        Map<String, String> map = new HashMap<>();
+        if (fileItems == null || fileItems.size() <= 0) {
+            return map;
+        } else {
+            for (FileItem fileItem : fileItems) {
+                if (fileItem.isFormField() && fileItem.getSize() > 0) {
+                    map.put(fileItem.getFieldName(),fileItem.getString("UTF-8"));
+                } else {
+                    
+                }
+            }
+        }
+        return null;
+    }
+
 
     @RequestMapping(uri = "/createcontact", method = RequestMapping.Method.POST)
     public void createContact(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-        if (!ServletFileUpload.isMultipartContent(req)) {
-            //TODO Сделать окно с ошибкой
-        }
+
         DiskFileItemFactory factory = new DiskFileItemFactory();
         ServletFileUpload upload = new ServletFileUpload(factory);
         ContactDTO contactDTO = (ContactDTO) req.getSession().getAttribute("createContactDTO");
@@ -54,8 +71,8 @@ public class ContactsFormController {
             List<FileItem> formItems = upload.parseRequest(req);
             ContactDTO contactDTOFileItems = getContactDTOFileItems(formItems, req);
             Validator validator = new Validator();
-            if (validator.check(contactDTOFileItems).hasErroe()){
-                req.getSession().setAttribute("error","Enter a valid date");
+            if (validator.check(contactDTOFileItems).hasErroe()) {
+                req.getSession().setAttribute("error", "Enter a valid date");
                 resp.sendRedirect("/editcontact");
                 return;
             }
@@ -64,7 +81,6 @@ public class ContactsFormController {
             e.printStackTrace();
             log.error(e);
         }
-
 
 
         ContactService contactService = new ContactServiceImpl();
@@ -83,33 +99,18 @@ public class ContactsFormController {
     }
 
 
-
-
     @RequestMapping(uri = "/deletecontact", method = RequestMapping.Method.GET)
-    public void deleteOneContact(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    public void deleteOneContact(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServiceException {
         ContactService contactService = new ContactServiceImpl();
-        try {
-            contactService.deleteContact(Integer.valueOf(req.getParameter("id")));
-        } catch (ServiceException e) {
-            e.printStackTrace();
-            log.error(e);
-        }
+        contactService.deleteContact(Integer.valueOf(req.getParameter("id")));
         resp.sendRedirect("/");
     }
 
 
     @RequestMapping(uri = "/deletesomecontact", method = RequestMapping.Method.POST)
-    public void deleteSomeContact(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    public void deleteSomeContact(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServiceException {
         ContactService contactService = new ContactServiceImpl();
-        for (Enumeration<String> parametrs = req.getParameterNames(); parametrs.hasMoreElements(); ) {
-            try {
-                String id = parametrs.nextElement();
-                contactService.deleteContact(Integer.valueOf(id));
-            } catch (ServiceException e) {
-                e.printStackTrace();
-                log.error(e);
-            }
-        }
+        contactService.deleteContact(ArrayUtils.toObject(Arrays.stream(req.getParameterValues("contact_table")).mapToInt(Integer::parseInt).toArray()));
         resp.sendRedirect("/");
     }
 
@@ -143,7 +144,7 @@ public class ContactsFormController {
         if (formItems != null && formItems.size() > 0) {
             for (FileItem item : formItems) {
                 if (!item.isFormField()) {
-                    if (item.getFieldName().equals("up_photo")&& item.getSize()>0) {
+                    if (item.getFieldName().equals("up_photo") && item.getSize() > 0) {
                         String uploadPath = req.getServletContext().getRealPath("") + File.separator + UPLOAD_DIRECTORY_PHOTO + File.separator + generateUniqueId();
                         File uploadDir = new File(uploadPath);
                         if (!uploadDir.exists()) {
@@ -155,7 +156,7 @@ public class ContactsFormController {
                         item.write(storeFile);
                         contactDTO.setPhotoPath(filePath);
                     }
-                } else if (item.isFormField()&& item.getSize()>0) {
+                } else if (item.isFormField() && item.getSize() > 0) {
                     switch (item.getFieldName()) {
                         case "first_name":
                             contactDTO.setFirstName(item.getString("UTF-8"));
@@ -205,7 +206,6 @@ public class ContactsFormController {
         }
         return contactDTO;
     }
-
 
 
     private static int generateUniqueId() {

@@ -5,7 +5,7 @@
 
 import by.itechart.phonebook.DTO.ContactDTO;
 import by.itechart.phonebook.Email.Sender;
-import by.itechart.phonebook.Servic.ServiceException;
+import by.itechart.phonebook.Servis.ServiceException;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;

@@ -1,4 +1,4 @@
-package by.itechart.phonebook.Servic;
+package by.itechart.phonebook.Servis;
 
 
 public interface TelephoneService {

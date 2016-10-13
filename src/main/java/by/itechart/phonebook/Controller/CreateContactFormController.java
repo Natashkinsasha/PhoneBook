@@ -5,7 +5,7 @@ import by.itechart.phonebook.DTO.AttachmentDTO;
 import by.itechart.phonebook.DTO.ContactDTO;
 import by.itechart.phonebook.DTO.TelephoneDTO;
 import by.itechart.phonebook.MVC.RequestMapping;
-import by.itechart.phonebook.Servic.*;
+import by.itechart.phonebook.Servis.*;
 import by.itechart.phonebook.Validator.Validator;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;

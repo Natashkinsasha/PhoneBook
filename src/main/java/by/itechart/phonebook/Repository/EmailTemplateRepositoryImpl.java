@@ -25,7 +25,7 @@ public class EmailTemplateRepositoryImpl implements EmailTemplateRepository {
     }
 
     @Override
-    public void delete(Integer id) throws RepositoryException {
+    public void delete(Integer... id) throws RepositoryException {
 
     }
 
