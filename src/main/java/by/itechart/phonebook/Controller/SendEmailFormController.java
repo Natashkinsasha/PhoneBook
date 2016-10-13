@@ -11,6 +11,7 @@ import by.itechart.phonebook.Repository.RepositoryException;
 import by.itechart.phonebook.Servic.ContactService;
 import by.itechart.phonebook.Servic.ContactServiceImpl;
 import by.itechart.phonebook.Servic.ServiceException;
+import org.apache.log4j.Logger;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -24,7 +25,7 @@ import java.util.List;
 import java.util.Properties;
 
 public class SendEmailFormController {
-
+    private final static Logger log =Logger.getLogger(SendEmailFormController.class);
     @RequestMapping(uri = "/sendemail", method = RequestMapping.Method.GET)
     public void openEmailForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         EmailDTO emailDTO = new EmailDTO();
@@ -36,6 +37,7 @@ public class SendEmailFormController {
             emailTemplateDTOList = emailTemplateRepository.toList();
         } catch (RepositoryException e) {
             e.printStackTrace();
+            log.error(e);
         }
         req.getSession().setAttribute("templates",emailTemplateDTOList);
 
@@ -47,6 +49,7 @@ public class SendEmailFormController {
                 contactDTO = contactService.getContactById(Integer.valueOf(req.getParameter("id")));
             } catch (ServiceException e) {
                 e.printStackTrace();
+                log.error(e);
             }
 
             req.getSession().setAttribute("emailContactDTO",contactDTO);
@@ -64,6 +67,7 @@ public class SendEmailFormController {
                 emailTemplateDTO= emailTemplateRepository.get(Integer.valueOf(req.getParameter("id_template")));
             } catch (RepositoryException e) {
                 e.printStackTrace();
+                log.error(e);
             }
             emailDTO.setText(generateText(contactDTO,emailTemplateDTO));
             emailDTO.setEmailTemplateDTO(emailTemplateDTO);

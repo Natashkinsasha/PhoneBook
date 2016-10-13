@@ -2,12 +2,14 @@ package by.itechart.phonebook.Controller;
 
 
 import by.itechart.phonebook.DTO.ContactDTO;
+import by.itechart.phonebook.MVC.DispatcherServlet;
 import by.itechart.phonebook.MVC.RequestMapping;
 import by.itechart.phonebook.Servic.*;
 import by.itechart.phonebook.Validator.Validator;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +21,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class ContactsFormController {
+    private final static Logger log =Logger.getLogger(ContactsFormController.class);
     @RequestMapping(uri = "/", method = RequestMapping.Method.GET)
     public void mainPage(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         MainTableService mainTableService = new MainTableServiceImpl();
@@ -32,6 +35,7 @@ public class ContactsFormController {
             req.getSession().setAttribute("pageCol", mainTableService.getCountTablePage((ContactDTO) req.getSession().getAttribute("serchPattern")));
         } catch (ServiceException e) {
             e.printStackTrace();
+            log.error(e);
         }
         req.getServletContext().getRequestDispatcher("/WEB-INF/jsp/pages/contact_list_page.jsp").forward(req, resp);
     }
@@ -58,6 +62,7 @@ public class ContactsFormController {
             contactDTO.setFirstName(contactDTOFileItems.getFirstName()).setSecondName(contactDTOFileItems.getSecondName()).setPatronymic(contactDTOFileItems.getPatronymic()).setBirthday(contactDTOFileItems.getBirthday()).setMale(contactDTOFileItems.getMale()).setNationality(contactDTOFileItems.getNationality()).setRelationshipStatus(contactDTOFileItems.getRelationshipStatus()).setWebSite(contactDTOFileItems.getWebSite()).setEmail(contactDTOFileItems.getEmail()).setCountry(contactDTOFileItems.getCountry()).setCity(contactDTOFileItems.getCity()).setStreet(contactDTOFileItems.getStreet()).setIndex(contactDTOFileItems.getIndex()).setCompany(contactDTOFileItems.getCompany()).setPhotoPath(contactDTOFileItems.getPhotoPath());
         } catch (Exception e) {
             e.printStackTrace();
+            log.error(e);
         }
 
 
@@ -71,6 +76,7 @@ public class ContactsFormController {
             }
         } catch (ServiceException e) {
             e.printStackTrace();
+            log.error(e);
         }
 
         resp.sendRedirect("/");
@@ -86,6 +92,7 @@ public class ContactsFormController {
             contactService.deleteContact(Integer.valueOf(req.getParameter("id")));
         } catch (ServiceException e) {
             e.printStackTrace();
+            log.error(e);
         }
         resp.sendRedirect("/");
     }
@@ -100,6 +107,7 @@ public class ContactsFormController {
                 contactService.deleteContact(Integer.valueOf(id));
             } catch (ServiceException e) {
                 e.printStackTrace();
+                log.error(e);
             }
         }
         resp.sendRedirect("/");

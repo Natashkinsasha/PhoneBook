@@ -45,6 +45,8 @@ public class DispatcherServlet extends HttpServlet {
         HandlerMapping handlerMapping = (HandlerMapping) getServletContext().getAttribute("HandlerMapping");
         HandlerAdapter handlerAdapter = (HandlerAdapter) getServletContext().getAttribute("HandlerAdapter");
         Handler handler = handlerMapping.getHandler(req);
-        handlerAdapter.handle(req, resp, handler);
+        if (handler!=null) {
+            handlerAdapter.handle(req, resp, handler);
+        }
     }
 }

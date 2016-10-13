@@ -10,6 +10,7 @@ import by.itechart.phonebook.Validator.Validator;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.UUID;
 
 public class CreateContactFormController {
+    private final static Logger log =Logger.getLogger(CreateContactFormController.class);
     final static String UPLOAD_DIRECTORY_FILE = "META-INF" + File.separator + "file";
 
     @RequestMapping(uri = "/createcontact", method = RequestMapping.Method.GET)
@@ -41,6 +43,7 @@ public class CreateContactFormController {
                 contactDTO = contactService.getContactById(Integer.valueOf(req.getParameter("id")));
             } catch (ServiceException e) {
                 e.printStackTrace();
+                log.error(e);
             }
             HttpSession session = req.getSession();
             session.setAttribute("createContactDTO", contactDTO);
@@ -69,6 +72,7 @@ public class CreateContactFormController {
             telephoneDTO.setId(generateUniqueId()).setCountryCode(telephoneDTOFileItems.getCountryCode()).setOperatorCode(telephoneDTOFileItems.getOperatorCode()).setNumber(telephoneDTOFileItems.getNumber()).setType(telephoneDTOFileItems.getType()).setComments(telephoneDTOFileItems.getComments());
         } catch (Exception e) {
             e.printStackTrace();
+            log.error(e);
         }
         Validator validator = new Validator();
         if (validator.check(telephoneDTO).hasErroe()){
@@ -93,6 +97,7 @@ public class CreateContactFormController {
             contactDTO.setFirstName(contactDTOFileItems.getFirstName()).setSecondName(contactDTOFileItems.getSecondName()).setPatronymic(contactDTOFileItems.getPatronymic()).setBirthday(contactDTOFileItems.getBirthday()).setMale(contactDTOFileItems.getMale()).setNationality(contactDTOFileItems.getNationality()).setRelationshipStatus(contactDTOFileItems.getRelationshipStatus()).setWebSite(contactDTOFileItems.getWebSite()).setEmail(contactDTOFileItems.getEmail()).setCountry(contactDTOFileItems.getCountry()).setCity(contactDTOFileItems.getCity()).setStreet(contactDTOFileItems.getStreet()).setIndex(contactDTOFileItems.getIndex()).setCompany(contactDTOFileItems.getCompany());
         } catch (Exception e) {
             e.printStackTrace();
+            log.error(e);
         }
         resp.sendRedirect("/editcontactWithoutId");
     }
@@ -122,6 +127,7 @@ public class CreateContactFormController {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            log.error(e);
         }
         resp.sendRedirect("/editcontactWithoutId");
     }
@@ -161,6 +167,7 @@ public class CreateContactFormController {
 
         } catch (Exception e) {
             e.printStackTrace();
+            log.error(e);
         }
         /*if (new Validator().check(telephoneDTO).hasErroe()) {
             resp.sendRedirect("/createcontactwitherror");
@@ -194,6 +201,7 @@ public class CreateContactFormController {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            log.error(e);
         }
         resp.sendRedirect("/editcontactWithoutId");
     }
@@ -211,6 +219,7 @@ public class CreateContactFormController {
             contactDTO.setFirstName(contactDTOFileItems.getFirstName()).setSecondName(contactDTOFileItems.getSecondName()).setPatronymic(contactDTOFileItems.getPatronymic()).setBirthday(contactDTOFileItems.getBirthday()).setMale(contactDTOFileItems.getMale()).setNationality(contactDTOFileItems.getNationality()).setRelationshipStatus(contactDTOFileItems.getRelationshipStatus()).setWebSite(contactDTOFileItems.getWebSite()).setEmail(contactDTOFileItems.getEmail()).setCountry(contactDTOFileItems.getCountry()).setCity(contactDTOFileItems.getCity()).setStreet(contactDTOFileItems.getStreet()).setIndex(contactDTOFileItems.getIndex()).setCompany(contactDTOFileItems.getCompany());
         } catch (Exception e) {
             e.printStackTrace();
+            log.error(e);
         }
         resp.sendRedirect("/editcontactWithoutId");
     }
