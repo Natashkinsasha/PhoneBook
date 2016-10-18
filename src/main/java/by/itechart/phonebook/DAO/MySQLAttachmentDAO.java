@@ -5,10 +5,7 @@ import by.itechart.phonebook.DTO.AttachmentDTO;
 import by.itechart.phonebook.Entity.AttachmentEntity;
 import by.itechart.phonebook.Entity.TelephoneEntity;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +18,7 @@ public class MySQLAttachmentDAO implements AttachmentDAO{
     private static final String insertQuere = "INSERT INTO attachment (path, creation_date, name, comment, contact_id) VALUES (?, ?, ?, ?, ?)";
     private static final String getNumberQuere = "SELECT COUNT(*) FROM attachments";
     private static final String getByContactIDQuere = "SELECT * FROM attachment WHERE contact_id=?";
+    private static final String deleteExcludedQuere = "DELETE * FROM attachment where attachment.contact_id=? and attachment.id not in (?)";
 
     private Connection connection;
     public MySQLAttachmentDAO(Connection connection) {
@@ -139,5 +137,27 @@ public class MySQLAttachmentDAO implements AttachmentDAO{
             throw new DAOException(e);
         }
         return attachmentEntities;
+    }
+
+    @Override
+    public void update(List<AttachmentEntity> attachmentEntities) throws DAOException {
+        try (PreparedStatement statement = getConnection().prepareStatement(deleteExcludedQuere)) {
+            statement.setInt(1,attachmentEntities.get(0).getContactId());
+            Integer[] ids = attachmentEntities.stream().map(elemnt -> elemnt.getId()).toArray(Integer[]::new);
+            Array idsArray = getConnection().createArrayOf("Integer", ids);
+            statement.setArray(2, idsArray);
+            statement.execute();
+            AttachmentEntity[] attachmentsForUpdate = attachmentEntities.stream().filter((s) -> s.getId() > 0).toArray(AttachmentEntity[]::new);
+            for (AttachmentEntity attachment: attachmentsForUpdate){
+                update(attachment);
+            }
+            AttachmentEntity[] attachmentsForAdd = attachmentEntities.stream().filter((s) -> s.getId() < 0).toArray(AttachmentEntity[]::new);
+            for (AttachmentEntity attachment: attachmentsForAdd){
+                create(attachment);
+            }
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        }
+
     }
 }

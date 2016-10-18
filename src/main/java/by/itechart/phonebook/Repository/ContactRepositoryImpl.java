@@ -73,26 +73,20 @@ public class ContactRepositoryImpl implements ContactRepository {
             TelephoneDAO mySQLtelephoneDAO = daoFactory.getTelephoneDAO(connection);
             AttachmentDAO mySQLAttachmentDAO = daoFactory.getAttachmentDAO(connection);
             ContactEntity contactEntity = new ContactEntity(dto);
+            List<TelephoneEntity> telephoneEntities = new ArrayList<>();
+            for (TelephoneDTO telephoneDTO: dto.getTelephonesDTO()){
+                TelephoneEntity telephoneEntity = new TelephoneEntity(telephoneDTO,dto.getId());
+                telephoneEntities.add(telephoneEntity);
+            }
+            List<AttachmentEntity> attachmentEntities = new ArrayList<>();
+            for (AttachmentDTO attachmentDTO:dto.getAttachmentDTOs()){
+                AttachmentEntity attachmentEntity = new AttachmentEntity(attachmentDTO,dto.getId());
+                attachmentEntities.add(attachmentEntity);
+            }
             connection.setAutoCommit(false);
             mySQLContactDAO.update(contactEntity);
-            List<TelephoneEntity> telephoneEntityList = mySQLtelephoneDAO.getByContactId(contactEntity.getId());
-            for (TelephoneEntity telephoneEntity : telephoneEntityList) {
-                mySQLtelephoneDAO.delete(telephoneEntity.getId());
-            }
-            for (TelephoneDTO telephoneDTO : dto.getTelephonesDTO()) {
-                TelephoneEntity telephoneEntity = new TelephoneEntity(telephoneDTO, dto.getId());
-                mySQLtelephoneDAO.create(telephoneEntity);
-            }
-
-            List<AttachmentEntity> attachmentEntities = mySQLAttachmentDAO.getByContactId(contactEntity.getId());
-            for (AttachmentEntity attachmentEntity : attachmentEntities) {
-                mySQLAttachmentDAO.delete(attachmentEntity.getId());
-            }
-            for (AttachmentDTO attachmentDTO : dto.getAttachmentDTOs()) {
-                AttachmentEntity attachmentEntity = new AttachmentEntity(attachmentDTO, dto.getId());
-                mySQLAttachmentDAO.create(attachmentEntity);
-            }
-
+            mySQLtelephoneDAO.update(telephoneEntities);
+            mySQLAttachmentDAO.update(attachmentEntities);
             connection.commit();
         } catch (SQLException | DAOException e) {
             if (connection != null) {
@@ -263,7 +257,7 @@ public class ContactRepositoryImpl implements ContactRepository {
             ContactDAO mySQLContactDAO = daoFactory.getContactDAO(connection);
             TelephoneDAO mySQLtelephoneDAO = daoFactory.getTelephoneDAO(connection);
             AttachmentDAO mySQLAttachmentDAO = daoFactory.getAttachmentDAO(connection);
-
+            connection.setAutoCommit(false);
             for (ContactEntity contactEntity : mySQLContactDAO.getSerchSortLimit(sortContactEntity, offset, number, sortFields)) {
                 ContactDTO newContactDTO = new ContactDTO(contactEntity);
                 List<TelephoneEntity> telephoneEntities = mySQLtelephoneDAO.getByContactId(contactEntity.getId());
@@ -276,9 +270,16 @@ public class ContactRepositoryImpl implements ContactRepository {
                 }
                 contactDTOs.add(newContactDTO);
             }
+            connection.commit();
 
-        } catch (DAOException e) {
-            throw new RepositoryException(e);
+        } catch (SQLException|DAOException e) {
+            if (connection != null) {
+                try {
+                    connection.rollback();
+                } catch (SQLException e1) {
+                    throw new RepositoryException(e1);
+                }
+            }
         } finally {
             if (connection != null) {
                 try {

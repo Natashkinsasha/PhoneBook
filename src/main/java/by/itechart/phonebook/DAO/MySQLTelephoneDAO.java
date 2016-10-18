@@ -2,14 +2,14 @@ package by.itechart.phonebook.DAO;
 
 
 import by.itechart.phonebook.DAO.TelephoneDAO;
+import by.itechart.phonebook.Entity.ContactEntity;
 import by.itechart.phonebook.Entity.TelephoneEntity;
+import org.apache.commons.lang.ArrayUtils;
 
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MySQLTelephoneDAO implements TelephoneDAO {
@@ -21,12 +21,35 @@ public class MySQLTelephoneDAO implements TelephoneDAO {
     private static final String insertQuere = "INSERT INTO telephone (number, type, comment, country_code, operator_code, contact_id) VALUES (?, ?, ?, ?, ?, ?);";
     private static final String getByContactIDQuere = "SELECT * FROM telephone WHERE contact_id=?";
     private static final String getNumberQuere = "SELECT COUNT(*) FROM telephone";
+    private static final String deleteExcludedQuere = "DELETE * FROM telephone where telephone.contact_id=? and telephone.id not in (?)";
     private Connection connection;
     public MySQLTelephoneDAO(Connection connection) {
         this.connection=connection;
     }
     private Connection getConnection(){
         return connection;
+    }
+
+
+    @Override
+    public void update(List<TelephoneEntity> telephoneEntities) throws DAOException {
+        try (PreparedStatement statement = getConnection().prepareStatement(deleteExcludedQuere)) {
+            statement.setInt(1,telephoneEntities.get(0).getContactId());
+            Integer[] ids = telephoneEntities.stream().map(elemnt -> elemnt.getId()).toArray(Integer[]::new);
+            Array idsArray = getConnection().createArrayOf("Integer", ids);
+            statement.setArray(2, idsArray);
+            statement.execute();
+            TelephoneEntity[] telephonesForUpdate = telephoneEntities.stream().filter((s) -> s.getId() > 0).toArray(TelephoneEntity[]::new);
+            for (TelephoneEntity telephone: telephonesForUpdate){
+                update(telephone);
+            }
+            TelephoneEntity[] telephonesForAdd = telephoneEntities.stream().filter((s) -> s.getId() < 0).toArray(TelephoneEntity[]::new);
+            for (TelephoneEntity telephone: telephonesForAdd){
+                create(telephone);
+            }
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        }
     }
 
     //TO DO Удастоверица, что выбран лучший способ получения последней вставленой записи

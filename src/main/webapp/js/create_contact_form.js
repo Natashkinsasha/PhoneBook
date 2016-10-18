@@ -202,7 +202,7 @@ function save_attachment() {
 }
 
 function generateId() {
-    return '_' + Math.random().toString(36).substr(2, 9);
+    return base_convert(sha1(uniqid(mt_rand(), true)), 16, 36);
 }
 
 function formatDate(date) {
@@ -216,6 +216,7 @@ function formatDate(date) {
 function makeForm() {
     var form = document.createElement("form");
     form.enctype = "multipart/form-data";
+    form.action = "/save_contact";
     document.body.appendChild(form);
     return form;
 }
@@ -224,15 +225,16 @@ function save_contact() {
     var form = makeForm();
     addAttachmentsFromTable(form);
     addPhonesFromTable(form);
-    addFiles('files_form', form);
-    var act = document.forms["save_contact_form"];
-    act.action = "/save_contact";
-    act.method = "post";
-    act.submit();
+    addFromForm('files_form', form);
+    addFromForm('contact_form', form);
 
-    function addFiles(from_form_id, from) {
+    form.method = "post";
+    form.submit();
+
+    function addFromForm(from_form_id, from) {
         var formFiles = document.getElementById(from_form_id);
         for (var i = 0; i < formFiles.elements.length;) {
+            //formFiles.elements[i].type="hidden";
             form.appendChild(formFiles.elements[i]);
         }
     }
@@ -245,26 +247,32 @@ function save_contact() {
         form.appendChild(parameter);
     }
 
-    function addAttachmentsFromTable(form) {
-        var tbody = document.getElementById("telephones");
-        for (var i = 0; i < tbody.rows.length; i++) {
-            addParameterToForm(form, "telephone_id", tbody.row[i].id);
-            addParameterToForm(form, tbody.row[i].cells[1].id, tbody.row[i].cells[1].innerHTML);
-            addParameterToForm(form, tbody.row[i].cells[2].id, tbody.row[i].cells[2].innerHTML);
-            addParameterToForm(form, tbody.row[i].cells[3].id, tbody.row[i].cells[3].innerHTML);
-            addParameterToForm(form, tbody.row[i].cells[4].id, tbody.row[i].cells[4].innerHTML);
-            addParameterToForm(form, tbody.row[i].cells[5].id, tbody.row[i].cells[5].innerHTML);
-        }
-    }
+
 
     function addPhonesFromTable(form) {
-        var tbody = document.getElementById("attachments");
+        var tbody = document.getElementById("telephones");
+        var phonesIds='';
         for (var i = 0; i < tbody.rows.length; i++) {
-            addParameterToForm(form, "attachment_id", tbody.row[i].id);
-            addParameterToForm(form, tbody.row[i].cells[1].id, tbody.row[i].cells[1].innerHTML);
-            addParameterToForm(form, tbody.row[i].cells[2].id, tbody.row[i].cells[2].innerHTML);
-            addParameterToForm(form, tbody.row[i].cells[3].id, tbody.row[i].cells[3].innerHTML);
+            phonesIds=phonesIds.concat(","+tbody.rows[i].id);
+            addParameterToForm(form, tbody.rows[i].cells[1].id, tbody.rows[i].cells[1].innerHTML);
+            addParameterToForm(form, tbody.rows[i].cells[2].id, tbody.rows[i].cells[2].innerHTML);
+            addParameterToForm(form, tbody.rows[i].cells[3].id, tbody.rows[i].cells[3].innerHTML);
+            addParameterToForm(form, tbody.rows[i].cells[4].id, tbody.rows[i].cells[4].innerHTML);
+            addParameterToForm(form, tbody.rows[i].cells[5].id, tbody.rows[i].cells[5].innerHTML);
         }
+        addParameterToForm(form, 'phonesIds', phonesIds);
+    }
+
+    function addAttachmentsFromTable(form) {
+        var tbody = document.getElementById("attachments");
+        var attachmentsIds='';
+        for (var i = 0; i < tbody.rows.length; i++) {
+            attachmentsIds=attachmentsIds.concat(","+tbody.rows[i].id);
+            addParameterToForm(form, tbody.rows[i].cells[1].id, tbody.rows[i].cells[1].innerHTML);
+            addParameterToForm(form, tbody.rows[i].cells[2].id, tbody.rows[i].cells[2].innerHTML);
+            addParameterToForm(form, tbody.rows[i].cells[3].id, tbody.rows[i].cells[3].innerHTML);
+        }
+        addParameterToForm(form, 'attachmentsIds', attachmentsIds);
     }
 
 }

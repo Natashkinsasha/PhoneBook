@@ -1,4 +1,4 @@
-package by.itechart.phonebook.Email;
+package by.itechart.phonebook.Servis;
 
 
 import java.util.Properties;
@@ -7,15 +7,15 @@ import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-public class Sender {
+public class SenderServiceImpl implements SenderService{
 
     private String username;
     private String password;
     private Properties props;
 
-    public Sender(String username, String password) {
-        this.username = username;
-        this.password = password;
+    public SenderServiceImpl() {
+        this.username = "natashkinsasha";
+        this.password = "Natashkinsasha6426384";
 
         props = new Properties();
         props.put("mail.smtp.auth", "true");
