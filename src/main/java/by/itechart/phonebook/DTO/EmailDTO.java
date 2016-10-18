@@ -16,17 +16,6 @@ public class EmailDTO implements DTO {
     private String whom;
     @MaxSize(45)
     private String subject;
-    private EmailTemplateDTO emailTemplateDTO;
-
-    public EmailTemplateDTO getEmailTemplateDTO() {
-        return emailTemplateDTO;
-    }
-
-    public EmailDTO setEmailTemplateDTO(EmailTemplateDTO emailTemplateDTO) {
-        this.emailTemplateDTO = emailTemplateDTO;
-        return this;
-    }
-
     private String text;
 
     public String getFrom() {

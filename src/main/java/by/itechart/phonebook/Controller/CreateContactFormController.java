@@ -35,7 +35,6 @@ public class CreateContactFormController {
 
     @RequestMapping(uri = "/editcontact", method = RequestMapping.Method.GET)
     public void editContact(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-        TelephoneService telephoneService = new TelephoneServiceImpl();
         ContactService contactService = new ContactServiceImpl();
         ContactDTO contactDTO = null;
         if (req.getParameter("id")!=null) {
@@ -86,7 +85,6 @@ public class CreateContactFormController {
 
     @RequestMapping(uri = "/deletetelephone", method = RequestMapping.Method.POST)
     public void deleteTelephone(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        TelephoneService telephoneService = new TelephoneServiceImpl();
         ContactDTO contactDTO = (ContactDTO) req.getSession().getAttribute("createContactDTO");
         contactDTO.deleteTelephone(Integer.valueOf(req.getParameter("id")));
         DiskFileItemFactory factory = new DiskFileItemFactory();
@@ -208,7 +206,6 @@ public class CreateContactFormController {
 
     @RequestMapping(uri = "/deleteattachment", method = RequestMapping.Method.POST)
     public void deleteAttachment(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        TelephoneService telephoneService = new TelephoneServiceImpl();
         ContactDTO contactDTO = (ContactDTO) req.getSession().getAttribute("createContactDTO");
         contactDTO.deleteAttachment(Integer.valueOf(req.getParameter("id")));
         DiskFileItemFactory factory = new DiskFileItemFactory();

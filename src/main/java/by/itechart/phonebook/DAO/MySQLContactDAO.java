@@ -149,7 +149,7 @@ public class MySQLContactDAO implements ContactDAO {
                 contactEntity.setFirstName(resultSet.getString("firstname"));
                 contactEntity.setSecondName(resultSet.getString("secondname"));
                 contactEntity.setIndex(resultSet.getString("ind"));
-                contactEntity.setMale(resultSet.getBoolean("male"));
+                contactEntity.setMale(resultSet.getObject("male")==null?null: (Boolean) resultSet.getObject("male"));
                 contactEntity.setStreet(resultSet.getString("street"));
                 contactEntity.setNationality(resultSet.getString("nationality"));
                 contactEntity.setPatronymic(resultSet.getString("patronymic"));

@@ -14,6 +14,7 @@ public class HandlerImpl implements Handler{
     private HttpServletResponse response;
     private Method method;
     private Object controller;
+    private String pathErrorPage;
 
     public HandlerImpl(Object controller, Method method){
         this.controller=controller;
@@ -46,6 +47,11 @@ public class HandlerImpl implements Handler{
         return this;
     }
 
+    public Handler setPathErrorPage(String pathErrorPage) {
+        this.pathErrorPage = pathErrorPage;
+        return this;
+    }
+
     @Override
     public String toString() {
         return "HandlerImpl{" +
@@ -55,4 +61,6 @@ public class HandlerImpl implements Handler{
                 ", controller=" + controller +
                 '}';
     }
+
+
 }

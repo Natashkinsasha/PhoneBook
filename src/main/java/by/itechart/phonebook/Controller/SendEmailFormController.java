@@ -2,11 +2,10 @@ package by.itechart.phonebook.Controller;
 
 import by.itechart.phonebook.DTO.ContactDTO;
 import by.itechart.phonebook.DTO.EmailDTO;
-import by.itechart.phonebook.DTO.EmailTemplateDTO;
+
 import by.itechart.phonebook.Email.Sender;
 import by.itechart.phonebook.MVC.RequestMapping;
-import by.itechart.phonebook.Repository.EmailTemplateRepository;
-import by.itechart.phonebook.Repository.EmailTemplateRepositoryImpl;
+
 import by.itechart.phonebook.Repository.RepositoryException;
 import by.itechart.phonebook.Servis.ContactService;
 import by.itechart.phonebook.Servis.ContactServiceImpl;
@@ -28,17 +27,17 @@ public class SendEmailFormController {
     @RequestMapping(uri = "/sendemail", method = RequestMapping.Method.GET)
     public void openEmailForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         EmailDTO emailDTO = new EmailDTO();
-        emailDTO.setEmailTemplateDTO(new EmailTemplateDTO());
+        /*emailDTO.setEmailTemplateDTO(new EmailTemplateDTO());
         req.getSession().setAttribute("emailDTO",emailDTO);
         EmailTemplateRepository emailTemplateRepository = new EmailTemplateRepositoryImpl();
-        List<EmailTemplateDTO> emailTemplateDTOList=null;
-        try {
+        List<EmailTemplateDTO> emailTemplateDTOList=null;*/
+        /*try {
             emailTemplateDTOList = emailTemplateRepository.toList();
         } catch (RepositoryException e) {
             e.printStackTrace();
             log.error(e);
         }
-        req.getSession().setAttribute("templates",emailTemplateDTOList);
+        req.getSession().setAttribute("templates",emailTemplateDTOList);*/
 
 
         ContactDTO contactDTO = (ContactDTO) req.getSession().getAttribute("emailContactDTO");
@@ -60,7 +59,7 @@ public class SendEmailFormController {
 
         emailDTO.setWhom(contactDTO.getEmailString());
 
-        EmailTemplateDTO emailTemplateDTO = null;
+        /*EmailTemplateDTO emailTemplateDTO = null;
         if (req.getParameter("id_template")!=null){
             try {
                 emailTemplateDTO= emailTemplateRepository.get(Integer.valueOf(req.getParameter("id_template")));
@@ -71,11 +70,11 @@ public class SendEmailFormController {
             emailDTO.setText(generateText(contactDTO,emailTemplateDTO));
             emailDTO.setEmailTemplateDTO(emailTemplateDTO);
 
-        }
+        }*/
         req.getServletContext().getRequestDispatcher("/WEB-INF/jsp/pages/send_email_page.jsp").forward(req, resp);
     }
 
-    private String generateText(ContactDTO contactDTO, EmailTemplateDTO emailTemplate){
+    /*private String generateText(ContactDTO contactDTO, EmailTemplateDTO emailTemplate){
         VelocityEngine velocityEngine = new VelocityEngine();
         velocityEngine.setProperty("resource.loader", "class");
         velocityEngine.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");
@@ -88,7 +87,7 @@ public class SendEmailFormController {
         template.merge(context, writer);
         String text = writer.toString();
         return text;
-    }
+    }*/
 
 
 

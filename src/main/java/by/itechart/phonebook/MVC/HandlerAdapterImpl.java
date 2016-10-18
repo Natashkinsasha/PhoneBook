@@ -10,7 +10,6 @@ public class HandlerAdapterImpl implements HandlerAdapter{
     private final static Logger log =Logger.getLogger(HandlerImpl.class);
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, Handler handler) {
-        log.info(handler);
         handler.setRequest(request).setResponce(response).execute();
     }
 }

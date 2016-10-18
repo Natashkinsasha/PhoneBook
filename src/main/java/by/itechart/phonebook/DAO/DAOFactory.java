@@ -21,7 +21,6 @@ public abstract class DAOFactory {
 
     public abstract AttachmentDAO getAttachmentDAO(Connection connection) throws DAOException;
 
-    public abstract EmailTemplateDAO getEmailTemplateDAO(Connection connection) throws DAOException;
 
     public abstract Connection getConnection() throws DAOException;
 
@@ -48,7 +47,7 @@ public abstract class DAOFactory {
     }
 }
 
-//TO DO Уточнить правильно ли, что при каждом get создаеться новый DAO
+
 class MySQLDAOFactory extends DAOFactory {
     private DataSource dataSource;
     MySQLDAOFactory() {
@@ -66,10 +65,7 @@ class MySQLDAOFactory extends DAOFactory {
         return new MySQLAttachmentDAO(connection);
     }
 
-    @Override
-    public EmailTemplateDAO getEmailTemplateDAO(Connection connection) throws DAOException {
-        return new MySQLEmailTemplateDAO(connection);
-    }
+
 
     public ContactDAO getContactDAO(Connection connection) {
         return new MySQLContactDAO(connection);
