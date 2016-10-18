@@ -52,7 +52,7 @@ public class ContactsFormController {
                 if (fileItem.isFormField() && fileItem.getSize() > 0) {
                     map.put(fileItem.getFieldName(),fileItem.getString("UTF-8"));
                 } else {
-                    
+
                 }
             }
         }

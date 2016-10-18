@@ -149,7 +149,7 @@
             </div>
         </div>
     </form>
-    <form method="post" enctype="multipart/form-data" id="files_form">
+    <form  enctype="multipart/form-data" id="files_form">
     </form>
     <div class="row">
         <table class="table">
@@ -252,7 +252,7 @@
     </div>
     <div class="btn-group" role="group" aria-label="...">
         <button type="button" class="btn btn-danger" onclick="location.href='/'">Close</button>
-        <button id="create_contact" type="button" class="btn btn-success" onclick="click_btn(this)">Save</button>
+        <button id="create_contact" type="button" class="btn btn-success" onclick="save_contact()">Save</button>
         <button type="button" class="btn btn-warning"
                 onclick="location.href='/deletecontact?id=${createContactDTO.id}'">Delete
         </button>

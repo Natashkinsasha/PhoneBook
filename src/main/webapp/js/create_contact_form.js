@@ -87,7 +87,7 @@ function save_telephone() {
     telephone.comment = document.getElementById('comment').value;
     var choose_telephone = document.getElementById("telephone_" + telephone.id);
     document.getElementById("telephones").insertBefore(generateTRForTelephone(telephone), choose_telephone);
-    if (document.getElementById(choose_telephone)) {
+    if (choose_telephone != null) {
         document.getElementById("telephones").removeChild(choose_telephone);
     }
     function generateTRForTelephone(telephone) {
@@ -117,7 +117,7 @@ function save_telephone() {
         temp.innerHTML = telephone.comment;
         tr.appendChild(temp);
         var temp = document.createElement('td');
-        temp.innerHTML = "<button id=\"delete_telephone\" onclick=\"delete_telephone(this, \'" + telephone.id + "\')\" class=\"btn btn-default\" type=\"button\" aria-haspopup=\"true\" aria-expanded=\"true\"style=\"border: 0px\"> <span class=\"glyphicon glyphicon-trash\"></span> </button> <button id=\"edit_telephone\" data-toggle=\"modal\" data-target=\"#modal_telephone\" onclick=\"edit_telephone(this, \'" + telephone.id + "\')\"class=\"btn btn-default \"type=\"button\" aria-haspopup=\"true\" aria-expanded=\"true\" style=\"border: 0px\" > <span class=\"glyphicon glyphicon-pencil\"></span> </button>";
+        temp.innerHTML = "<button id=\"delete_telephone\" onclick=\"delete_telephone(\'" + telephone.id + "\','Are you sure?'" + ")\" class=\"btn btn-default\" type=\"button\" aria-haspopup=\"true\" aria-expanded=\"true\"style=\"border: 0px\"> <span class=\"glyphicon glyphicon-trash\"></span> </button> <button id=\"edit_telephone\" data-toggle=\"modal\" data-target=\"#modal_telephone\" onclick=\"edit_telephone(this, \'" + telephone.id + "\')\"class=\"btn btn-default \"type=\"button\" aria-haspopup=\"true\" aria-expanded=\"true\" style=\"border: 0px\" > <span class=\"glyphicon glyphicon-pencil\"></span> </button>";
         tr.appendChild(temp);
         return tr;
     }
@@ -126,8 +126,9 @@ function save_telephone() {
 
 function create_attachment(btn) {
     var id = generateId();
-    if(document.getElementById("attachment_div")!=null){
-        document.removeChild(document.getElementById("attachment_div"));
+    if (document.getElementById('attachment_div') != null) {
+        var attachment_div = document.querySelector('#modal_attachment .modal-body');
+        attachment_div.removeChild(document.getElementById('attachment_div'));
     }
     document.getElementById('attachment_id').value = id;
     document.getElementById('attachment_name').value = '';
@@ -142,8 +143,9 @@ function create_attachment(btn) {
 }
 
 function edit_attachment(btn, attachment_id) {
-    if(document.getElementById("attachment_div")!=null){
-        document.removeChild(document.getElementById("attachment_div"));
+    if (document.getElementById('attachment_div') != null) {
+        var attachment_div = document.querySelector('#modal_attachment .modal-body');
+        attachment_div.removeChild(document.getElementById('attachment_div'));
     }
     document.getElementById('attachment_id').value = attachment_id;
     document.getElementById('attachment_name').value = document.getElementById('attachment_' + attachment_id + '_name').innerHTML;
@@ -152,9 +154,10 @@ function edit_attachment(btn, attachment_id) {
 }
 
 function delete_attachment(attachment_id, text) {
+
     if (confirm(text)) {
         document.getElementById("attachments").removeChild(document.getElementById("attachment_" + attachment_id));
-        document.getElementById("attachments").removeChild(document.getElementById("up_file_" + attachment_id));
+        document.getElementById("files_form").removeChild(document.getElementById("up_file_" + attachment_id));
     }
 }
 
@@ -165,11 +168,14 @@ function save_attachment() {
     attachment.comment = document.getElementById('attachment_comment').value;
     attachment.data = formatDate(new Date());
     var choose_attachment = document.getElementById("attachment_" + attachment.id);
+    var file = document.getElementById("up_file_" + attachment.id);
     document.getElementById("attachments").insertBefore(generateTRForAttachment(attachment), choose_attachment);
-    if (document.getElementById(choose_attachment) != null) {
+    if (choose_attachment != null) {
         document.getElementById("attachments").removeChild(choose_attachment);
     }
-    document.getElementById("files_form").appendChild(document.getElementById("up_file_" + attachment.id))
+    if (file != null) {
+        document.getElementById("files_form").appendChild(file)
+    }
     function generateTRForAttachment(attachment) {
         var tr = document.createElement('tr');
         tr.id = "attachment_" + attachment.id;
@@ -189,7 +195,7 @@ function save_attachment() {
         temp.innerHTML = attachment.comment;
         tr.appendChild(temp);
         var temp = document.createElement('td');
-        temp.innerHTML = "<button id=\"delete_attachment\" onclick=\"delete_attachment(this, \'" + attachment.id + "\')\" class=\"btn btn-default\" type=\"button\" aria-haspopup=\"true\" aria-expanded=\"true\" style=\"border: 0px\"> <span class=\"glyphicon glyphicon-trash\"></span> </button> <button id=\"edit_attachment\" data-toggle=\"modal\"data-target=\"#modal_attachment\" onclick=\"edit_attachment(this,\'" + attachment.id + "\')\"class=\"btn btn-default \"type=\"button\" aria-haspopup=\"true\" aria-expanded=\"true\" style=\"border: 0px\"> <span class=\"glyphicon glyphicon-pencil\"></span> </button>";
+        temp.innerHTML = "<button id=\"delete_attachment\" onclick=\"delete_attachment(\'" + attachment.id + "\', \'Are you sure\'" + ")\" class=\"btn btn-default\" type=\"button\" aria-haspopup=\"true\" aria-expanded=\"true\" style=\"border: 0px\"> <span class=\"glyphicon glyphicon-trash\"></span> </button> <button id=\"edit_attachment\" data-toggle=\"modal\"data-target=\"#modal_attachment\" onclick=\"edit_attachment(this,\'" + attachment.id + "\')\"class=\"btn btn-default \"type=\"button\" aria-haspopup=\"true\" aria-expanded=\"true\" style=\"border: 0px\"> <span class=\"glyphicon glyphicon-pencil\"></span> </button>";
         tr.appendChild(temp);
         return tr;
     }
@@ -206,4 +212,64 @@ function formatDate(date) {
     return [date.getFullYear(), '-', String(mm).length == 1 ? '0' : '',
         mm, '-', String(dd).length == 1 ? '0' : '', dd].join('');
 }
+
+function makeForm() {
+    var form = document.createElement("form");
+    form.enctype = "multipart/form-data";
+    document.body.appendChild(form);
+    return form;
+}
+
+function save_contact() {
+    var form = makeForm();
+    addAttachmentsFromTable(form);
+    addPhonesFromTable(form);
+    addFiles('files_form', form);
+    var act = document.forms["save_contact_form"];
+    act.action = "/save_contact";
+    act.method = "post";
+    act.submit();
+
+    function addFiles(from_form_id, from) {
+        var formFiles = document.getElementById(from_form_id);
+        for (var i = 0; i < formFiles.elements.length;) {
+            form.appendChild(formFiles.elements[i]);
+        }
+    }
+
+    function addParameterToForm(form, name, value) {
+        var parameter = document.createElement("input");
+        parameter.type = 'hidden';
+        parameter.name = name;
+        parameter.value = value;
+        form.appendChild(parameter);
+    }
+
+    function addAttachmentsFromTable(form) {
+        var tbody = document.getElementById("telephones");
+        for (var i = 0; i < tbody.rows.length; i++) {
+            addParameterToForm(form, "telephone_id", tbody.row[i].id);
+            addParameterToForm(form, tbody.row[i].cells[1].id, tbody.row[i].cells[1].innerHTML);
+            addParameterToForm(form, tbody.row[i].cells[2].id, tbody.row[i].cells[2].innerHTML);
+            addParameterToForm(form, tbody.row[i].cells[3].id, tbody.row[i].cells[3].innerHTML);
+            addParameterToForm(form, tbody.row[i].cells[4].id, tbody.row[i].cells[4].innerHTML);
+            addParameterToForm(form, tbody.row[i].cells[5].id, tbody.row[i].cells[5].innerHTML);
+        }
+    }
+
+    function addPhonesFromTable(form) {
+        var tbody = document.getElementById("attachments");
+        for (var i = 0; i < tbody.rows.length; i++) {
+            addParameterToForm(form, "attachment_id", tbody.row[i].id);
+            addParameterToForm(form, tbody.row[i].cells[1].id, tbody.row[i].cells[1].innerHTML);
+            addParameterToForm(form, tbody.row[i].cells[2].id, tbody.row[i].cells[2].innerHTML);
+            addParameterToForm(form, tbody.row[i].cells[3].id, tbody.row[i].cells[3].innerHTML);
+        }
+    }
+
+}
+
+
+
+
 
