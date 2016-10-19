@@ -1,3 +1,19 @@
+
+var numberOfRows;
+
+document.ready = function() {
+    numberOfRows = document.querySelectorAll("#telephones tr").length;
+    var checkboxes = document.querySelectorAll("thead input[type=checkbox]");
+    for(var i = 0; i < checkboxes.length; i++) {
+        checkboxes[i].onclick = (function(checkbox, table) {
+            var checkboxes = table.querySelectorAll("input[type=checkbox]");
+            for(var i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].value = checkbox.value;
+            }
+        })(checkboxes[i], checkboxes[i].parent.parent.parent)
+    }
+}
+
 function choosePhoto(event, image) {
     var input = event.target;
     var reader = new FileReader();
@@ -202,7 +218,7 @@ function save_attachment() {
 }
 
 function generateId() {
-    return '_' + Math.random().toString(36).substr(2, 9);
+    return numberOfRows++;
 }
 
 function formatDate(date) {
