@@ -1,6 +1,6 @@
 package by.itechart.phonebook.MVC;
 
-import exceptions.ExecutingCommandsException;
+
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -14,6 +14,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.UUID;
 
 public class FormatterRequest {
 
@@ -22,6 +23,7 @@ public class FormatterRequest {
     private static final int MEMORY_THRESHOLD;
     private static final int MAX_FILE_SIZE;
     private static final int MAX_REQUEST_SIZE;
+    final static String UPLOAD_DIRECTORY_FILE = "META-INF" + File.separator + "file";
 
     static {
         ResourceBundle resource = ResourceBundle.getBundle("resources");
@@ -40,7 +42,6 @@ public class FormatterRequest {
         this.request = request;
         DiskFileItemFactory factory = new DiskFileItemFactory();
         factory.setSizeThreshold(MEMORY_THRESHOLD);
-        tmpDirectory = FileUtil.createTmpFolder();
         factory.setRepository(tmpDirectory);
         upload = new ServletFileUpload(factory);
         upload.setHeaderEncoding("UTF8");
@@ -55,8 +56,8 @@ public class FormatterRequest {
         } else {
             convertMultipartRequest(request);
         }
-        FileUtil.deleteFolder(tmpDirectory);
     }
+
 
     private void convertSimpleRequest(HttpServletRequest request) {
         Enumeration<String> parameterNames = request.getParameterNames();
@@ -67,12 +68,10 @@ public class FormatterRequest {
         }
     }
 
-    private void convertMultipartRequest(HttpServletRequest request)
-            throws FileUploadException {
-
+    private void convertMultipartRequest(HttpServletRequest request) throws FileUploadException {
         List<FileItem> items = upload.parseRequest(request);
         for (FileItem item : items) {
-            if (item.isFormField()) {
+            if (item.isFormField() && item.getSize() > 0) {
                 createStringAttribute(request, item);
             }
         }
@@ -84,26 +83,38 @@ public class FormatterRequest {
 
     }
 
-    private void createFileFromAttribute(HttpServletRequest request, FileItem item) {
+    private static int generateUniqueId() {
+        UUID idOne = UUID.randomUUID();
+        String str = "" + idOne;
+        int uid = str.hashCode();
+        String filterStr = "" + uid;
+        str = filterStr.replaceAll("-", "");
+        return Integer.parseInt(str);
+    }
+
+    private void createFileFromAttribute(HttpServletRequest req, FileItem item) {
         try {
-            String idContact = (String) request.getAttribute("idContact");
-            ContactFilesService contactFileService = new ContactFilesService(idContact);
-            File file = contactFileService.createUniqueFile(idContact, item.getName());
-            item.write(file);
-            request.setAttribute(item.getFieldName(), ContactFilesService.getPrefix(file) + item.getName());
+            String uploadPath = req.getServletContext().getRealPath("") + File.separator + UPLOAD_DIRECTORY_FILE + File.separator + generateUniqueId();
+            File uploadDir = new File(uploadPath);
+            if (!uploadDir.exists()) {
+                uploadDir.mkdir();
+            }
+            String fileName = new File(item.getName()).getName();
+            String filePath = uploadPath + File.separator + fileName;
+            File storeFile = new File(filePath);
+            item.write(storeFile);
+            request.setAttribute(item.getFieldName(),filePath);
         } catch (Exception e) {
             request.setAttribute(item.getFieldName(), null);
             logger.error(item.toString(), e);
-            throw new ExecutingCommandsException("Ошибка сохранения временного файла на диск.");
         }
     }
 
-    private void createStringAttribute(HttpServletRequest request, FileItem item) {
+    private void    createStringAttribute(HttpServletRequest request, FileItem item) {
         try {
             request.setAttribute(item.getFieldName(), item.getString("utf-8"));
         } catch (UnsupportedEncodingException e) {
             logger.error(item.toString(), e);
-            throw new ExecutingCommandsException("Ошибка конвертирования параметра в строковой атрибут.");
         }
     }
 

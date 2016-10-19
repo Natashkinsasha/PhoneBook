@@ -52,6 +52,9 @@ public class ContactDTO implements DTO {
     private List<TelephoneDTO> telephonesDTO;
     private List<AttachmentDTO> attachmentDTOs;
 
+    public void setAttachmentDTOs(List<AttachmentDTO> attachmentDTOs) {
+        this.attachmentDTOs = attachmentDTOs;
+    }
 
     public ContactDTO() {
         telephonesDTO = new ArrayList<>();
@@ -450,6 +453,8 @@ public class ContactDTO implements DTO {
     public List<AttachmentDTO> getAttachmentDTOs() {
         return attachmentDTOs;
     }
+
+
 
     @Override
     public String toString() {

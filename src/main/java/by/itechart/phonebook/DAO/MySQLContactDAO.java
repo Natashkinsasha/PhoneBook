@@ -21,6 +21,8 @@ public class MySQLContactDAO implements ContactDAO {
     private static final String getNumberQuere = "SELECT COUNT(*) FROM contact";
     private static final String getbirthdays = "SELECT * FROM contact where DAYOFYEAR(contact.birthday)=DAYOFYEAR(CURDATE())";
     private static final String getSortLimit = "SELECT * FROM contact ORDER BY ? DESC LIMIT ?, ?";
+
+
     private Connection connection;
 
     public MySQLContactDAO(Connection connection) {
@@ -30,6 +32,8 @@ public class MySQLContactDAO implements ContactDAO {
     private Connection getConnection() {
         return connection;
     }
+
+
 
     public ContactEntity create(ContactEntity entity) throws DAOException {
         List<ContactEntity> contactEntities = new ArrayList<>();
@@ -226,4 +230,6 @@ public class MySQLContactDAO implements ContactDAO {
         }
         return contactEntities;
     }
+
+
 }

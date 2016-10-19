@@ -9,4 +9,6 @@ public interface ContactDAO extends DAO<ContactEntity, Integer>{
     List<ContactEntity> getSerchSortLimit(ContactEntity contactEntity, int offset, int count, Map<String, Boolean> sortFields) throws DAOException;
     int getNumberSerch(ContactEntity contactEntity) throws DAOException;
     List<ContactEntity> getBirthdays() throws DAOException;
+
+
 }

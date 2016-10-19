@@ -3,24 +3,18 @@ package by.itechart.phonebook.Controller;
 import by.itechart.phonebook.DTO.ContactDTO;
 import by.itechart.phonebook.DTO.EmailDTO;
 
-import by.itechart.phonebook.Email.Sender;
+import by.itechart.phonebook.Servis.SenderServiceImpl;
 import by.itechart.phonebook.MVC.RequestMapping;
 
-import by.itechart.phonebook.Repository.RepositoryException;
 import by.itechart.phonebook.Servis.ContactService;
 import by.itechart.phonebook.Servis.ContactServiceImpl;
 import by.itechart.phonebook.Servis.ServiceException;
 import org.apache.log4j.Logger;
-import org.apache.velocity.Template;
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.VelocityEngine;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.StringWriter;
-import java.util.List;
 
 public class SendEmailFormController {
     private final static Logger log =Logger.getLogger(SendEmailFormController.class);
@@ -97,8 +91,8 @@ public class SendEmailFormController {
         String whom = req.getParameter("whom");
         String them = req.getParameter("theme");
         String text = req.getParameter("text");
-        Sender tlsSender = new Sender("natashkinsasha@gmail.com", "Natashkinsasha6426384");
-        tlsSender.send(them, text, "natashkinsasha@gmail.com", whom);
+        SenderServiceImpl tlsSenderService = new SenderServiceImpl();
+        tlsSenderService.send(them, text, "natashkinsasha@gmail.com", whom);
         req.getServletContext().getRequestDispatcher("/WEB-INF/jsp/pages/send_email_page.jsp").forward(req, resp);
     }
 

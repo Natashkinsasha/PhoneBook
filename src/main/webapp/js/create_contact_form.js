@@ -1,19 +1,3 @@
-
-var numberOfRows;
-
-document.ready = function() {
-    numberOfRows = document.querySelectorAll("#telephones tr").length;
-    var checkboxes = document.querySelectorAll("thead input[type=checkbox]");
-    for(var i = 0; i < checkboxes.length; i++) {
-        checkboxes[i].onclick = (function(checkbox, table) {
-            var checkboxes = table.querySelectorAll("input[type=checkbox]");
-            for(var i = 0; i < checkboxes.length; i++) {
-                checkboxes[i].value = checkbox.value;
-            }
-        })(checkboxes[i], checkboxes[i].parent.parent.parent)
-    }
-}
-
 function choosePhoto(event, image) {
     var input = event.target;
     var reader = new FileReader();
@@ -232,6 +216,7 @@ function formatDate(date) {
 function makeForm() {
     var form = document.createElement("form");
     form.enctype = "multipart/form-data";
+    form.action = "/save_contact";
     document.body.appendChild(form);
     return form;
 }
@@ -263,6 +248,7 @@ function save_contact() {
 
     function addAttachmentsFromTable(form) {
         var tbody = document.getElementById("telephones");
+        var phonesIds='';
         for (var i = 0; i < tbody.rows.length; i++) {
             addParameterToForm(form, "telephone_id", tbody.row[i].id);
             addParameterToForm(form, tbody.row[i].cells[1].id, tbody.row[i].cells[1].innerHTML);
@@ -271,16 +257,19 @@ function save_contact() {
             addParameterToForm(form, tbody.row[i].cells[4].id, tbody.row[i].cells[4].innerHTML);
             addParameterToForm(form, tbody.row[i].cells[5].id, tbody.row[i].cells[5].innerHTML);
         }
+        addParameterToForm(form, 'phonesIds', phonesIds);
     }
 
     function addPhonesFromTable(form) {
         var tbody = document.getElementById("attachments");
+        var attachmentsIds='';
         for (var i = 0; i < tbody.rows.length; i++) {
             addParameterToForm(form, "attachment_id", tbody.row[i].id);
             addParameterToForm(form, tbody.row[i].cells[1].id, tbody.row[i].cells[1].innerHTML);
             addParameterToForm(form, tbody.row[i].cells[2].id, tbody.row[i].cells[2].innerHTML);
             addParameterToForm(form, tbody.row[i].cells[3].id, tbody.row[i].cells[3].innerHTML);
         }
+        addParameterToForm(form, 'attachmentsIds', attachmentsIds);
     }
 
 }

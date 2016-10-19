@@ -23,6 +23,7 @@
                            onchange="choosePhoto(event,'photo')">
                 </div>
             </div>
+            <input type="hidden" name="contact_id" value="${createContactDTO.id}">
             <div class="col-xs-8">
                 <div class="row">
                     <div class="col-xs-6">

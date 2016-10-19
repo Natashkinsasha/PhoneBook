@@ -9,4 +9,6 @@ import java.util.List;
 
 public interface AttachmentDAO extends DAO<AttachmentEntity, Integer>{
     List<AttachmentEntity> getByContactId(int id) throws DAOException;
+
+    void update(List<AttachmentEntity> attachmentEntities) throws DAOException;
 }

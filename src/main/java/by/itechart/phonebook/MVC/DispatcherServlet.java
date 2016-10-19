@@ -1,10 +1,9 @@
 package by.itechart.phonebook.MVC;
 
 
-import by.itechart.phonebook.Controller.ContactsFormController;
-import by.itechart.phonebook.Controller.CreateContactFormController;
-import by.itechart.phonebook.Controller.SendEmailFormController;
-import by.itechart.phonebook.Controller.SerchFormController;
+import by.itechart.phonebook.Controller.*;
+import by.itechart.phonebook.Servlet.AutoSenderEmail;
+import org.apache.commons.fileupload.FileUploadException;
 import org.apache.log4j.Logger;
 
 import javax.servlet.ServletContext;
@@ -24,11 +23,16 @@ public class DispatcherServlet extends HttpServlet {
     public void init() throws ServletException {
         ServletContext servletContext = getServletContext();
         HandlerMapping handlerMapping = new HandlerMappingImpl();
-        handlerMapping.addControllerClass(ContactsFormController.class).addControllerClass(CreateContactFormController.class).addControllerClass(SendEmailFormController.class).addControllerClass(SerchFormController.class);
+        handlerMapping.addControllerClass(ContactsFormController.class).addControllerClass(CreateContactFormController.class).addControllerClass(SendEmailFormController.class).addControllerClass(SerchFormController.class).addControllerClass(ContactController.class);
         servletContext.setAttribute("HandlerMapping", handlerMapping);
         servletContext.setAttribute("HandlerAdapter", new HandlerAdapterImpl());
         log.info(handlerMapping.getHandlerMap().toString());
-
+        try {
+            AutoSenderEmail autoSenderEmail = new AutoSenderEmail();
+            autoSenderEmail.start();
+        } catch (Exception e) {
+            log.error("Ошибка инициализации автоотправки email.", e);
+        }
     }
 
     @Override
@@ -40,6 +44,11 @@ public class DispatcherServlet extends HttpServlet {
         HandlerAdapter handlerAdapter = (HandlerAdapter) getServletContext().getAttribute("HandlerAdapter");
         Handler handler = null;
         try {
+            formatRequest(req);
+        } catch (FileUploadException e) {
+            log.error(e);
+        }
+        try {
             handler = handlerMapping.getHandler(req);
             log.info(handler);
             handlerAdapter.handle(req, resp, handler);
@@ -48,5 +57,11 @@ public class DispatcherServlet extends HttpServlet {
         }
 
 
+    }
+
+    private void formatRequest(HttpServletRequest request) throws FileUploadException {
+        FormatterRequest formatterRequest = new FormatterRequest(request);
+        formatterRequest.format();
+        formatterRequest.writeToLogAndConsoleAllAttribute();
     }
 }

@@ -13,4 +13,5 @@ public interface ContactRepository extends Repository<ContactDTO, Integer>{
     List<ContactDTO> getSerchSortLimit(ContactDTO contactDTO, int offset, int number, Map<String, Boolean> sortFields) throws RepositoryException;
     int sizeWithSerch(ContactDTO contactDTO) throws RepositoryException;
     List<ContactDTO> getBirthdays() throws RepositoryException;
+    void update(ContactDTO contactDTO) throws RepositoryException;
 }
