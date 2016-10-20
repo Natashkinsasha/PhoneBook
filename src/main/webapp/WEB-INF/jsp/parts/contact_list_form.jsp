@@ -17,7 +17,7 @@
         <table class="table">
             <thead>
             <tr>
-                <th><label><input type="checkbox"></label></th>
+                <th><label><input type="checkbox" onchange="toggle(this,'contact_table')"></label></th>
                 <th>Name</th>
                 <th>Birthday</th>
                 <th>Mail</th>
@@ -28,7 +28,7 @@
             <tbody>
             <c:forEach var="contact" items="${DTOs}">
                 <tr>
-                    <td><label><input type="checkbox" name="${contact.id}"></label></td>
+                    <td><label><input type="checkbox" name='contact_table' value="${contact.id}"></label></td>
                     <td>
                         <a href="/editcontact?id=${contact.id}">${contact.firstName} ${contact.secondName}</a>
                     </td>
@@ -75,5 +75,8 @@
         </ul>
     </nav>
 </div>
+
 </body>
+<script type="text/javascript"
+        src="${pageContext.request.contextPath}/js/contact_list_form.js"></script>
 </html>
