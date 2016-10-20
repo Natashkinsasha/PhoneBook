@@ -8,6 +8,7 @@ import by.itechart.phonebook.MVC.RequestMapping;
 import by.itechart.phonebook.Servis.ContactService;
 import by.itechart.phonebook.Servis.ContactServiceImpl;
 import by.itechart.phonebook.Servis.ServiceException;
+import by.itechart.phonebook.Validator.Validator;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
@@ -25,9 +26,29 @@ public class ContactController {
     public void saveContact(HttpServletRequest req, HttpServletResponse resp) throws ServiceException, IOException {
         ContactDTO contactDTO = createContactFromRequest(req);
         List<TelephoneDTO> telephoneDTOList = createPhonesFromRequest(req);
-        List<AttachmentDTO> attachmentsFromRequest = createAttachmentsFromRequest(req);
+        List<AttachmentDTO> attachmentsDTOList = createAttachmentsFromRequest(req);
+        Validator validator = Validator.getValidator();
+        if (validator.check(contactDTO).hasErroe()) {
+            req.getSession().setAttribute("error", "Contact has't been saved!");
+            resp.sendRedirect("/");
+            return;
+        }
+        for (TelephoneDTO telephoneDTO : telephoneDTOList) {
+            if (validator.check(telephoneDTO).hasErroe()) {
+                req.getSession().setAttribute("error", "Contact has't been saved!");
+                resp.sendRedirect("/");
+                return;
+            }
+        }
+        for (AttachmentDTO attachmentDTO : attachmentsDTOList) {
+            if (validator.check(attachmentsDTOList).hasErroe()) {
+                req.getSession().setAttribute("error", "Contact has't been saved!");
+                resp.sendRedirect("/");
+                return;
+            }
+        }
         contactDTO.setTelephonesDTO(telephoneDTOList);
-        contactDTO.setAttachmentDTOs(attachmentsFromRequest);
+        contactDTO.setAttachmentDTOs(attachmentsDTOList);
         ContactService contactServise = new ContactServiceImpl();
         if (contactDTO.getId() == 0) {
             contactServise.createContact(contactDTO);

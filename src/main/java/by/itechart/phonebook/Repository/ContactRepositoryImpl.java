@@ -11,6 +11,7 @@ import by.itechart.phonebook.Entity.TelephoneEntity;
 import by.itechart.phonebook.Repository.ContactRepository;
 
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -87,11 +88,22 @@ public class ContactRepositoryImpl implements ContactRepository {
             mySQLContactDAO.update(contactEntity);
             if(telephoneEntities.size()>0) {
                 mySQLtelephoneDAO.update(telephoneEntities);
+            } else{
+                mySQLtelephoneDAO.deleteAllByContactId(contactEntity.getId());
             }
+            List<AttachmentEntity> deletedAttachmentList  = new ArrayList<>();
             if (attachmentEntities.size()>0) {
+                deletedAttachmentList = mySQLAttachmentDAO.getDeletedAttachment(attachmentEntities);
                 mySQLAttachmentDAO.update(attachmentEntities);
+            } else {
+                deletedAttachmentList = mySQLAttachmentDAO.getByContactId(contactEntity.getId());
+                mySQLAttachmentDAO.deleteAllByContactId(contactEntity.getId());
             }
             connection.commit();
+            for (AttachmentEntity attachmentEntity:deletedAttachmentList){
+                File deletedAttachment = new File(attachmentEntity.getPath());
+                deletedAttachment.delete();
+            }
         } catch (SQLException | DAOException e) {
             if (connection != null) {
                 try {

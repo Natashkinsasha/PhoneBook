@@ -70,7 +70,7 @@
                                 </option>
                                 <option ${createContactDTO.male==false?'selected':''} value="female">
                                     Female
-                                </option>
+                                </option>v
                             </select>
                         </div>
                     </div>
@@ -254,8 +254,7 @@
     <div class="btn-group" role="group" aria-label="...">
         <button type="button" class="btn btn-danger" onclick="location.href='/'">Close</button>
         <button id="create_contact" type="button" class="btn btn-success" onclick="save_contact()">Save</button>
-        <button type="button" class="btn btn-warning"
-                onclick="deletecontact('${createContactDTO.id}','Are you sure?')">Delete
+        <button type="button" class="btn btn-warning" onclick="deletecontact('${createContactDTO.id}','Are you sure?')">Delete
         </button>
     </div>
     <jsp:include page="/WEB-INF/jsp/parts/create_telephone_dialog.jsp" flush="true"/>

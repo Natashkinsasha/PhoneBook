@@ -21,7 +21,9 @@ public class MySQLAttachmentDAO implements AttachmentDAO{
     private static final String getNumberQuere = "SELECT COUNT(*) FROM attachments";
     private static final String getByContactIDQuere = "SELECT * FROM attachment WHERE contact_id=?";
     private static final String deleteExcludedQuere = "DELETE  FROM attachment where attachment.contact_id=? and attachment.id not in (arrive)";
-
+    private static final String selectExcludedQuere = "SELECT *  FROM attachment where attachment.contact_id=? and attachment.id not in (arrive)";
+    private static final String deleteAllQuere = "TRUNCATE TABLE attachment";
+    private static final String deleteByIDQuere = "DELETE FROM attachment where attachment.contact_id=?";
     private Connection connection;
     public MySQLAttachmentDAO(Connection connection) {
         this.connection=connection;
@@ -29,6 +31,27 @@ public class MySQLAttachmentDAO implements AttachmentDAO{
 
     private Connection getConnection() {
         return connection;
+    }
+
+
+    @Override
+    public void deleteAll() throws DAOException {
+        try (PreparedStatement statement = getConnection().prepareStatement(deleteAllQuere)) {
+            statement.execute();
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        }
+    }
+
+    @Override
+    public void deleteAllByContactId(int id) throws DAOException {
+        try (PreparedStatement statement = getConnection().prepareStatement(deleteByIDQuere)) {
+            statement.setInt(1, id);
+            statement.execute();
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        }
+
     }
 
     @Override
@@ -139,6 +162,30 @@ public class MySQLAttachmentDAO implements AttachmentDAO{
             throw new DAOException(e);
         }
         return attachmentEntities;
+    }
+    @Override
+    public List<AttachmentEntity> getDeletedAttachment(List<AttachmentEntity> attachmentEntities) throws DAOException {
+        Integer[] ids = attachmentEntities.stream().map(elemnt -> elemnt.getId()).toArray(Integer[]::new);
+        StringBuffer arrive= new StringBuffer();
+        for (int i = 1; i<=ids.length; i++){
+            arrive.append("?");
+            if(i!=ids.length){
+                arrive.append(",");
+            }
+        }
+        String newSelectExcludedQuere = selectExcludedQuere.replaceAll("arrive",arrive.toString());
+        List<AttachmentEntity> attachmentEntitiesForDelete;
+        try (PreparedStatement statement = getConnection().prepareStatement(newSelectExcludedQuere)) {
+            statement.setInt(1,attachmentEntities.get(0).getContactId());
+            for (int i = 0; i<ids.length; i++){
+                statement.setInt(i+2,ids[i]);
+            }
+            ResultSet resultSet = statement.executeQuery();
+            attachmentEntitiesForDelete = parseResultSet(resultSet);
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        }
+        return attachmentEntitiesForDelete;
     }
 
     @Override

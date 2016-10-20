@@ -36,6 +36,13 @@
             </div>
         </c:if>
         <c:remove var="success"/>
+        <c:if test="${not empty serchPattern}">
+            <div class="alert alert-info" role="alert">
+                <span class="sr-only">Serch:</span>
+                <c:out value="${serchPattern}" />
+            </div>
+        </c:if>
+
     </div>
 <jsp:include
         page="/WEB-INF/jsp/parts/contact_list_form.jsp"

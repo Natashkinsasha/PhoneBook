@@ -11,4 +11,6 @@ public interface AttachmentDAO extends DAO<AttachmentEntity, Integer>{
     List<AttachmentEntity> getByContactId(int id) throws DAOException;
 
     void update(List<AttachmentEntity> attachmentEntities) throws DAOException;
+    List<AttachmentEntity> getDeletedAttachment(List<AttachmentEntity> attachmentEntities) throws DAOException;
+    void deleteAllByContactId(int id) throws DAOException;
 }

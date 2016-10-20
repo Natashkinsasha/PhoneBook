@@ -21,9 +21,10 @@ public class MySQLContactDAO implements ContactDAO {
     private static final String getNumberQuere = "SELECT COUNT(*) FROM contact";
     private static final String getbirthdays = "SELECT * FROM contact where DAYOFYEAR(contact.birthday)=DAYOFYEAR(CURDATE())";
     private static final String getSortLimit = "SELECT * FROM contact ORDER BY ? DESC LIMIT ?, ?";
-
+    private static final String deleteAllQuere = "TRUNCATE TABLE contact";
 
     private Connection connection;
+
 
     public MySQLContactDAO(Connection connection) {
         this.connection = connection;
@@ -97,6 +98,15 @@ public class MySQLContactDAO implements ContactDAO {
             throw new DAOException(e);
         }
 
+    }
+
+    @Override
+    public void deleteAll() throws DAOException {
+        try (PreparedStatement statement = getConnection().prepareStatement(deleteAllQuere)) {
+            statement.execute();
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        }
     }
 
     public ContactEntity getById(Integer id) throws DAOException {

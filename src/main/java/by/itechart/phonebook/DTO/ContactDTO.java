@@ -458,13 +458,23 @@ public class ContactDTO implements DTO {
         return attachmentDTOs;
     }
 
-
-
     @Override
     public String toString() {
-        return "firstName='" + firstName + '\'' +
+        return "ContactDTO{" +
+                "firstName='" + firstName + '\'' +
                 ", secondName='" + secondName + '\'' +
                 ", patronymic='" + patronymic + '\'' +
-                ", birthday=" + birthday;
+                ", birthday=" + birthday +
+                ", male=" + male +
+                ", nationality='" + nationality + '\'' +
+                ", relationshipStatus='" + relationshipStatus + '\'' +
+                ", webSite='" + webSite + '\'' +
+                ", email='" + email + '\'' +
+                ", company='" + company + '\'' +
+                ", country='" + country + '\'' +
+                ", city='" + city + '\'' +
+                ", street='" + street + '\'' +
+                ", index='" + index + '\'' +
+                '}';
     }
 }

@@ -56,7 +56,7 @@ function click_btn(btn, id) {
     }
 }
 function create_telephone(btn) {
-    document.getElementById('phone_id').value = -1*generateId();
+    document.getElementById('phone_id').value = -1 * generateId();
     document.getElementById('country_code').value = '';
     document.getElementById('operator_code').value = '';
     document.getElementById('phone_number').value = '';
@@ -130,7 +130,7 @@ function save_telephone() {
 
 
 function create_attachment(btn) {
-    var id = -1*generateId();
+    var id = -1 * generateId();
     if (document.getElementById('attachment_div') != null) {
         var attachment_div = document.querySelector('#modal_attachment .modal-body');
         attachment_div.removeChild(document.getElementById('attachment_div'));
@@ -227,12 +227,22 @@ function makeForm() {
 
 function save_contact() {
     var form = makeForm();
-    addAttachmentsFromTable(form);
-    addPhonesFromTable(form);
-    addFromForm('files_form', form);
-    //addFromForm('contact_form', form);
-    form.method = "post";
-    form.submit();
+
+    //if (form.checkValidity()) {
+
+        addAttachmentsFromTable(form);
+        addPhonesFromTable(form);
+        addFromForm('files_form', form);
+        //addFromForm('contact_form', form);
+        form.method = "post";
+        form.submit();
+    /*} else {
+        var elements = document.forms['contact_form'].getElementsByTagName("input");
+        for (var i = 0; i < elements.length; i++) {
+            if (elements[i].checkValidity();
+        }
+    }*/
+
     function addFromForm(from_form_id, from) {
         var formFiles = document.getElementById(from_form_id);
         for (var i = 0; i < formFiles.elements.length;) {
@@ -250,12 +260,11 @@ function save_contact() {
     }
 
 
-
     function addPhonesFromTable(form) {
         var tbody = document.getElementById("telephones");
-        var phonesIds='';
+        var phonesIds = '';
         for (var i = 0; i < tbody.rows.length; i++) {
-            phonesIds=phonesIds.concat(","+tbody.rows[i].id);
+            phonesIds = phonesIds.concat("," + tbody.rows[i].id);
             addParameterToForm(form, tbody.rows[i].cells[1].id, tbody.rows[i].cells[1].innerHTML);
             addParameterToForm(form, tbody.rows[i].cells[2].id, tbody.rows[i].cells[2].innerHTML);
             addParameterToForm(form, tbody.rows[i].cells[3].id, tbody.rows[i].cells[3].innerHTML);
@@ -267,9 +276,9 @@ function save_contact() {
 
     function addAttachmentsFromTable(form) {
         var tbody = document.getElementById("attachments");
-        var attachmentsIds='';
+        var attachmentsIds = '';
         for (var i = 0; i < tbody.rows.length; i++) {
-            attachmentsIds=attachmentsIds.concat(","+tbody.rows[i].id);
+            attachmentsIds = attachmentsIds.concat("," + tbody.rows[i].id);
             addParameterToForm(form, tbody.rows[i].cells[1].id, tbody.rows[i].cells[1].innerHTML);
             addParameterToForm(form, tbody.rows[i].cells[2].id, tbody.rows[i].cells[2].innerHTML);
             addParameterToForm(form, tbody.rows[i].cells[3].id, tbody.rows[i].cells[3].innerHTML);
@@ -279,11 +288,11 @@ function save_contact() {
 
 }
 
-function deletecontact(id,text) {
+function deletecontact(id, text) {
     if (confirm(text)) {
-        var req = new XMLHttpRequest();
-        req.open("GET", 'deletecontact?id=' + id, true);
-        req.send(null);
+        window.location.href = '/deletecontact?id=' + id;
+    } else {
+        return false;
     }
 }
 

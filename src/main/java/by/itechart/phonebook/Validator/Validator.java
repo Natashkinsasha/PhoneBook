@@ -6,6 +6,23 @@ import java.util.Map;
 
 public class Validator {
 
+    private static volatile Validator instance;
+
+    private Validator(){};
+
+    public static Validator getValidator() {
+        Validator localInstance = instance;
+        if (localInstance == null) {
+            synchronized (Validator.class) {
+                localInstance = instance;
+                if (localInstance == null) {
+                    instance = localInstance = new Validator();
+                }
+            }
+        }
+        return localInstance;
+    }
+
     public BindingResult check(Object object) {
         BindingResult bindingResult = new BindingResult();
         Class<?> objectClass = object.getClass();

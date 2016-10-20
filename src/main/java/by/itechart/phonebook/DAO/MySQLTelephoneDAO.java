@@ -23,7 +23,9 @@ public class MySQLTelephoneDAO implements TelephoneDAO {
     private static final String getByContactIDQuere = "SELECT * FROM telephone WHERE contact_id=?";
     private static final String getNumberQuere = "SELECT COUNT(*) FROM telephone";
     private static final String deleteExcludedQuere = "DELETE FROM telephone where telephone.contact_id=? and telephone.id not in (arrive)";
+    private static final String deleteAllQuere = "TRUNCATE TABLE telephone";
     private Connection connection;
+    private static final String deleteByIDQuere = "DELETE FROM telephone where telephone.contact_id=?";
 
     public MySQLTelephoneDAO(Connection connection) {
         this.connection = connection;
@@ -33,6 +35,25 @@ public class MySQLTelephoneDAO implements TelephoneDAO {
         return connection;
     }
 
+    @Override
+    public void deleteAll() throws DAOException {
+        try (PreparedStatement statement = getConnection().prepareStatement(deleteAllQuere)) {
+            statement.execute();
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        }
+    }
+
+    @Override
+    public void deleteAllByContactId(int id) throws DAOException {
+        try (PreparedStatement statement = getConnection().prepareStatement(deleteByIDQuere)) {
+            statement.setInt(1, id);
+            statement.execute();
+        } catch (SQLException e) {
+            throw new DAOException(e);
+        }
+
+    }
 
     @Override
     public void update(List<TelephoneEntity> telephoneEntities) throws DAOException {

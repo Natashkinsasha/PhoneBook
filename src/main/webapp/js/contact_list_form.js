@@ -9,15 +9,15 @@ function toggle(source, name) {
 
 
 function deletecontact(text, name) {
-    checkboxes = document.getElementsByName(name);
-    if (checkboxes != null) {
+    checkboxes = document.querySelector('input:checked');
+    if (checkboxes >0) {
         if (confirm(text)) {
             var act = document.forms["checkbox_form"];
             act.action = "/deletesomecontact";
             act.method = "post";
             act.submit();
         }
-    }
+    } 
 
 }
 
