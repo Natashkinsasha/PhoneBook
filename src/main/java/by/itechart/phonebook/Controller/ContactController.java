@@ -8,6 +8,9 @@ import by.itechart.phonebook.MVC.RequestMapping;
 import by.itechart.phonebook.Servis.ContactService;
 import by.itechart.phonebook.Servis.ContactServiceImpl;
 import by.itechart.phonebook.Servis.ServiceException;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,18 +29,35 @@ public class ContactController {
         contactDTO.setTelephonesDTO(telephoneDTOList);
         contactDTO.setAttachmentDTOs(attachmentsFromRequest);
         ContactService contactServise = new ContactServiceImpl();
-        contactServise.updateContact(contactDTO);
+        if (contactDTO.getId() == 0) {
+            contactServise.createContact(contactDTO);
+        } else {
+            contactServise.updateContact(contactDTO);
+        }
+        req.getSession().setAttribute("success", "Contact has been saved!");
         resp.sendRedirect("/");
+    }
 
+    @RequestMapping(uri = "/serchcontact", method = RequestMapping.Method.POST)
+    public void serchContact(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        DiskFileItemFactory factory = new DiskFileItemFactory();
+        ServletFileUpload upload = new ServletFileUpload(factory);
+        ContactDTO contactDTOFileItems = createContactFromRequest(req);
+        ContactDTO contactDTO = new ContactDTO().setFirstName(contactDTOFileItems.getFirstName()).setSecondName(contactDTOFileItems.getSecondName()).setPatronymic(contactDTOFileItems.getPatronymic()).setBirthday(contactDTOFileItems.getBirthday()).setMale(contactDTOFileItems.getMale()).setNationality(contactDTOFileItems.getNationality()).setRelationshipStatus(contactDTOFileItems.getRelationshipStatus()).setWebSite(contactDTOFileItems.getWebSite()).setEmail(contactDTOFileItems.getEmail()).setCountry(contactDTOFileItems.getCountry()).setCity(contactDTOFileItems.getCity()).setStreet(contactDTOFileItems.getStreet()).setIndex(contactDTOFileItems.getIndex()).setCompany(contactDTOFileItems.getCompany());
+        req.getSession().setAttribute("serchPattern", contactDTO);
+        req.getSession().removeAttribute("page");
+        resp.sendRedirect("/");
     }
 
     private ContactDTO createContactFromRequest(HttpServletRequest request) {
         ContactDTO contactDTO = new ContactDTO();
+        contactDTO.setPhotoPath((String) request.getAttribute("up_photo"));
+        contactDTO.setId(Integer.valueOf((String) request.getAttribute("contact_id")));
         contactDTO.setFirstName((String) request.getAttribute("first_name"));
         contactDTO.setSecondName((String) request.getAttribute("second_name"));
         contactDTO.setPatronymic((String) request.getAttribute("patronymic"));
         contactDTO.setBirthday((String) request.getAttribute("birthday"));
-        contactDTO.setMale((Boolean) request.getAttribute("sex"));
+        contactDTO.setMale((String) request.getAttribute("sex"));
         contactDTO.setNationality((String) request.getAttribute("natinality"));
         contactDTO.setRelationshipStatus((String) request.getAttribute("relationship_status"));
         contactDTO.setWebSite((String) request.getAttribute("web_site"));
@@ -52,41 +72,46 @@ public class ContactController {
 
     private List<TelephoneDTO> createPhonesFromRequest(HttpServletRequest request) {
         List<TelephoneDTO> phones = new ArrayList<>();
-
-        String[] phonesIds = ((String) request.getAttribute("phonesIds")).split(",");
-        for (int i = 1; i < phonesIds.length; i++) {
-            String idPhone = phonesIds[i];
-            TelephoneDTO telephoneDTO = new TelephoneDTO();
-            String id = idPhone.replaceAll("telephone_", "");
-            telephoneDTO.setId(Integer.valueOf(id));
-            telephoneDTO.setNumber((String) request.getAttribute(idPhone.concat("_number")));
-            telephoneDTO.setOperatorCode((String) request.getAttribute(idPhone.concat("_operator_code")));
-            telephoneDTO.setCountryCode((String) request.getAttribute(idPhone.concat("_country_code")));
-            telephoneDTO.setComments((String) request.getAttribute(idPhone.concat("_comments")));
-            telephoneDTO.setComments((String) request.getAttribute(idPhone.concat("_type")));
-            phones.add(telephoneDTO);
+        String phonesStringIds = (String) request.getAttribute("phonesIds");
+        if (phonesStringIds != null) {
+            String[] phonesIds = phonesStringIds.split(",");
+            for (int i = 1; i < phonesIds.length; i++) {
+                String idPhone = phonesIds[i];
+                TelephoneDTO telephoneDTO = new TelephoneDTO();
+                String id = idPhone.replaceAll("telephone_", "");
+                telephoneDTO.setId(Integer.valueOf(id));
+                telephoneDTO.setNumber((String) request.getAttribute(idPhone.concat("_number")));
+                telephoneDTO.setOperatorCode((String) request.getAttribute(idPhone.concat("_operator_code")));
+                telephoneDTO.setCountryCode((String) request.getAttribute(idPhone.concat("_country_code")));
+                telephoneDTO.setComments((String) request.getAttribute(idPhone.concat("_comments")));
+                telephoneDTO.setComments((String) request.getAttribute(idPhone.concat("_type")));
+                phones.add(telephoneDTO);
+            }
         }
         return phones;
     }
 
     private List<AttachmentDTO> createAttachmentsFromRequest(HttpServletRequest request) {
         List<AttachmentDTO> attachmentDTOLink = new ArrayList<>();
-        if ((String) request.getAttribute("attachmentsIds") == null) {
-            return attachmentDTOLink;
-        } else {
-            String[] attachmentIds = ((String) request.getAttribute("attachmentsIds")).split(",");
+        String attachmentStringIds = (String) request.getAttribute("attachmentsIds");
+        if (attachmentStringIds != null) {
+            String[] attachmentIds = attachmentStringIds.split(",");
             for (int i = 1; i < attachmentIds.length; i++) {
                 String idAttachment = attachmentIds[i];
                 AttachmentDTO attachmentDTO = new AttachmentDTO();
-                attachmentDTO.setId(Integer.valueOf(idAttachment));
-                attachmentDTO.setName((String) request.getAttribute("attachment_".concat(idAttachment).concat("_name")));
-                attachmentDTO.setComment((String) request.getAttribute("attachment_".concat(idAttachment.concat("_comments"))));
+                String id = idAttachment.replaceAll("attachment_", "");
+                attachmentDTO.setId(Integer.valueOf(id));
+                String temp = idAttachment.concat("_name");
+                attachmentDTO.setName((String) request.getAttribute(idAttachment.concat("_name")));
+                attachmentDTO.setComment((String) request.getAttribute(idAttachment.concat("_comment")));
                 //attachmentDTO.setCreationDate(request.getAttribute("attachment_".concat(idAttachment.concat("creation_date"))))
-                attachmentDTO.setPath((String) request.getAttribute("up_file_" + idAttachment));
+                attachmentDTO.setPath((String) request.getAttribute("up_file_" + id));
+                attachmentDTOLink.add(attachmentDTO);
             }
-
-            return attachmentDTOLink;
         }
-    }
 
+        return attachmentDTOLink;
+    }
 }
+
+

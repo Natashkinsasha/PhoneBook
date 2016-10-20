@@ -113,22 +113,6 @@ public class ContactsFormController {
         resp.sendRedirect("/");
     }
 
-    @RequestMapping(uri = "/serchcontact", method = RequestMapping.Method.POST)
-    public void serchContact(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        DiskFileItemFactory factory = new DiskFileItemFactory();
-        ServletFileUpload upload = new ServletFileUpload(factory);
-        ContactDTO contactDTO = (ContactDTO) req.getSession().getAttribute("createContactDTO");
-        try {
-            List<FileItem> formItems = upload.parseRequest(req);
-            ContactDTO contactDTOFileItems = getContactDTOFileItems(formItems, req);
-            contactDTO.setFirstName(contactDTOFileItems.getFirstName()).setSecondName(contactDTOFileItems.getSecondName()).setPatronymic(contactDTOFileItems.getPatronymic()).setBirthday(contactDTOFileItems.getBirthday()).setMale(contactDTOFileItems.getMale()).setNationality(contactDTOFileItems.getNationality()).setRelationshipStatus(contactDTOFileItems.getRelationshipStatus()).setWebSite(contactDTOFileItems.getWebSite()).setEmail(contactDTOFileItems.getEmail()).setCountry(contactDTOFileItems.getCountry()).setCity(contactDTOFileItems.getCity()).setStreet(contactDTOFileItems.getStreet()).setIndex(contactDTOFileItems.getIndex()).setCompany(contactDTOFileItems.getCompany());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        req.getSession().setAttribute("serchPattern", contactDTO);
-        req.getSession().removeAttribute("page");
-        resp.sendRedirect("/");
-    }
 
     @RequestMapping(uri = "/cancelserch", method = RequestMapping.Method.GET)
     public void cancelSerchContacts(HttpServletRequest req, HttpServletResponse resp) throws IOException {

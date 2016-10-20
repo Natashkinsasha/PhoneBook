@@ -4,10 +4,12 @@ package by.itechart.phonebook.DAO;
 import by.itechart.phonebook.DTO.AttachmentDTO;
 import by.itechart.phonebook.Entity.AttachmentEntity;
 import by.itechart.phonebook.Entity.TelephoneEntity;
+import com.mchange.v1.util.ArrayUtils;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MySQLAttachmentDAO implements AttachmentDAO{
 
@@ -18,7 +20,7 @@ public class MySQLAttachmentDAO implements AttachmentDAO{
     private static final String insertQuere = "INSERT INTO attachment (path, creation_date, name, comment, contact_id) VALUES (?, ?, ?, ?, ?)";
     private static final String getNumberQuere = "SELECT COUNT(*) FROM attachments";
     private static final String getByContactIDQuere = "SELECT * FROM attachment WHERE contact_id=?";
-    private static final String deleteExcludedQuere = "DELETE * FROM attachment where attachment.contact_id=? and attachment.id not in (?)";
+    private static final String deleteExcludedQuere = "DELETE  FROM attachment where attachment.contact_id=? and attachment.id not in (arrive)";
 
     private Connection connection;
     public MySQLAttachmentDAO(Connection connection) {
@@ -141,11 +143,20 @@ public class MySQLAttachmentDAO implements AttachmentDAO{
 
     @Override
     public void update(List<AttachmentEntity> attachmentEntities) throws DAOException {
-        try (PreparedStatement statement = getConnection().prepareStatement(deleteExcludedQuere)) {
+        Integer[] ids = attachmentEntities.stream().map(elemnt -> elemnt.getId()).toArray(Integer[]::new);
+        StringBuffer arrive= new StringBuffer();
+        for (int i = 1; i<=ids.length; i++){
+            arrive.append("?");
+            if(i!=ids.length){
+                arrive.append(",");
+            }
+        }
+        String newDeleteExcludedQuere = deleteExcludedQuere.replaceAll("arrive",arrive.toString());
+        try (PreparedStatement statement = getConnection().prepareStatement(newDeleteExcludedQuere)) {
             statement.setInt(1,attachmentEntities.get(0).getContactId());
-            Integer[] ids = attachmentEntities.stream().map(elemnt -> elemnt.getId()).toArray(Integer[]::new);
-            Array idsArray = getConnection().createArrayOf("Integer", ids);
-            statement.setArray(2, idsArray);
+            for (int i = 0; i<ids.length; i++){
+                statement.setInt(i+2,ids[i]);
+            }
             statement.execute();
             AttachmentEntity[] attachmentsForUpdate = attachmentEntities.stream().filter((s) -> s.getId() > 0).toArray(AttachmentEntity[]::new);
             for (AttachmentEntity attachment: attachmentsForUpdate){
@@ -160,4 +171,6 @@ public class MySQLAttachmentDAO implements AttachmentDAO{
         }
 
     }
+
+
 }

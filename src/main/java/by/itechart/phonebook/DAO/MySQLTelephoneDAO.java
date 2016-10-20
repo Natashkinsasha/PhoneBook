@@ -11,6 +11,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class MySQLTelephoneDAO implements TelephoneDAO {
 
@@ -21,30 +22,41 @@ public class MySQLTelephoneDAO implements TelephoneDAO {
     private static final String insertQuere = "INSERT INTO telephone (number, type, comment, country_code, operator_code, contact_id) VALUES (?, ?, ?, ?, ?, ?);";
     private static final String getByContactIDQuere = "SELECT * FROM telephone WHERE contact_id=?";
     private static final String getNumberQuere = "SELECT COUNT(*) FROM telephone";
-    private static final String deleteExcludedQuere = "DELETE * FROM telephone where telephone.contact_id=? and telephone.id not in (?)";
+    private static final String deleteExcludedQuere = "DELETE FROM telephone where telephone.contact_id=? and telephone.id not in (arrive)";
     private Connection connection;
+
     public MySQLTelephoneDAO(Connection connection) {
-        this.connection=connection;
+        this.connection = connection;
     }
-    private Connection getConnection(){
+
+    private Connection getConnection() {
         return connection;
     }
 
 
     @Override
     public void update(List<TelephoneEntity> telephoneEntities) throws DAOException {
-        try (PreparedStatement statement = getConnection().prepareStatement(deleteExcludedQuere)) {
-            statement.setInt(1,telephoneEntities.get(0).getContactId());
-            Integer[] ids = telephoneEntities.stream().map(elemnt -> elemnt.getId()).toArray(Integer[]::new);
-            Array idsArray = getConnection().createArrayOf("Integer", ids);
-            statement.setArray(2, idsArray);
+        Integer[] ids = telephoneEntities.stream().map(elemnt -> elemnt.getId()).toArray(Integer[]::new);
+        StringBuffer arrive= new StringBuffer();
+        for (int i = 1; i<=ids.length; i++){
+            arrive.append("?");
+            if(i!=ids.length){
+                arrive.append(",");
+            }
+        }
+        String newDeleteExcludedQuere=deleteExcludedQuere.replaceAll("arrive",arrive.toString());
+        try (PreparedStatement statement = getConnection().prepareStatement(newDeleteExcludedQuere)) {
+            statement.setInt(1, telephoneEntities.get(0).getContactId());
+            for (int i = 0; i<ids.length; i++){
+                statement.setInt(i+2,ids[i]);
+            }
             statement.execute();
             TelephoneEntity[] telephonesForUpdate = telephoneEntities.stream().filter((s) -> s.getId() > 0).toArray(TelephoneEntity[]::new);
-            for (TelephoneEntity telephone: telephonesForUpdate){
+            for (TelephoneEntity telephone : telephonesForUpdate) {
                 update(telephone);
             }
             TelephoneEntity[] telephonesForAdd = telephoneEntities.stream().filter((s) -> s.getId() < 0).toArray(TelephoneEntity[]::new);
-            for (TelephoneEntity telephone: telephonesForAdd){
+            for (TelephoneEntity telephone : telephonesForAdd) {
                 create(telephone);
             }
         } catch (SQLException e) {
@@ -64,7 +76,7 @@ public class MySQLTelephoneDAO implements TelephoneDAO {
             createPreparedStatement.setInt(6, entity.getContactId());
             createPreparedStatement.execute();
             //TO DO добавить проверку на добавление
-            ResultSet resultSet =  createPreparedStatement.executeQuery("SELECT * FROM telephone WHERE id = last_insert_id()");
+            ResultSet resultSet = createPreparedStatement.executeQuery("SELECT * FROM telephone WHERE id = last_insert_id()");
             telephoneEntities = parseResultSet(resultSet);
         } catch (SQLException e) {
             throw new DAOException(e);
@@ -142,7 +154,7 @@ public class MySQLTelephoneDAO implements TelephoneDAO {
     }
 
     @Override
-    public List<TelephoneEntity> getByContactId(int id) throws DAOException{
+    public List<TelephoneEntity> getByContactId(int id) throws DAOException {
         List<TelephoneEntity> telephoneEntities;
         try (PreparedStatement getByIdPreparedStatement = getConnection().prepareStatement(getByContactIDQuere)) {
             getByIdPreparedStatement.setInt(1, id);

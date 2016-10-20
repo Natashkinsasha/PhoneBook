@@ -150,7 +150,7 @@
             </div>
         </div>
     </form>
-    <form  enctype="multipart/form-data" id="files_form">
+    <form  enctype="multipart/form-data" id="files_form" hidden>
     </form>
     <div class="row">
         <table class="table">
@@ -255,7 +255,7 @@
         <button type="button" class="btn btn-danger" onclick="location.href='/'">Close</button>
         <button id="create_contact" type="button" class="btn btn-success" onclick="save_contact()">Save</button>
         <button type="button" class="btn btn-warning"
-                onclick="location.href='/deletecontact?id=${createContactDTO.id}'">Delete
+                onclick="deletecontact('${createContactDTO.id}','Are you sure?')">Delete
         </button>
     </div>
     <jsp:include page="/WEB-INF/jsp/parts/create_telephone_dialog.jsp" flush="true"/>

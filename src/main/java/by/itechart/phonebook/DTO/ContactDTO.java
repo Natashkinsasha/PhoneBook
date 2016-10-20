@@ -81,6 +81,10 @@ public class ContactDTO implements DTO {
         this.photoPath = contactEntity.getPhotoPath();
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getPhotoPath() {
         return photoPath;
     }

@@ -1,3 +1,8 @@
+document.addEventListener("DOMContentLoaded", ready);
+var numberOfRows;
+function ready() {
+    numberOfRows = document.querySelector("table").rows.length;
+}
 function choosePhoto(event, image) {
     var input = event.target;
     var reader = new FileReader();
@@ -51,7 +56,7 @@ function click_btn(btn, id) {
     }
 }
 function create_telephone(btn) {
-    document.getElementById('phone_id').value = generateId();
+    document.getElementById('phone_id').value = -1*generateId();
     document.getElementById('country_code').value = '';
     document.getElementById('operator_code').value = '';
     document.getElementById('phone_number').value = '';
@@ -125,7 +130,7 @@ function save_telephone() {
 
 
 function create_attachment(btn) {
-    var id = generateId();
+    var id = -1*generateId();
     if (document.getElementById('attachment_div') != null) {
         var attachment_div = document.querySelector('#modal_attachment .modal-body');
         attachment_div.removeChild(document.getElementById('attachment_div'));
@@ -202,7 +207,7 @@ function save_attachment() {
 }
 
 function generateId() {
-    return numberOfRows++;
+    return ++numberOfRows;
 }
 
 function formatDate(date) {
@@ -214,10 +219,9 @@ function formatDate(date) {
 }
 
 function makeForm() {
-    var form = document.createElement("form");
+    var form = document.forms['contact_form'];
     form.enctype = "multipart/form-data";
     form.action = "/save_contact";
-    document.body.appendChild(form);
     return form;
 }
 
@@ -225,15 +229,14 @@ function save_contact() {
     var form = makeForm();
     addAttachmentsFromTable(form);
     addPhonesFromTable(form);
-    addFiles('files_form', form);
-    var act = document.forms["save_contact_form"];
-    act.action = "/save_contact";
-    act.method = "post";
-    act.submit();
-
-    function addFiles(from_form_id, from) {
+    addFromForm('files_form', form);
+    //addFromForm('contact_form', form);
+    form.method = "post";
+    form.submit();
+    function addFromForm(from_form_id, from) {
         var formFiles = document.getElementById(from_form_id);
         for (var i = 0; i < formFiles.elements.length;) {
+            //formFiles.elements[i].type="hidden";
             form.appendChild(formFiles.elements[i]);
         }
     }
@@ -246,35 +249,41 @@ function save_contact() {
         form.appendChild(parameter);
     }
 
-    function addAttachmentsFromTable(form) {
+
+
+    function addPhonesFromTable(form) {
         var tbody = document.getElementById("telephones");
         var phonesIds='';
         for (var i = 0; i < tbody.rows.length; i++) {
-            addParameterToForm(form, "telephone_id", tbody.row[i].id);
-            addParameterToForm(form, tbody.row[i].cells[1].id, tbody.row[i].cells[1].innerHTML);
-            addParameterToForm(form, tbody.row[i].cells[2].id, tbody.row[i].cells[2].innerHTML);
-            addParameterToForm(form, tbody.row[i].cells[3].id, tbody.row[i].cells[3].innerHTML);
-            addParameterToForm(form, tbody.row[i].cells[4].id, tbody.row[i].cells[4].innerHTML);
-            addParameterToForm(form, tbody.row[i].cells[5].id, tbody.row[i].cells[5].innerHTML);
+            phonesIds=phonesIds.concat(","+tbody.rows[i].id);
+            addParameterToForm(form, tbody.rows[i].cells[1].id, tbody.rows[i].cells[1].innerHTML);
+            addParameterToForm(form, tbody.rows[i].cells[2].id, tbody.rows[i].cells[2].innerHTML);
+            addParameterToForm(form, tbody.rows[i].cells[3].id, tbody.rows[i].cells[3].innerHTML);
+            addParameterToForm(form, tbody.rows[i].cells[4].id, tbody.rows[i].cells[4].innerHTML);
+            addParameterToForm(form, tbody.rows[i].cells[5].id, tbody.rows[i].cells[5].innerHTML);
         }
         addParameterToForm(form, 'phonesIds', phonesIds);
     }
 
-    function addPhonesFromTable(form) {
+    function addAttachmentsFromTable(form) {
         var tbody = document.getElementById("attachments");
         var attachmentsIds='';
         for (var i = 0; i < tbody.rows.length; i++) {
-            addParameterToForm(form, "attachment_id", tbody.row[i].id);
-            addParameterToForm(form, tbody.row[i].cells[1].id, tbody.row[i].cells[1].innerHTML);
-            addParameterToForm(form, tbody.row[i].cells[2].id, tbody.row[i].cells[2].innerHTML);
-            addParameterToForm(form, tbody.row[i].cells[3].id, tbody.row[i].cells[3].innerHTML);
+            attachmentsIds=attachmentsIds.concat(","+tbody.rows[i].id);
+            addParameterToForm(form, tbody.rows[i].cells[1].id, tbody.rows[i].cells[1].innerHTML);
+            addParameterToForm(form, tbody.rows[i].cells[2].id, tbody.rows[i].cells[2].innerHTML);
+            addParameterToForm(form, tbody.rows[i].cells[3].id, tbody.rows[i].cells[3].innerHTML);
         }
         addParameterToForm(form, 'attachmentsIds', attachmentsIds);
     }
 
 }
 
-
-
-
+function deletecontact(id,text) {
+    if (confirm(text)) {
+        var req = new XMLHttpRequest();
+        req.open("GET", 'deletecontact?id=' + id, true);
+        req.send(null);
+    }
+}
 

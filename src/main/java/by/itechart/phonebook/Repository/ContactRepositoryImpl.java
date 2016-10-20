@@ -85,8 +85,12 @@ public class ContactRepositoryImpl implements ContactRepository {
             }
             connection.setAutoCommit(false);
             mySQLContactDAO.update(contactEntity);
-            mySQLtelephoneDAO.update(telephoneEntities);
-            mySQLAttachmentDAO.update(attachmentEntities);
+            if(telephoneEntities.size()>0) {
+                mySQLtelephoneDAO.update(telephoneEntities);
+            }
+            if (attachmentEntities.size()>0) {
+                mySQLAttachmentDAO.update(attachmentEntities);
+            }
             connection.commit();
         } catch (SQLException | DAOException e) {
             if (connection != null) {

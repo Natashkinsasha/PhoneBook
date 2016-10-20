@@ -7,10 +7,18 @@
     <div class="row text-right">
         <div class="btn-group" role="group" aria-label="...">
             <button type="button" class="btn btn-success" onclick="location.href='/createcontact'">Create</button>
-            <button type="button" class="btn btn-info" onclick="location.href='/serchcontact'">Serch</button>
-            <button type="button" class="btn btn-info" onclick="location.href='/cancelserch'">Сancel search</button>
-            <button id="send_email" type="button" class="btn btn-warning" onclick="location.href='/sendemail'">Sendemail</button>
-            <button type="submit" class="btn btn-danger">Delete</button>
+            <c:if test="${empty serchPattern}">
+                <button type="button" class="btn btn-info" onclick="location.href='/serchcontact'">Serch</button>
+            </c:if>
+            <c:if test="${not empty serchPattern}">
+                <button type="button" class="btn btn-info" onclick="location.href='/cancelserch'">Сancel search</button>
+            </c:if>
+            <button id="send_email" type="button" class="btn btn-warning" onclick="location.href='/sendemail'">
+                Sendemail
+            </button>
+            <button type="button" class="btn btn-danger" onclick="deletecontact('Are you sure','contact_table')">
+                Delete
+            </button>
         </div>
     </div>
     <div class="row">

@@ -1,16 +1,11 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: Seven
-  Date: 23.09.2016
-  Time: 4:25
-  To change this template use File | Settings | File Templates.
---%>
+
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
 </head>
 <body>
 <form method="post" action="/serchcontact" novalidate>
+    <input type="hidden" name="contact_id" value="0">
     <div class="form-group">
         <label for="first_name">Firstname:</label>
         <input type="text" maxlength="32" required class="form-control" id="first_name" name="first_name">

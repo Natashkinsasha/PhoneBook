@@ -30,6 +30,13 @@
         </div>
     </c:if>
     <c:remove var="error"/>
+    <c:if test="${not empty success}">
+        <div class="alert alert-success" role="alert">
+            <span class="sr-only">Well done!</span>
+            <c:out value="${success}" />
+        </div>
+    </c:if>
+    <c:remove var="success"/>
 </div>
 <jsp:include
         page="/WEB-INF/jsp/parts/create_contact_form.jsp"
