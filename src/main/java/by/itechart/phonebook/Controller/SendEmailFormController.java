@@ -29,6 +29,11 @@ public class SendEmailFormController {
 
     @RequestMapping(uri = "/sendemail", method = RequestMapping.Method.GET)
     public void openEmailForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String id_template = req.getParameter("id_template");
+        if (id_template == null) {
+            req.getSession().removeAttribute("emailContactDTO");
+        }
+
         ContactDTO contactDTO = null;
         if (req.getParameter("id") != null) {
             ContactService contactService = new ContactServiceImpl();
@@ -45,29 +50,30 @@ public class SendEmailFormController {
             contactDTO = new ContactDTO();
         }
         EmailDTO emailDTO = new EmailDTO();
-        req.getSession().setAttribute("emailDTO",emailDTO);
+        req.getSession().setAttribute("emailDTO", emailDTO);
         emailDTO.setWhom(contactDTO.getEmailString());
         List<EmailTemplateDTO> templates = new ArrayList<>();
-        File folder = new File(this.getClass().getClassLoader().getResource("").getPath()+"\\templates");
+        File folder = new File(this.getClass().getClassLoader().getResource("").getPath() + "\\templates");
         File[] files = folder.listFiles();
-        int i=0;
-        for (File file: files){
+        int i = 0;
+        for (File file : files) {
             String name = file.getName();
-            templates.add(new EmailTemplateDTO().setId(i++).setName(name.replace(".vm","")).setTemplatePath("templates\\"+name));
+            templates.add(new EmailTemplateDTO().setId(i++).setName(name.replace(".vm", "")).setTemplatePath("templates\\" + name));
         }
         req.getSession().setAttribute("templates", templates);
-        String id_template = req.getParameter("id_template");
+
+
         req.getSession().setAttribute("idChooseTemplate", id_template);
-        if (id_template!=null){
+        if (id_template != null) {
             log.debug(id_template);
             int id = Integer.valueOf(id_template);
-            EmailTemplateDTO emailTemplateDTO = templates.parallelStream().filter((e)->e.getId()==id).findFirst().orElse(new EmailTemplateDTO());
-            emailDTO.setText(generateText(contactDTO,emailTemplateDTO));
+            EmailTemplateDTO emailTemplateDTO = templates.parallelStream().filter((e) -> e.getId() == id).findFirst().orElse(new EmailTemplateDTO());
+            emailDTO.setText(generateText(contactDTO, emailTemplateDTO));
         }
         req.getServletContext().getRequestDispatcher("/WEB-INF/jsp/pages/send_email_page.jsp").forward(req, resp);
     }
 
-    private String generateText(ContactDTO contactDTO, EmailTemplateDTO emailTemplate){
+    private String generateText(ContactDTO contactDTO, EmailTemplateDTO emailTemplate) {
         VelocityEngine velocityEngine = new VelocityEngine();
         velocityEngine.setProperty("resource.loader", "class");
         velocityEngine.setProperty("class.resource.loader.class", "org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader");

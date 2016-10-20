@@ -23,7 +23,7 @@ public class FormatterRequest {
     private static final int MEMORY_THRESHOLD;
     private static final int MAX_FILE_SIZE;
     private static final int MAX_REQUEST_SIZE;
-    final static String UPLOAD_DIRECTORY_FILE = "META-INF" + File.separator + "file";
+    final static String UPLOAD_DIRECTORY_FILE = "META-INF" + File.separator + "tempFile";
 
     static {
         ResourceBundle resource = ResourceBundle.getBundle("resources");

@@ -19,26 +19,23 @@ public class SenderBirthdays implements Job {
     private Logger logger = Logger.getLogger(SenderBirthdays.class.getName());
 
     @Override
-    public void execute(JobExecutionContext context)
-            throws JobExecutionException {
-            logger.info("began send birthdays to admin");
-            String message = createMessage();
-            if(!StringUtils.isNullOrEmpty(message)) {
-                SenderService senderService = new SenderServiceImpl();
-                senderService.send("Birthdays",message, "natashkinsasha@gmail.com","natashkinsasha@gmail.com");
-                logger.info("birthdays sent");
-            }
-
-
+    public void execute(JobExecutionContext context) throws JobExecutionException {
+        logger.info("began send birthdays to admin");
+        //Перенести
+        String message = createMessage();
+        if (!StringUtils.isNullOrEmpty(message)) {
+            SenderService senderService = new SenderServiceImpl();
+            senderService.send("Birthdays", message, "natashkinsasha@gmail.com", "natashkinsasha@gmail.com");
+            logger.info("birthdays sent");
+        }
     }
 
     private String createMessage() {
         ContactRepository contactRepository = new ContactRepositoryImpl();
-        StringBuffer text = null;
+        StringBuffer text = new StringBuffer();
         try {
             List<ContactDTO> birthdaysContacts = contactRepository.getBirthdays();
-            text = new StringBuffer();
-            for (ContactDTO contactDTO: birthdaysContacts){
+            for (ContactDTO contactDTO : birthdaysContacts) {
                 text.append(contactDTO.toString()).append("/n");
             }
         } catch (RepositoryException e) {

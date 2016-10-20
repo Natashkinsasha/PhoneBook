@@ -15,13 +15,18 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import java.io.*;
+import java.nio.channels.FileChannel;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 public class ContactController {
+    final static String UPLOAD_DIRECTORY_FILE = "META-INF" + File.separator + "file";
+
     @RequestMapping(uri = "/save_contact", method = RequestMapping.Method.POST)
     public void saveContact(HttpServletRequest req, HttpServletResponse resp) throws ServiceException, IOException {
         ContactDTO contactDTO = createContactFromRequest(req);
@@ -72,7 +77,14 @@ public class ContactController {
 
     private ContactDTO createContactFromRequest(HttpServletRequest request) {
         ContactDTO contactDTO = new ContactDTO();
-        contactDTO.setPhotoPath((String) request.getAttribute("up_photo"));
+        String up_photo = (String) request.getAttribute("up_photo");
+        String photo_path = (String) request.getAttribute("photo_path");
+        if (up_photo != null) {
+            contactDTO.setPhotoPath(up_photo);
+        } else if (photo_path != null) {
+            contactDTO.setPhotoPath(photo_path);
+        }
+
         contactDTO.setId(Integer.valueOf((String) request.getAttribute("contact_id")));
         contactDTO.setFirstName((String) request.getAttribute("first_name"));
         contactDTO.setSecondName((String) request.getAttribute("second_name"));
@@ -125,13 +137,43 @@ public class ContactController {
                 String temp = idAttachment.concat("_name");
                 attachmentDTO.setName((String) request.getAttribute(idAttachment.concat("_name")));
                 attachmentDTO.setComment((String) request.getAttribute(idAttachment.concat("_comment")));
-                //attachmentDTO.setCreationDate(request.getAttribute("attachment_".concat(idAttachment.concat("creation_date"))))
-                attachmentDTO.setPath((String) request.getAttribute("up_file_" + id));
+                String creation_date = (String) request.getAttribute(idAttachment.concat("_data"));
+                if (creation_date != null) {
+                    try {
+                        attachmentDTO.setCreationDate(new java.sql.Date(new SimpleDateFormat("yyyy-MM-dd").parse(creation_date).getTime()));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+                String pathOld = (String) request.getAttribute(idAttachment.concat("_path"));
+                String newTempPath = (String) request.getAttribute("up_file_" + id);
+                if (pathOld != null) {
+                    attachmentDTO.setPath(pathOld);
+                } else if (newTempPath != null) {
+                    String newPath = request.getServletContext().getRealPath("") + File.separator + UPLOAD_DIRECTORY_FILE + File.separator;
+                    try {
+                        transferFile(newTempPath, newPath);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    attachmentDTO.setPath(newTempPath);
+                }
                 attachmentDTOLink.add(attachmentDTO);
             }
         }
 
         return attachmentDTOLink;
+    }
+
+    private void transferFile(String nameFrom, String nameTo) throws IOException {
+        FileChannel source = new FileInputStream(new File(nameFrom)).getChannel();
+        FileChannel dest = new FileOutputStream(new File(nameTo)).getChannel();
+        try {
+            source.transferTo(0, source.size(), dest);
+        } finally {
+            source.close();
+            dest.close();
+        }
     }
 }
 

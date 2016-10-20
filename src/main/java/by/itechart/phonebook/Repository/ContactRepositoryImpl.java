@@ -75,24 +75,24 @@ public class ContactRepositoryImpl implements ContactRepository {
             AttachmentDAO mySQLAttachmentDAO = daoFactory.getAttachmentDAO(connection);
             ContactEntity contactEntity = new ContactEntity(dto);
             List<TelephoneEntity> telephoneEntities = new ArrayList<>();
-            for (TelephoneDTO telephoneDTO: dto.getTelephonesDTO()){
-                TelephoneEntity telephoneEntity = new TelephoneEntity(telephoneDTO,dto.getId());
+            for (TelephoneDTO telephoneDTO : dto.getTelephonesDTO()) {
+                TelephoneEntity telephoneEntity = new TelephoneEntity(telephoneDTO, dto.getId());
                 telephoneEntities.add(telephoneEntity);
             }
             List<AttachmentEntity> attachmentEntities = new ArrayList<>();
-            for (AttachmentDTO attachmentDTO:dto.getAttachmentDTOs()){
-                AttachmentEntity attachmentEntity = new AttachmentEntity(attachmentDTO,dto.getId());
+            for (AttachmentDTO attachmentDTO : dto.getAttachmentDTOs()) {
+                AttachmentEntity attachmentEntity = new AttachmentEntity(attachmentDTO, dto.getId());
                 attachmentEntities.add(attachmentEntity);
             }
             connection.setAutoCommit(false);
             mySQLContactDAO.update(contactEntity);
-            if(telephoneEntities.size()>0) {
+            if (telephoneEntities.size() > 0) {
                 mySQLtelephoneDAO.update(telephoneEntities);
-            } else{
+            } else {
                 mySQLtelephoneDAO.deleteAllByContactId(contactEntity.getId());
             }
-            List<AttachmentEntity> deletedAttachmentList  = new ArrayList<>();
-            if (attachmentEntities.size()>0) {
+            List<AttachmentEntity> deletedAttachmentList = new ArrayList<>();
+            if (attachmentEntities.size() > 0) {
                 deletedAttachmentList = mySQLAttachmentDAO.getDeletedAttachment(attachmentEntities);
                 mySQLAttachmentDAO.update(attachmentEntities);
             } else {
@@ -100,7 +100,7 @@ public class ContactRepositoryImpl implements ContactRepository {
                 mySQLAttachmentDAO.deleteAllByContactId(contactEntity.getId());
             }
             connection.commit();
-            for (AttachmentEntity attachmentEntity:deletedAttachmentList){
+            for (AttachmentEntity attachmentEntity : deletedAttachmentList) {
                 File deletedAttachment = new File(attachmentEntity.getPath());
                 deletedAttachment.delete();
             }
@@ -132,11 +132,22 @@ public class ContactRepositoryImpl implements ContactRepository {
             connection = daoFactory.getConnection();
             ContactDAO mySQLContactDAO = daoFactory.getContactDAO(connection);
             TelephoneDAO mySQLtelephoneDAO = daoFactory.getTelephoneDAO(connection);
+            AttachmentDAO mySQlAttachmentDAO = daoFactory.getAttachmentDAO(connection);
+            List<List<AttachmentEntity>> deletedAttachmentList = new ArrayList<>();
             connection.setAutoCommit(false);
+
             for (int i : id) {
+                List<AttachmentEntity> byContactId = mySQlAttachmentDAO.getByContactId(i);
                 mySQLContactDAO.delete(i);
+                deletedAttachmentList.add(byContactId);
             }
             connection.commit();
+            for (List<AttachmentEntity> attachmentList : deletedAttachmentList) {
+                for (AttachmentEntity attachmentEntity : attachmentList) {
+                    File deletedAttachment = new File(attachmentEntity.getPath());
+                    deletedAttachment.delete();
+                }
+            }
         } catch (SQLException | DAOException e) {
             if (connection != null) {
                 try {
@@ -288,7 +299,7 @@ public class ContactRepositoryImpl implements ContactRepository {
             }
             connection.commit();
 
-        } catch (SQLException|DAOException e) {
+        } catch (SQLException | DAOException e) {
             if (connection != null) {
                 try {
                     connection.rollback();

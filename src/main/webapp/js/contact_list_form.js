@@ -1,5 +1,5 @@
 function toggle(source, name) {
-    checkboxes = document.getElementsByName(name);
+    var checkboxes = document.getElementsByName(name);
     for (var i = 0, n = checkboxes.length; i < n; i++) {
         checkboxes[i].checked = source.checked;
     }
@@ -9,8 +9,8 @@ function toggle(source, name) {
 
 
 function deletecontact(text, name) {
-    checkboxes = document.querySelector('input:checked');
-    if (checkboxes >0) {
+    var checkboxes = document.querySelectorAll('input:checked');
+    if (checkboxes.length >0) {
         if (confirm(text)) {
             var act = document.forms["checkbox_form"];
             act.action = "/deletesomecontact";

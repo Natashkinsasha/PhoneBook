@@ -11,7 +11,8 @@
 <body>
 
 <div class="container">
-    <form novalidate id="contact_form" method="post" action="/createcontact" enctype="multipart/form-data" acceptcharset="UTF-8">
+    <form novalidate id="contact_form" method="post" action="/createcontact" enctype="multipart/form-data"
+          acceptcharset="UTF-8">
         <div class="row">
             <div class="col-xs-4">
                 <div class="form-group">
@@ -70,7 +71,8 @@
                                 </option>
                                 <option ${createContactDTO.male==false?'selected':''} value="female">
                                     Female
-                                </option>v
+                                </option>
+                                v
                             </select>
                         </div>
                     </div>
@@ -150,7 +152,11 @@
             </div>
         </div>
     </form>
-    <form  enctype="multipart/form-data" id="files_form" hidden>
+    <form enctype="multipart/form-data" id="files_form" hidden>
+        <c:forEach var="attachment" items="${createContactDTO.attachmentDTOs}">
+            <input type="hidden" name="attachment_${attachment.id}_path" value="${attachment.path}">
+        </c:forEach>
+        <input type="hidden" name="photo_path" value="${createContactDTO.photoPath}">
     </form>
     <div class="row">
         <table class="table">
@@ -188,9 +194,10 @@
                                 style="border: 0px">
                             <span class="glyphicon glyphicon-trash"></span>
                         </button>
-                        <button id="edit_telephone" data-toggle="modal" data-target="#modal_telephone" onclick="edit_telephone(this, '${telephone.id}')"
+                        <button id="edit_telephone" data-toggle="modal" data-target="#modal_telephone"
+                                onclick="edit_telephone(this, '${telephone.id}')"
                                 class="btn btn-default "
-                                type="button" aria-haspopup="true" aria-expanded="true" style="border: 0px" >
+                                type="button" aria-haspopup="true" aria-expanded="true" style="border: 0px">
                             <span class="glyphicon glyphicon-pencil"></span>
                         </button>
                     </td>
@@ -254,7 +261,8 @@
     <div class="btn-group" role="group" aria-label="...">
         <button type="button" class="btn btn-danger" onclick="location.href='/'">Close</button>
         <button id="create_contact" type="button" class="btn btn-success" onclick="save_contact()">Save</button>
-        <button type="button" class="btn btn-warning" onclick="deletecontact('${createContactDTO.id}','Are you sure?')">Delete
+        <button type="button" class="btn btn-warning" onclick="deletecontact('${createContactDTO.id}','Are you sure?')">
+            Delete
         </button>
     </div>
     <jsp:include page="/WEB-INF/jsp/parts/create_telephone_dialog.jsp" flush="true"/>
