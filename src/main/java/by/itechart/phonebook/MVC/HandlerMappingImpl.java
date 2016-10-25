@@ -1,12 +1,9 @@
 package by.itechart.phonebook.MVC;
 
 
-import by.itechart.phonebook.MVC.HandlerMapping;
 import org.apache.log4j.Logger;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -14,16 +11,18 @@ import java.util.Map;
 
 public class HandlerMappingImpl implements HandlerMapping {
     private final static Logger log = Logger.getLogger(HandlerMappingImpl.class);
-    Map<Entry<String, RequestMapping.Method>, Handler> handlerMap;
+    Map<Entry<String, RequestMapping.Method>, Handler> uriHandlerMap;
+    Map<Class<? extends Throwable>, Handler> exceptionHandlerMap;
     String pathErrorPage;
 
 
     public HandlerMappingImpl() {
-        handlerMap = new HashMap<>();
+        uriHandlerMap = new HashMap<>();
+        exceptionHandlerMap = new HashMap<>();
     }
-
-    public Map<Entry<String, RequestMapping.Method>, Handler> getHandlerMap() {
-        return handlerMap;
+    @Override
+    public Map<Entry<String, RequestMapping.Method>, Handler> getUriHandlerMap() {
+        return uriHandlerMap;
     }
 
     public void setPathErrorPage(String pathErrorPage) {
@@ -31,12 +30,21 @@ public class HandlerMappingImpl implements HandlerMapping {
     }
 
     @Override
-    public Handler getHandler(HttpServletRequest request) throws URIIncorrect {
+    public Handler getHandler(HttpServletRequest request) throws IncorrectURI {
         String method = request.getMethod();
         String uri = request.getRequestURI();
-        Handler handler = handlerMap.get(Entry.e(uri, RequestMapping.Method.valueOf(method)));
+        Handler handler = uriHandlerMap.get(Entry.e(uri, RequestMapping.Method.valueOf(method)));
         if (handler == null) {
-            throw new URIIncorrect(request.getRequestURI()+" don't find");
+            throw new IncorrectURI(request.getRequestURI()+" don't find");
+        }
+        return handler;
+    }
+
+    @Override
+    public Handler getHandler(Class<? extends Throwable> exceptionClass) throws ExceptionNotHandler{
+        Handler handler = exceptionHandlerMap.get(exceptionClass);
+        if (handler == null) {
+            throw new ExceptionNotHandler("Handler for "+exceptionClass+" don't find");
         }
         return handler;
     }
@@ -58,7 +66,12 @@ public class HandlerMappingImpl implements HandlerMapping {
                 RequestMapping annotation = method.getAnnotation(RequestMapping.class);
                 String value = annotation.uri();
                 RequestMapping.Method method1 = annotation.method();
-                handlerMap.put(Entry.e(value, method1), new HandlerImpl(controller, method).setPathErrorPage(pathErrorPage));
+                uriHandlerMap.put(Entry.e(value, method1), new HandlerImpl(controller, method).setPathErrorPage(pathErrorPage));
+            }
+            if (method.isAnnotationPresent(ExceptionHandler.class)) {
+                ExceptionHandler annotation = method.getAnnotation(ExceptionHandler.class);
+                Class<? extends Throwable> exceptionClass = annotation.value();
+                exceptionHandlerMap.put(exceptionClass, new HandlerImpl(controller, method));
             }
         }
         return this;

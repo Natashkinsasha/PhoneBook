@@ -1,4 +1,4 @@
-var Modal = function (el, options) {
+var Modal = function (el, options, method_template) {
     var self = this;
 
     this.el = document.querySelector(el);
@@ -10,6 +10,22 @@ var Modal = function (el, options) {
             list[x].addEventListener('click', function (e) {
                 if (e) e.preventDefault();
                 self.hide();
+            });
+        }
+    }
+    catch (e) {
+        console.log(e);
+    }
+
+
+    try {
+        var list = document.querySelectorAll('#' + this.el.id + ' [data-save="modal"]');
+        for (var x = 0; x < list.length; x++) {
+            list[x].addEventListener('click', function (e) {
+                if (e) e.preventDefault();
+                if (method_template()==true) {
+                    self.hide();
+                }
             });
         }
     }
@@ -47,11 +63,11 @@ Modal.prototype.hide = function () {
     }
 };
 
-function openModal(btn, event) {
-    var idModal = btn.getAttribute('data-target');
+function openModal(event, method_template) {
+    var idModal = event.target.getAttribute('data-target');
     if (event) event.preventDefault();
     var modal = new Modal(idModal, {
         backdrop: true
-    });
+    }, method_template);
     modal.show();
 }

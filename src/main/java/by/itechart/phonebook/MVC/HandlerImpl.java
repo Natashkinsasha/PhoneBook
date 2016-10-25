@@ -8,42 +8,34 @@ import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class HandlerImpl implements Handler{
-    private final static Logger log =Logger.getLogger(HandlerImpl.class);
+public class HandlerImpl implements Handler {
+    private final static Logger log = Logger.getLogger(HandlerImpl.class);
     private HttpServletRequest request;
     private HttpServletResponse response;
     private Method method;
     private Object controller;
     private String pathErrorPage;
 
-    public HandlerImpl(Object controller, Method method){
-        this.controller=controller;
-        this.method=method;
+    public HandlerImpl(Object controller, Method method) {
+        this.controller = controller;
+        this.method = method;
     }
 
     @Override
-    public void execute() {
-        try {
-            method.invoke(controller, request, response);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            log.error(e);
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-            log.error(e);
-        }
+    public void execute() throws Exception {
+        method.invoke(controller, request, response);
     }
 
 
     @Override
     public Handler setRequest(HttpServletRequest request) {
-        this.request=request;
+        this.request = request;
         return this;
     }
 
     @Override
     public Handler setResponce(HttpServletResponse response) {
-        this.response=response;
+        this.response = response;
         return this;
     }
 

@@ -460,21 +460,49 @@ public class ContactDTO implements DTO {
 
     @Override
     public String toString() {
-        return "ContactDTO{" +
-                "firstName='" + firstName + '\'' +
-                ", secondName='" + secondName + '\'' +
-                ", patronymic='" + patronymic + '\'' +
-                ", birthday=" + birthday +
-                ", male=" + male +
-                ", nationality='" + nationality + '\'' +
-                ", relationshipStatus='" + relationshipStatus + '\'' +
-                ", webSite='" + webSite + '\'' +
-                ", email='" + email + '\'' +
-                ", company='" + company + '\'' +
-                ", country='" + country + '\'' +
-                ", city='" + city + '\'' +
-                ", street='" + street + '\'' +
-                ", index='" + index + '\'' +
-                '}';
+        StringBuffer stringBuffer = new StringBuffer();
+        if (getFirstName()!=null){
+            stringBuffer.append("Firstname=").append(getFirstNameString()).append(",");
+        }
+        if (getSecondName()!=null){
+            stringBuffer.append(" Secondname=").append(getSecondNameString()).append(",");
+        }
+        if (getPatronymic()!=null){
+            stringBuffer.append(" Patronymic=").append(getPatronymicString()).append(",");
+        }
+        if (getMale()!=null){
+            stringBuffer.append(" Sex=").append(getMaleString()).append(",");
+        }
+        if (getMale()!=null){
+            stringBuffer.append(" Sex=").append(getMaleString()).append(",");
+        }
+        if (getNationality()!=null){
+            stringBuffer.append(" Nationality=").append(getNationalityString()).append(",");
+        }
+        if (getRelationshipStatus()!=null){
+            stringBuffer.append(" Relation ship=").append(getRelationshipStatusString()).append(",");
+        }
+        if (getWebSite()!=null){
+            stringBuffer.append(" Web site=").append(getWebSiteString()).append(",");
+        }
+        if (getEmail()!=null){
+            stringBuffer.append(" Email=").append(getEmailString()).append(",");
+        }
+        if (getCompany()!=null){
+            stringBuffer.append(" Company=").append(getCompanyString()).append(",");
+        }
+        if (getCountry()!=null){
+            stringBuffer.append(" Country=").append(getCountryString()).append(",");
+        }
+        if (getCity()!=null){
+            stringBuffer.append(" City=").append(getCity()).append(",");
+        }
+        if (getStreet()!=null){
+            stringBuffer.append(" Street=").append(getStreet()).append(",");
+        }
+        if (getIndex()!=null){
+            stringBuffer.append(" Index=").append(getIndex()).append(",");
+        }
+        return stringBuffer.toString();
     }
 }

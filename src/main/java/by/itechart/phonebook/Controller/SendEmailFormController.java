@@ -28,12 +28,11 @@ public class SendEmailFormController {
     private final static Logger log = Logger.getLogger(SendEmailFormController.class);
 
     @RequestMapping(uri = "/sendemail", method = RequestMapping.Method.GET)
-    public void openEmailForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    public void openEmailForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, NumberFormatException {
         String id_template = req.getParameter("id_template");
         if (id_template == null) {
             req.getSession().removeAttribute("emailContactDTO");
         }
-
         ContactDTO contactDTO = null;
         if (req.getParameter("id") != null) {
             ContactService contactService = new ContactServiceImpl();

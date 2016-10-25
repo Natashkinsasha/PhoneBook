@@ -55,24 +55,24 @@ function click_btn(btn, id) {
             break;
     }
 }
-function create_telephone(btn) {
+function create_telephone(event) {
     document.getElementById('phone_id').value = -1 * generateId();
     document.getElementById('country_code').value = '';
     document.getElementById('operator_code').value = '';
     document.getElementById('phone_number').value = '';
     document.getElementById('phone_type').value = '';
     document.getElementById('comment').value = '';
-    openModal(btn);
+    openModal(event, save_telephone);
 }
 
-function edit_telephone(btn, telephone_id) {
+function edit_telephone(event, telephone_id) {
     document.getElementById('phone_id').value = telephone_id;
     document.getElementById('country_code').value = document.getElementById('telephone_' + telephone_id + '_country_code').innerHTML;
     document.getElementById('operator_code').value = document.getElementById('telephone_' + telephone_id + '_operator_code').innerHTML;
     document.getElementById('phone_number').value = document.getElementById('telephone_' + telephone_id + '_number').innerHTML;
     document.getElementById('phone_type').value = document.getElementById('telephone_' + telephone_id + '_type').innerHTML;
     document.getElementById('comment').value = document.getElementById('telephone_' + telephone_id + '_comments').innerHTML;
-    openModal(btn);
+    openModal(event, save_telephone);
 }
 
 function delete_telephone(telephone_id, text) {
@@ -82,18 +82,28 @@ function delete_telephone(telephone_id, text) {
     }
 }
 
+
+
 function save_telephone() {
-    var telephone = {};
-    telephone.id = document.getElementById('phone_id').value;
-    telephone.country_code = document.getElementById('country_code').value;
-    telephone.operator_code = document.getElementById('operator_code').value;
-    telephone.number = document.getElementById('phone_number').value;
-    telephone.type = document.getElementById('phone_type').value;
-    telephone.comment = document.getElementById('comment').value;
-    var choose_telephone = document.getElementById("telephone_" + telephone.id);
-    document.getElementById("telephones").insertBefore(generateTRForTelephone(telephone), choose_telephone);
-    if (choose_telephone != null) {
-        document.getElementById("telephones").removeChild(choose_telephone);
+    var form = document.forms['telephone_form'];
+    if (form.checkValidity()) {
+        var telephone = {};
+        telephone.id = document.getElementById('phone_id').value;
+        telephone.country_code = document.getElementById('country_code').value;
+        telephone.operator_code = document.getElementById('operator_code').value;
+        telephone.number = document.getElementById('phone_number').value;
+        telephone.type = document.getElementById('phone_type').value;
+        telephone.comment = document.getElementById('comment').value;
+        var choose_telephone = document.getElementById("telephone_" + telephone.id);
+        document.getElementById("telephones").insertBefore(generateTRForTelephone(telephone), choose_telephone);
+        if (choose_telephone != null) {
+            document.getElementById("telephones").removeChild(choose_telephone);
+        }
+        clear_form(form)
+        return true;
+    } else {
+        valid_form(form);
+        return false;
     }
     function generateTRForTelephone(telephone) {
         var tr = document.createElement('tr');
@@ -122,14 +132,14 @@ function save_telephone() {
         temp.innerHTML = telephone.comment;
         tr.appendChild(temp);
         var temp = document.createElement('td');
-        temp.innerHTML = "<button id=\"delete_telephone\" onclick=\"delete_telephone(\'" + telephone.id + "\','Are you sure?'" + ")\" class=\"btn btn-default\" type=\"button\" aria-haspopup=\"true\" aria-expanded=\"true\"style=\"border: 0px\"> <span class=\"glyphicon glyphicon-trash\"></span> </button> <button id=\"edit_telephone\" data-toggle=\"modal\" data-target=\"#modal_telephone\" onclick=\"edit_telephone(this, \'" + telephone.id + "\')\"class=\"btn btn-default \"type=\"button\" aria-haspopup=\"true\" aria-expanded=\"true\" style=\"border: 0px\" > <span class=\"glyphicon glyphicon-pencil\"></span> </button>";
+        temp.innerHTML = "<button id=\"delete_telephone\" onclick=\"delete_telephone(\'" + telephone.id + "\','Are you sure?'" + ")\" class=\"btn btn-default\" type=\"button\" aria-haspopup=\"true\" aria-expanded=\"true\"style=\"border: 0px\"> <span class=\"glyphicon glyphicon-trash\"></span> </button> <button id=\"edit_telephone\" data-toggle=\"modal\" data-target=\"#modal_telephone\" onclick=\"edit_telephone(event, \'" + telephone.id + "\')\"class=\"btn btn-default \"type=\"button\" aria-haspopup=\"true\" aria-expanded=\"true\" style=\"border: 0px\" > <span class=\"glyphicon glyphicon-pencil\"></span> </button>";
         tr.appendChild(temp);
         return tr;
     }
 }
 
 
-function create_attachment(btn) {
+function create_attachment(event) {
     var id = -1 * generateId();
     if (document.getElementById('attachment_div') != null) {
         var attachment_div = document.querySelector('#modal_attachment .modal-body');
@@ -141,13 +151,13 @@ function create_attachment(btn) {
     var div = document.createElement('div');
     div.id = "attachment_div";
     div.class = "\"form-group\"";
-    var temp = "<label for=\"up_file\" class=\"required\">Attachment:</label> <input id=\"up_file_" + id + "\" type=\"file\" name=\"up_file_" + id + "\" accept=\"*\" required>"
+    var temp = "<label for=\"up_file\" class=\"required\">Attachment:</label> <input id=\"up_file_" + id + "\" type=\"file\" name=\"up_file_" + id + "\" accept=\"*\" required/><small class=\"error-text help-block\">Choose file</small>"
     div.innerHTML = temp;
-    document.querySelector('#modal_attachment .modal-body').appendChild(div);
-    openModal(btn);
+    document.querySelector('#attachment_form').appendChild(div);
+    openModal(event, save_attachment);
 }
 
-function edit_attachment(btn, attachment_id) {
+function edit_attachment(event, attachment_id) {
     if (document.getElementById('attachment_div') != null) {
         var attachment_div = document.querySelector('#modal_attachment .modal-body');
         attachment_div.removeChild(document.getElementById('attachment_div'));
@@ -155,7 +165,7 @@ function edit_attachment(btn, attachment_id) {
     document.getElementById('attachment_id').value = attachment_id;
     document.getElementById('attachment_name').value = document.getElementById('attachment_' + attachment_id + '_name').innerHTML;
     document.getElementById('attachment_comment').value = document.getElementById('attachment_' + attachment_id + '_comment').innerHTML;
-    openModal(btn);
+    openModal(event, save_attachment);
 }
 
 function delete_attachment(attachment_id, text) {
@@ -167,19 +177,27 @@ function delete_attachment(attachment_id, text) {
 }
 
 function save_attachment() {
-    var attachment = {};
-    attachment.id = document.getElementById('attachment_id').value;
-    attachment.name = document.getElementById('attachment_name').value;
-    attachment.comment = document.getElementById('attachment_comment').value;
-    attachment.data = formatDate(new Date());
-    var choose_attachment = document.getElementById("attachment_" + attachment.id);
-    var file = document.getElementById("up_file_" + attachment.id);
-    document.getElementById("attachments").insertBefore(generateTRForAttachment(attachment), choose_attachment);
-    if (choose_attachment != null) {
-        document.getElementById("attachments").removeChild(choose_attachment);
-    }
-    if (file != null) {
-        document.getElementById("files_form").appendChild(file)
+    var form = document.forms['attachment_form'];
+    if (form.checkValidity()) {
+        var attachment = {};
+        attachment.id = document.getElementById('attachment_id').value;
+        attachment.name = document.getElementById('attachment_name').value;
+        attachment.comment = document.getElementById('attachment_comment').value;
+        attachment.data = formatDate(new Date());
+        var choose_attachment = document.getElementById("attachment_" + attachment.id);
+        var file = document.getElementById("up_file_" + attachment.id);
+        document.getElementById("attachments").insertBefore(generateTRForAttachment(attachment), choose_attachment);
+        if (choose_attachment != null) {
+            document.getElementById("attachments").removeChild(choose_attachment);
+        }
+        if (file != null) {
+            document.getElementById("files_form").appendChild(file)
+        }
+        clear_form(form)
+        return true;
+    } else {
+        valid_form(form);
+        return false;
     }
     function generateTRForAttachment(attachment) {
         var tr = document.createElement('tr');
@@ -192,7 +210,7 @@ function save_attachment() {
         temp.innerHTML = attachment.name;
         tr.appendChild(temp);
         var temp = document.createElement('td');
-        temp.id = "attachment_" + attachment.id + "_data"
+        temp.id = "attachment_" + attachment.id + "_creationDate"
         temp.innerHTML = attachment.data;
         tr.appendChild(temp);
         var temp = document.createElement('td');
@@ -200,7 +218,7 @@ function save_attachment() {
         temp.innerHTML = attachment.comment;
         tr.appendChild(temp);
         var temp = document.createElement('td');
-        temp.innerHTML = "<button id=\"delete_attachment\" onclick=\"delete_attachment(\'" + attachment.id + "\', \'Are you sure\'" + ")\" class=\"btn btn-default\" type=\"button\" aria-haspopup=\"true\" aria-expanded=\"true\" style=\"border: 0px\"> <span class=\"glyphicon glyphicon-trash\"></span> </button> <button id=\"edit_attachment\" data-toggle=\"modal\"data-target=\"#modal_attachment\" onclick=\"edit_attachment(this,\'" + attachment.id + "\')\"class=\"btn btn-default \"type=\"button\" aria-haspopup=\"true\" aria-expanded=\"true\" style=\"border: 0px\"> <span class=\"glyphicon glyphicon-pencil\"></span> </button>";
+        temp.innerHTML = "<button id=\"delete_attachment\" onclick=\"delete_attachment(\'" + attachment.id + "\', \'Are you sure\'" + ")\" class=\"btn btn-default\" type=\"button\" aria-haspopup=\"true\" aria-expanded=\"true\" style=\"border: 0px\"> <span class=\"glyphicon glyphicon-trash\"></span> </button> <button id=\"edit_attachment\" data-toggle=\"modal\"data-target=\"#modal_attachment\" onclick=\"edit_attachment(event,\'" + attachment.id + "\')\"class=\"btn btn-default \"type=\"button\" aria-haspopup=\"true\" aria-expanded=\"true\" style=\"border: 0px\"> <span class=\"glyphicon glyphicon-pencil\"></span> </button>";
         tr.appendChild(temp);
         return tr;
     }
@@ -225,23 +243,50 @@ function makeForm() {
     return form;
 }
 
+
+function valid_form(form) {
+    var elements = form.getElementsByTagName("input");
+    for (var i = 0; i < elements.length; i++) {
+        if (!elements[i].checkValidity()) {
+            elements[i].classList.add('has-error');
+        } else if (elements[i].checkValidity()) {
+            if (elements[i].classList.contains("has-error")) {
+                elements[i].classList.remove("has-error");
+            }
+            if (elements[i].hasAttribute("required")) {
+                elements[i].classList.add('has-success');
+            }
+        }
+    }
+}
+
+function clear_form(form) {
+    var elements = form.getElementsByTagName("input");
+    for (var i = 0; i < elements.length; i++) {
+        if (elements[i].classList.contains("has-error")) {
+            elements[i].classList.remove("has-error");
+        }
+        if (elements[i].classList.contains("has-succes")) {
+            elements[i].classList.remove("has-succes");
+        }
+    }
+
+}
+
 function save_contact() {
     var form = makeForm();
-
-    //if (form.checkValidity()) {
-
+    if (form.checkValidity()) {
         addAttachmentsFromTable(form);
         addPhonesFromTable(form);
         addFromForm('files_form', form);
         //addFromForm('contact_form', form);
         form.method = "post";
         form.submit();
-    /*} else {
-        var elements = document.forms['contact_form'].getElementsByTagName("input");
-        for (var i = 0; i < elements.length; i++) {
-            if (elements[i].checkValidity();
-        }
-    }*/
+        return true;
+    } else {
+        valid_form(form);
+        return false;
+    }
 
     function addFromForm(from_form_id, from) {
         var formFiles = document.getElementById(from_form_id);

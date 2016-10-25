@@ -3,3 +3,38 @@ label.required:after {
     color: red;
     content: " *";
 }
+
+
+
+.form_hint::before {
+    content: "\25C0"; /* left point triangle in escaped unicode */
+    color:#d45252;
+    position: absolute;
+    top:1px;
+    left:-6px;
+}
+
+input.has-error  { /* when a field is considered invalid by the browser */
+    box-shadow: 0 0 5px #d45252;
+    border-color: #b03535
+}
+
+
+input.has-success { /* when a field is considered valid by the browser */
+    box-shadow: 0 0 5px #5cd053;
+    border-color: #28921f;
+}
+
+
+.error-text{
+    visibility: hidden;
+    color: #b03535
+}
+
+input.has-error + .error-text{
+    visibility: visible;
+}
+
+.error-text.help-block {
+    color: #b03535
+}

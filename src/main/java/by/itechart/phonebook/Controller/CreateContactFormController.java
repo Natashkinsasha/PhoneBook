@@ -34,19 +34,10 @@ public class CreateContactFormController {
 
 
     @RequestMapping(uri = "/editcontact", method = RequestMapping.Method.GET)
-    public void editContact(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+    public void editContact(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException, ServiceException, NumberFormatException {
         ContactService contactService = new ContactServiceImpl();
-        ContactDTO contactDTO = null;
-        if (req.getParameter("id") != null) {
-            try {
-                contactDTO = contactService.getContactById(Integer.valueOf(req.getParameter("id")));
-            } catch (ServiceException e) {
-                e.printStackTrace();
-                log.error(e);
-            }
-            HttpSession session = req.getSession();
-            session.setAttribute("createContactDTO", contactDTO);
-        }
+        ContactDTO contactDTO = contactService.getContactById(Integer.valueOf(req.getParameter("id")));
+        req.getSession().setAttribute("createContactDTO", contactDTO);
         req.getServletContext().getRequestDispatcher("/WEB-INF/jsp/pages/create_contact_page.jsp").forward(req, resp);
     }
 

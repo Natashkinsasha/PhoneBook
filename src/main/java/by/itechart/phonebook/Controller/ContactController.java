@@ -137,7 +137,7 @@ public class ContactController {
                 String temp = idAttachment.concat("_name");
                 attachmentDTO.setName((String) request.getAttribute(idAttachment.concat("_name")));
                 attachmentDTO.setComment((String) request.getAttribute(idAttachment.concat("_comment")));
-                String creation_date = (String) request.getAttribute(idAttachment.concat("_data"));
+                String creation_date = (String) request.getAttribute(idAttachment.concat("_creationDate"));
                 if (creation_date != null) {
                     try {
                         attachmentDTO.setCreationDate(new java.sql.Date(new SimpleDateFormat("yyyy-MM-dd").parse(creation_date).getTime()));
@@ -151,11 +151,6 @@ public class ContactController {
                     attachmentDTO.setPath(pathOld);
                 } else if (newTempPath != null) {
                     String newPath = request.getServletContext().getRealPath("") + File.separator + UPLOAD_DIRECTORY_FILE + File.separator;
-                    try {
-                        transferFile(newTempPath, newPath);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
                     attachmentDTO.setPath(newTempPath);
                 }
                 attachmentDTOLink.add(attachmentDTO);
@@ -165,16 +160,6 @@ public class ContactController {
         return attachmentDTOLink;
     }
 
-    private void transferFile(String nameFrom, String nameTo) throws IOException {
-        FileChannel source = new FileInputStream(new File(nameFrom)).getChannel();
-        FileChannel dest = new FileOutputStream(new File(nameTo)).getChannel();
-        try {
-            source.transferTo(0, source.size(), dest);
-        } finally {
-            source.close();
-            dest.close();
-        }
-    }
 }
 
 

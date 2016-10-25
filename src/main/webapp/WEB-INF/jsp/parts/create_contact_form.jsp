@@ -33,6 +33,7 @@
                             <input type="text" maxlength="32" required class="form-control" id="first_name"
                                    name="first_name"
                                    value="${createContactDTO.firstName}">
+                            <small class="error-text help-block">Please supply your first name</small>
                         </div>
                     </div>
                     <div class="col-xs-6">
@@ -41,6 +42,7 @@
                             <input type="text" maxlength="32" required class="form-control" id="second_name"
                                    name="second_name"
                                    value="${createContactDTO.secondName}">
+                            <small class="error-text help-block">Please supply your second name</small>
                         </div>
                     </div>
                 </div>
@@ -72,7 +74,6 @@
                                 <option ${createContactDTO.male==false?'selected':''} value="female">
                                     Female
                                 </option>
-                                v
                             </select>
                         </div>
                     </div>
@@ -109,6 +110,7 @@
                             <input type="text" maxlength="32" class="form-control"
                                    pattern="^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" id="email" name="email"
                                    value="${createContactDTO.email}">
+                            <small class="error-text help-block">Please supply valid email</small>
                         </div>
                     </div>
                     <div class="col-xs-6">
@@ -147,7 +149,9 @@
                 <div class="form-group">
                     <label for="index">Index</label>
                     <input type="text" maxlength="32" class="form-control" id="index" name="index"
-                           value="${createContactDTO.index}">
+                           value="${createContactDTO.index}"
+                           pattern="^\d{6}$">
+                    <small class="error-text help-block">Please supply valid index</small>
                 </div>
             </div>
         </div>
@@ -170,7 +174,7 @@
                 <th>Comment</th>
                 <th>
                     <button id="create_telephone_modal" data-toggle="modal" data-target="#modal_telephone"
-                            onclick="create_telephone(this)"
+                            onclick="create_telephone(event)"
                             class="btn btn-default "
                             type="button"
                             aria-haspopup="true" aria-expanded="true" style="border: 0px">
@@ -195,7 +199,7 @@
                             <span class="glyphicon glyphicon-trash"></span>
                         </button>
                         <button id="edit_telephone" data-toggle="modal" data-target="#modal_telephone"
-                                onclick="edit_telephone(this, '${telephone.id}')"
+                                onclick="edit_telephone(event, '${telephone.id}')"
                                 class="btn btn-default "
                                 type="button" aria-haspopup="true" aria-expanded="true" style="border: 0px">
                             <span class="glyphicon glyphicon-pencil"></span>
@@ -216,7 +220,7 @@
                 <th>Date</th>
                 <th>Comment</th>
                 <th>
-                    <button data-toggle="modal" data-target="#modal_attachment" onclick="create_attachment(this)"
+                    <button data-toggle="modal" data-target="#modal_attachment" onclick="create_attachment(event)"
                             class="btn btn-default"
                             type="button"
                             aria-haspopup="true" aria-expanded="true" style="border: 0px">
@@ -246,7 +250,7 @@
                             <span class="glyphicon glyphicon-trash"></span>
                         </button>
                         <button id="edit_attachment" data-toggle="modal"
-                                data-target="#modal_attachment" onclick="edit_attachment(this, '${attachment.id}')"
+                                data-target="#modal_attachment" onclick="edit_attachment(event, '${attachment.id}')"
                                 class="btn btn-default "
                                 type="button" aria-haspopup="true" aria-expanded="true" style="border: 0px">
                             <span class="glyphicon glyphicon-pencil"></span>

@@ -24,33 +24,29 @@ public class ContactsFormController {
     private final static Logger log = Logger.getLogger(ContactsFormController.class);
 
     @RequestMapping(uri = "/", method = RequestMapping.Method.GET)
-    public void mainPage(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    public void mainPage(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException, ServiceException {
         MainTableService mainTableService = new MainTableServiceImpl();
         String page = req.getParameter("page");
         if (page != null) {
             req.getSession().setAttribute("page", Integer.valueOf(req.getParameter("page")));
         }
-        try {
-            req.getSession().setAttribute("DTOs", mainTableService.getSerchSortLimitContacts((ContactDTO) req.getSession().getAttribute("serchPattern"), (Integer) req.getSession().getAttribute("page"), null));
-            req.getSession().setAttribute("pageCol", mainTableService.getCountTablePage((ContactDTO) req.getSession().getAttribute("serchPattern")));
-        } catch (ServiceException e) {
-            e.printStackTrace();
-            log.error(e);
-        }
+        req.getSession().setAttribute("DTOs", mainTableService.getSerchSortLimitContacts((ContactDTO) req.getSession().getAttribute("serchPattern"), (Integer) req.getSession().getAttribute("page"), null));
+        req.getSession().setAttribute("pageCol", mainTableService.getCountTablePage((ContactDTO) req.getSession().getAttribute("serchPattern")));
         req.getServletContext().getRequestDispatcher("/WEB-INF/jsp/pages/contact_list_page.jsp").forward(req, resp);
     }
 
 
     @RequestMapping(uri = "/deletecontact", method = RequestMapping.Method.GET)
-    public void deleteOneContact(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServiceException {
+    public void deleteOneContact(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServiceException, NumberFormatException {
         ContactService contactService = new ContactServiceImpl();
-        contactService.deleteContact(Integer.valueOf(req.getParameter("id")));
+        Integer id = Integer.valueOf(req.getParameter("id"));
+        contactService.deleteContact(id);
         resp.sendRedirect("/");
     }
 
 
     @RequestMapping(uri = "/deletesomecontact", method = RequestMapping.Method.POST)
-    public void deleteSomeContact(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServiceException {
+    public void deleteSomeContact(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServiceException, NumberFormatException {
         ContactService contactService = new ContactServiceImpl();
         contactService.deleteContact(ArrayUtils.toObject(Arrays.stream(req.getParameterValues("contact_table")).mapToInt(Integer::parseInt).toArray()));
         resp.sendRedirect("/");

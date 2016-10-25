@@ -12,26 +12,30 @@
             </div>
             <div class="modal-body">
                 <input type="hidden" id="attachment_id">
-                <div class="form-group">
-                    <label for="attachment_name" class="required">Name</label>
-                    <input type="text" maxlength="32" class="form-control"
-                           id="attachment_name"
-                           name="attachment_name"
-                           required>
-                </div>
-                <div class="form-group">
-                    <label for="attachment_comment">Comment</label>
-                    <input type="text" maxlength="32" class="form-control"
-                           id="attachment_comment"
-                           name="attachment_comment">
-                </div>
+                <form id="attachment_form">
+                    <div class="form-group">
+                        <label for="attachment_name" class="required">Name</label>
+                        <input type="text" maxlength="32" class="form-control"
+                               id="attachment_name"
+                               name="attachment_name"
+                               required>
+                        <small class="error-text help-block">Please supply name</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="attachment_comment">Comment</label>
+                        <input type="text" maxlength="32" class="form-control"
+                               id="attachment_comment"
+                               name="attachment_comment">
+                    </div>
+                </form>
             </div>
             <div class="modal-footer">
                 <div class="btn-group" role="group" aria-label="...">
                     <button type="button" class="btn btn-danger" data-dismiss="modal">
                         Close
                     </button>
-                    <button id="create_attachment" onclick="save_attachment(this)" class="btn btn-success" data-dismiss="modal">
+                    <button id="create_attachment" class="btn btn-success"
+                            data-save="modal">
                         Save
                     </button>
                 </div>

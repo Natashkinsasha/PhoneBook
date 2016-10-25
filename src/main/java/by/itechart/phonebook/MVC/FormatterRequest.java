@@ -38,8 +38,7 @@ public class FormatterRequest {
     private ServletFileUpload upload;
     private HttpServletRequest request;
 
-    public FormatterRequest(HttpServletRequest request) {
-        this.request = request;
+    public FormatterRequest() {
         DiskFileItemFactory factory = new DiskFileItemFactory();
         factory.setSizeThreshold(MEMORY_THRESHOLD);
         factory.setRepository(tmpDirectory);
@@ -47,6 +46,10 @@ public class FormatterRequest {
         upload.setHeaderEncoding("UTF8");
         upload.setFileSizeMax(MAX_FILE_SIZE);
         upload.setSizeMax(MAX_REQUEST_SIZE);
+    }
+
+    public void setRequest(HttpServletRequest request) {
+        this.request = request;
     }
 
     public void format() throws FileUploadException {
