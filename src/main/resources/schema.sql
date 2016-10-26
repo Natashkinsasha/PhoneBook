@@ -1,9 +1,12 @@
-CREATE SCHEMA `phonebooknatashkin` ;
+CREATE DATABASE  IF NOT EXISTS `phonebooknatashkin`;
+USE `phonebooknatashkin`;
 
-CREATE TABLE `phonebooknatashkin`.`contact` (
+
+DROP TABLE IF EXISTS `contact`;
+CREATE TABLE `contact` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `firstname` varchar(45) DEFAULT NULL,
-  `secondname` varchar(45) DEFAULT NULL,
+  `firstname` varchar(45) NOT NULL,
+  `secondname` varchar(45) NOT NULL,
   `patronymic` varchar(45) DEFAULT NULL,
   `birthday` date DEFAULT NULL,
   `male` tinyint(1) DEFAULT NULL,
@@ -18,9 +21,22 @@ CREATE TABLE `phonebooknatashkin`.`contact` (
   `company` varchar(45) DEFAULT NULL,
   `photo_path` varchar(244) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=35 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
 
-CREATE TABLE `phonebooknatashkin`.`telephone` (
+DROP TABLE IF EXISTS `attachment`;
+CREATE TABLE `attachment` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `path` varchar(244) NOT NULL,
+  `creation_date` date NOT NULL,
+  `comment` varchar(100) DEFAULT NULL,
+  `contact_id` int(11) NOT NULL,
+  `name` varchar(45) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `id_idx` (`contact_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `telephone`;
+CREATE TABLE `telephone` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `number` varchar(45) DEFAULT NULL,
   `type` varchar(45) DEFAULT NULL,
@@ -31,20 +47,4 @@ CREATE TABLE `phonebooknatashkin`.`telephone` (
   PRIMARY KEY (`id`),
   KEY `id_idx` (`contact_id`),
   CONSTRAINT `id` FOREIGN KEY (`contact_id`) REFERENCES `contact` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
-
-CREATE TABLE `phonebooknatashkin`.`attachment` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `path` varchar(244) DEFAULT NULL,
-  `creation_date` date DEFAULT NULL,
-  `comment` varchar(100) DEFAULT NULL,
-  `contact_id` int(11) DEFAULT NULL,
-  `name` varchar(45) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `id_idx` (`contact_id`),
-  CONSTRAINT `` FOREIGN KEY (`contact_id`) REFERENCES `contact` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
-
-
-
-INSERT INTO `emailtemplate` VALUES (1,'templates/usual.vm','Привет','Hi'),(2,'templates/happy_birthday.vm','С ДР','HB');
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
