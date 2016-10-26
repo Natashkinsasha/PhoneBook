@@ -1,7 +1,7 @@
+BEGIN;
 CREATE DATABASE  IF NOT EXISTS `phonebooknatashkin`;
 USE `phonebooknatashkin`;
-
-
+SET FOREIGN_KEY_CHECKS=0;
 DROP TABLE IF EXISTS `contact`;
 CREATE TABLE `contact` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -22,7 +22,7 @@ CREATE TABLE `contact` (
   `photo_path` varchar(244) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
-
+SET FOREIGN_KEY_CHECKS=1;
 DROP TABLE IF EXISTS `attachment`;
 CREATE TABLE `attachment` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -34,7 +34,6 @@ CREATE TABLE `attachment` (
   PRIMARY KEY (`id`),
   KEY `id_idx` (`contact_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
-
 DROP TABLE IF EXISTS `telephone`;
 CREATE TABLE `telephone` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -48,3 +47,4 @@ CREATE TABLE `telephone` (
   KEY `id_idx` (`contact_id`),
   CONSTRAINT `id` FOREIGN KEY (`contact_id`) REFERENCES `contact` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+COMMIT;
